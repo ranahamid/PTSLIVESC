@@ -1,0 +1,147 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using VirtualClassroom.Code;
+using VirtualClassroom.Models;
+
+namespace VirtualClassroom.Controllers
+{
+    public class PCController : Interfaces.ControllerR
+    {
+        private VirtualClassroomDataContext db;
+
+        public PCController()
+        {
+            db = new VirtualClassroomDataContext();
+        }
+
+        public ActionResult Index(string classroomId, string id)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                TblPC pc = q.Single();
+                if (pc.ScUid.HasValue)
+                {
+                    ViewBag.Name = pc.TblClassroom.Name + " - " + pc.Name;
+                }
+                else
+                {
+                    ViewBag.Name = "Virtual Classroom - Personal computer";
+                    ViewBag.ErrorMessage = "No seat computer assigned.";
+                }
+            }
+            else
+            {
+                ViewBag.Name = "Virtual Classroom - Personal computer";
+                ViewBag.ErrorMessage = "Invalid URL.";
+            }
+
+            return View();
+        }
+
+        public ActionResult GetData(string classroomId, string id)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                TblPC pc = q.Single();
+
+                if (pc.ScUid.HasValue)
+                {
+                    TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+
+                    cData.Uid = pc.Uid;
+                    cData.Key = TokBoxHelper.Key;
+                    cData.ComputerSetting = new TokBoxHelper.ComputerConfig(pc);
+                    cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(pc.TblClassroom);
+                    cData.ScSession = TokBoxHelper.GetScSession(pc.ScUid.Value,
+                        new TokBoxHelper.TokenData
+                        {
+                            Uid = pc.Uid,
+                            Name = pc.Name,
+                            Role = (int)VC.VcRoles.PC,
+                            Position = pc.Position
+                        });
+
+                    if (pc.TcUid.HasValue)
+                    {
+                        cData.TcSession = TokBoxHelper.GetTcSession(pc.TcUid.Value,
+                        new TokBoxHelper.TokenData
+                        {
+                            Uid = pc.Uid,
+                            Name = pc.Name,
+                            Role = (int)VC.VcRoles.PC,
+                            Position = pc.Position
+                        });
+                    }
+                    cData.AcSession = TokBoxHelper.GetAcSession(pc.ClassroomId,
+                        new TokBoxHelper.TokenData
+                        {
+                            Uid = pc.Uid,
+                            Name = pc.Name,
+                            Role = (int)VC.VcRoles.PC,
+                            Position = pc.Position
+                        });
+
+                    return responseSuccess(cData);
+                }
+                else
+                {
+                    // error
+                    return responseError("No seat computer assigned.");
+                }
+            }
+            else
+            {
+                // error
+                return responseError("Invalid URL.");
+            }
+
+        }
+
+        public ActionResult LoadAnswers(string classroomId, string id)
+        {
+            var qPC = from x in db.TblPCs
+                      where x.ClassroomId.ToLower() == classroomId && x.Id.ToLower() == id.ToLower()
+                      select x;
+
+            if (qPC.Count() == 1)
+            {
+                TblPC pc = qPC.Single();
+
+                List<Answer> data = new List<Answer>();
+
+                if (pc.TcUid.HasValue)
+                {
+                    data = db.TblFormAnswers.Where(x => x.PcUid == pc.Uid).OrderBy(x => x.Received).Select(x => new Answer(x)).ToList();
+                }
+
+                return responseSuccess(data);
+            }
+            else
+            {
+                return responseError("Invalid Student ID.");
+            }
+        }
+
+        // dispose
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

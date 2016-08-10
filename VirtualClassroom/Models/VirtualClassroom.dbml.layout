@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.375, 9.25" name="VirtualClassroom">
+  <DataContextMoniker Name="/VirtualClassroomDataContext" />
+  <nestedChildShapes>
+    <classShape Id="8ef7052a-066c-48b7-84bc-cc2f73372be3" absoluteBounds="0.75, 3.5, 2, 1.3862939453125005">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblClassroom" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cc9e8af4-274e-4a9e-b081-1de1b3ae0b43" absoluteBounds="0.765, 3.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a4ef0c7d-94c0-41bc-98fa-44727ce621ff" absoluteBounds="3.5, 1.5, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblTC" />
+      <nestedChildShapes>
+        <elementListCompartment Id="28b99211-6a30-45a9-8c9a-7ca55ec58aa2" absoluteBounds="3.515, 1.96, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="420c9544-5923-4898-adef-a47387823444" absoluteBounds="6.25, 2.75, 2, 2.9247054036458326">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblPC" />
+      <nestedChildShapes>
+        <elementListCompartment Id="08a810d0-a862-44e5-8b66-9e02231aa530" absoluteBounds="6.265, 3.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 4.27089730989583); (4.5 : 4.27089730989583); (4.5 : 3.65549967447917)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblClassroom/TblClassroom_TblTC" />
+      <nodes>
+        <classShapeMoniker Id="8ef7052a-066c-48b7-84bc-cc2f73372be3" />
+        <classShapeMoniker Id="a4ef0c7d-94c0-41bc-98fa-44727ce621ff" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 4.64109562760417); (5.91666666666667 : 4.64109562760417 : JumpStart); (6.08333333333333 : 4.64109562760417 : JumpEnd); (6.25 : 4.64109562760417)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblClassroom/TblClassroom_TblPC" />
+      <nodes>
+        <classShapeMoniker Id="8ef7052a-066c-48b7-84bc-cc2f73372be3" />
+        <classShapeMoniker Id="420c9544-5923-4898-adef-a47387823444" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 3.20274983723958); (6.25 : 3.20274983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblTC/TblTC_TblPC" />
+      <nodes>
+        <classShapeMoniker Id="a4ef0c7d-94c0-41bc-98fa-44727ce621ff" />
+        <classShapeMoniker Id="420c9544-5923-4898-adef-a47387823444" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="7186160b-9ee3-4541-ae8f-66ff3c3cc374" absoluteBounds="6.25, 6.5, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblForm" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f2c7b82e-311c-4ab4-a0d2-12c3bf398b07" absoluteBounds="6.265, 6.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 3.9631959921875); (4.41666666666667 : 3.9631959921875 : JumpStart); (4.58333333333333 : 3.9631959921875 : JumpEnd); (6 : 3.9631959921875); (6 : 5.92470540364583); (7.25 : 5.92470540364583); (7.25 : 6.5)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblClassroom/TblClassroom_TblForm" />
+      <nodes>
+        <classShapeMoniker Id="8ef7052a-066c-48b7-84bc-cc2f73372be3" />
+        <classShapeMoniker Id="7186160b-9ee3-4541-ae8f-66ff3c3cc374" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="8d6be487-bfae-4f1f-9d5e-1619b698e82b" absoluteBounds="9.125, 5.125, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblFormAnswer" />
+      <nestedChildShapes>
+        <elementListCompartment Id="de62e484-4b31-4c6d-b295-8fb929e6b468" absoluteBounds="9.14, 5.585, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(8.25 : 6.98640055338542); (9.125 : 6.98640055338542)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblForm/TblForm_TblFormAnswer" />
+      <nodes>
+        <classShapeMoniker Id="7186160b-9ee3-4541-ae8f-66ff3c3cc374" />
+        <classShapeMoniker Id="8d6be487-bfae-4f1f-9d5e-1619b698e82b" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.25 : 5.39985270182292); (9.125 : 5.39985270182292)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblPC/TblPC_TblFormAnswer" />
+      <nodes>
+        <classShapeMoniker Id="420c9544-5923-4898-adef-a47387823444" />
+        <classShapeMoniker Id="8d6be487-bfae-4f1f-9d5e-1619b698e82b" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="7f09c4a7-376d-48a5-a276-19bc605403a0" absoluteBounds="3.375, 5.25, 2, 3.6939111328124996">
+      <DataClassMoniker Name="/VirtualClassroomDataContext/TblSC" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b81cc716-452c-4412-ae4b-fff0c28a4f0e" absoluteBounds="3.39, 5.71, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.375 : 5.46235270182292); (5.91666666666667 : 5.46235270182292 : JumpStart); (6.08333333333333 : 5.46235270182292 : JumpEnd); (6.25 : 5.46235270182292)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblSC/TblSC_TblPC" />
+      <nodes>
+        <classShapeMoniker Id="7f09c4a7-376d-48a5-a276-19bc605403a0" />
+        <classShapeMoniker Id="420c9544-5923-4898-adef-a47387823444" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 4.8862939453125); (3.375 : 5.25)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/VirtualClassroomDataContext/TblClassroom/TblClassroom_TblSC" />
+      <nodes>
+        <classShapeMoniker Id="8ef7052a-066c-48b7-84bc-cc2f73372be3" />
+        <classShapeMoniker Id="7f09c4a7-376d-48a5-a276-19bc605403a0" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

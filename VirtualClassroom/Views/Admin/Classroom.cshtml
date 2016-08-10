@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Administration";
+}
+
+@if (!String.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+else
+{
+    <div id="divTarget" class="adminContainer"></div>
+
+    @Scripts.Render("~/bundles/react")
+    @Scripts.Render("~/vc/global")
+    @Scripts.Render("~/vc/forms")
+    @Scripts.Render("~/vc/admin")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var admin = new VC.Admin.InitClassrooms('divTarget', '@Url.Action()', '@ViewBag.ClassroomId');
+        });
+    </script>
+}

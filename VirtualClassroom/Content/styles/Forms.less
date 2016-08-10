@@ -1,0 +1,67 @@
+﻿@import (reference) "../bootstrap/bootstrap.less";
+
+.Forms {
+    // panel
+    .FormPanel {
+        .panelButton {
+            float:left;
+            padding-right:3px;
+            padding-bottom:3px;
+            button {
+            }
+        }
+    }
+
+    // body
+    .FormBody {
+        // bootstrap customization
+        .form-control {
+            resize:none;
+        }
+
+        // component
+        .fc {
+            padding-bottom:5px;
+        }
+
+        // label
+        .fc-label {
+            .fc;
+            .lbl {
+                font-weight:bold;
+            }
+        }
+
+        // textbox
+        .fc-textbox {
+            .fc;
+            .required {
+                font-weight:normal;
+            }
+        }
+
+        // radiobuttons
+        .fc-radiobuttons {
+            .fc;
+            label {
+                width:100%;
+                font-weight:normal;
+            }
+            table {
+                padding:0px;
+                td:first-child {
+                    width:1%;
+                    padding-right:5px;
+                }
+                width:100%;
+            }
+            .buttons {
+            }
+        }
+
+        // checkboxes
+        .fc-checkboxes {
+            .fc-radiobuttons;
+        }
+    }
+}

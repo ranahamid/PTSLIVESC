@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    ViewBag.Name = "Virtual Classroom - Administration";
+}
+
+<div id="divTarget" class="adminContainer"></div>
+
+@Scripts.Render("~/bundles/react")
+@Scripts.Render("~/vc/global")
+@Scripts.Render("~/vc/admin")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var a = new VC.Admin.InitAdministration('divTarget', '@Url.Action()');
+    });
+</script>

@@ -1,0 +1,14 @@
+﻿{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es6",
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<VirtualClassroom.Models.Classroom>
+
+
+@{
+    ViewBag.Title = "Home";
+    ViewBag.Name = "Virtual Classroom";
+}
+
+<div class="homeContainer">
+
+    <div style="text-align:right"><h4>@Html.ActionLink("Administration", "Index", "Admin", routeValues: new { }, htmlAttributes: new { })</h4></div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-4">
+                <ul>
+                    <li>
+                        <h4>@Html.Label(item.name)</h4>
+                        <ul>
+                            <li>
+                                @Html.ActionLink("Admin computer", "Index", "AC", routeValues: new { classroomId = item.id }, htmlAttributes: new { })
+                            </li>
+                        </ul>
+
+                        @foreach (var sc in item.seats)
+                        {
+                            <ul>
+                                <li>
+                                    @Html.ActionLink(sc.name, "Index", "SC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })
+                                    <ul>
+                                        @{
+                                            for (int i = 0; i < sc.students.Count; i++)
+                                            {
+                                                <li>@Html.ActionLink(sc.students[i].name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                            </ul>
+                        }
+
+                        @foreach (var tc in item.teachers)
+                        {
+                            <ul>
+                                <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
+                            </ul>
+                        }
+                    </li>
+                </ul>
+            </div>
+        }
+    </div>
+
+    <div style="text-align:left;display:none"><h4>@Html.ActionLink("Test TC", "Test", "Home", routeValues: new { }, htmlAttributes: new { })</h4></div>
+
+</div>

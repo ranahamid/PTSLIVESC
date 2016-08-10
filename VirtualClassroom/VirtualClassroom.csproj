@@ -249,7 +249,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DbUpdate.sql" />
+    <Content Include="App_Data\DbScript.sql" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Extensions\ScreenSharing\Chrome\background-script.js" />
     <Content Include="Extensions\ScreenSharing\Chrome\logo128.png" />
@@ -352,7 +352,6 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
-    <None Include="Properties\PublishProfiles\Local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

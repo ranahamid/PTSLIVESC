@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Routing;
 using VirtualClassroom.Models;
 
 namespace VirtualClassroom.Controllers
@@ -64,6 +61,19 @@ namespace VirtualClassroom.Controllers
             return responseSuccess(data);
         }
         [HttpGet]
+        public DataResponse<List<Computer>> GetAvailableFeaturedStudents(string classroomId)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    select x;
+
+            List<Computer> data = q.Select(x =>
+                new Computer() { id = x.Id, name = x.Name }
+                ).ToList();
+
+            return responseSuccess(data);
+        }
+        [HttpGet]
         public DataResponse<List<Computer>> GetAvailableTeachers(string classroomId)
         {
             var q = from x in db.TblTCs
@@ -97,6 +107,18 @@ namespace VirtualClassroom.Controllers
                 id = x.Id,
                 name = x.Name,
                 students = x.TblPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.Id, name = z.Name, position = z.Position, teacher = null }).ToList()
+            }).ToList();
+
+            return responseSuccess(data);
+        }
+        [HttpGet]
+        public DataResponse<List<Featured>> LoadFeatureds(string classroomId)
+        {
+            List<Featured> data = db.TblFCs.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Featured()
+            {
+                id = x.Id,
+                name = x.Name,
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
             }).ToList();
 
             return responseSuccess(data);
@@ -251,7 +273,7 @@ namespace VirtualClassroom.Controllers
             }
         }
 
-        private void updateStudentPosition(string classroomId, Student student, Guid scUid, int position)
+        private void updateStudentPositionSc(string classroomId, Student student, Guid scUid, int position)
         {
             if (student != null)
             {
@@ -287,7 +309,6 @@ namespace VirtualClassroom.Controllers
                 Id = item.id,
                 ClassroomId = classroomId,
                 Name = item.name,
-                SessionId = String.Empty,
                 Audio = true,
                 Video = true,
                 Volume1 = 80,
@@ -303,7 +324,7 @@ namespace VirtualClassroom.Controllers
             // assign students and positions
             for (int i = 0; i < 8; i++)
             {
-                updateStudentPosition(classroomId, item.students[i], scUid, i + 1);
+                updateStudentPositionSc(classroomId, item.students[i], scUid, i + 1);
             }
 
             try
@@ -342,7 +363,7 @@ namespace VirtualClassroom.Controllers
                 // assign student position 1
                 for (int i = 0; i < 8; i++)
                 {
-                    updateStudentPosition(classroomId, item.students[i], tblSC.Uid, i + 1);
+                    updateStudentPositionSc(classroomId, item.students[i], tblSC.Uid, i + 1);
                 }
 
                 try
@@ -397,6 +418,168 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError<string>("Seat Id not found.");
+            }
+        }
+
+        [HttpPost]
+        public DataResponse<bool> IsFeaturedExists(string classroomId, string id, [FromBody] string excludeId)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.Id.ToLower() != excludeId.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return responseSuccess(exists);
+        }
+        private TblFCPC createStudentFcPc(string classroomId, Student student, Guid fcUid, int position)
+        {
+            if (student != null)
+            {
+                var qPC = from x in db.TblPCs
+                          where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == student.id.ToLower()
+                          select x;
+                if (qPC.Count() == 1)
+                {
+                    TblPC tblPC = qPC.Single();
+
+                    return new TblFCPC
+                    {
+                        Uid = Guid.NewGuid(),
+                        FcUid = fcUid,
+                        PcUid = tblPC.Uid,
+                        Position = position,
+                        Volume = 80
+                    };
+                }
+            }
+
+            return null;
+        }
+        [HttpPost]
+        public DataResponse<Featured> CreateFeatured(string classroomId, [FromBody] Featured item)
+        {
+            Guid fcUid = Guid.NewGuid();
+            db.TblFCs.InsertOnSubmit(new TblFC
+            {
+                Uid = fcUid,
+                Id = item.id,
+                ClassroomId = classroomId,
+                Name = item.name
+            });
+
+            // assign students and positions
+            List<TblFCPC> fcPcs = new List<TblFCPC>();
+            for (int i = 0; i < 8; i++)
+            {
+                TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], fcUid, i + 1);
+
+                if (tblFCPC != null)
+                {
+                    fcPcs.Add(tblFCPC);
+                }
+            }
+            if (fcPcs.Count > 0)
+            {
+                db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+            }
+
+            try
+            {
+                db.SubmitChanges();
+
+                return responseSuccess(item);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError<Featured>(ex.Message);
+            }
+        }
+        [HttpPost]
+        public DataResponse<Featured> UpdateFeatured(string classroomId, [FromBody] Featured item)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                TblFC tblFC = q.Single();
+                tblFC.Name = item.name;
+
+                // remove assigned students
+                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                              where x.FcUid == tblFC.Uid
+                                              select x);
+
+                // assign student position 1
+                List<TblFCPC> fcPcs = new List<TblFCPC>();
+                for (int i = 0; i < 8; i++)
+                {
+                    TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], tblFC.Uid, i + 1);
+
+                    if (tblFCPC != null)
+                    {
+                        fcPcs.Add(tblFCPC);
+                    }
+                }
+                if (fcPcs.Count > 0)
+                {
+                    db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+                }
+
+                try
+                {
+                    db.SubmitChanges();
+
+                    return responseSuccess(item);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<Featured>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<Featured>("Featured Id not found.");
+            }
+        }
+        [HttpPost]
+        public DataResponse<string> DeleteFeatured(string classroomId, [FromBody] string id)
+        {
+            string loweredId = id.ToLower();
+
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                TblFC tblFC = q.Single();
+
+                Guid fcUid = tblFC.Uid;
+
+                // remove assigned students
+                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                              where x.FcUid == tblFC.Uid
+                                              select x);
+
+                db.TblFCs.DeleteOnSubmit(tblFC);
+
+                try
+                {
+                    db.SubmitChanges();
+
+                    return responseSuccess(id);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<string>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<string>("Featured Id not found.");
             }
         }
 
@@ -515,6 +698,11 @@ namespace VirtualClassroom.Controllers
                                                     where x.PcUid == tblPC.Uid
                                                     select x);
 
+                // delete from featured computer
+                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                              where x.PcUid == tblPC.Uid
+                                              select x);
+
                 // delete student
                 db.TblPCs.DeleteOnSubmit(tblPC);
 
@@ -555,7 +743,6 @@ namespace VirtualClassroom.Controllers
                 Id = item.id,
                 ClassroomId = classroomId,
                 Name = item.name,
-                SessionId = String.Empty,
                 Audio = false,
                 Video = true
             });

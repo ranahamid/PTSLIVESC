@@ -17,7 +17,7 @@ var VC;
             didMount() {
                 $(window).resize(() => this.fitHeightOfBoxes());
             }
-            connected(connection, t) {
+            connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -31,28 +31,29 @@ var VC;
                     // set chat name
                     this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
                 }
-                else {
-                    if (tokenData.Role === App.Roles.SC && t !== App.ConnectionType.AC) {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.SC) {
                         // seat computer
                         this.labelLeft.setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                         // show raise hand button
                         this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
                     }
-                    else if (tokenData.Role === App.Roles.TC && t !== App.ConnectionType.AC) {
+                    else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
                         this.labelRight.setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                     }
-                    else if (tokenData.Role === App.Roles.AC) {
-                        // admin computer
-                        App.Global.Signaling.sendSignal(this.session2AC, this.getAcConnection(), App.Global.SignalTypes.Connected, {
-                            audio: this.dataResponse.ComputerSetting.Audio,
-                            video: this.dataResponse.ComputerSetting.Video,
-                            volume: this.dataResponse.ComputerSetting.Volume
-                        });
-                    }
+                }
+                else if (tokenData.Role === App.Roles.AC) {
+                    // admin computer
+                    App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
+                        audio: this.dataResponse.ComputerSetting.Audio,
+                        video: this.dataResponse.ComputerSetting.Video,
+                        volume: this.dataResponse.ComputerSetting.Volume
+                    });
                 }
             }
-            disconnected(connection, t) {
+            disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -60,14 +61,15 @@ var VC;
                     this.setUiVisibility(false);
                     this.setStatusText("Disconnected from the session.", App.Components.StatusStyle.Error);
                 }
-                else {
-                    if (tokenData.Role === App.Roles.SC && t !== App.ConnectionType.AC) {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.SC) {
                         // seat computer
                         this.labelLeft.setText("Seat computer not connected.", App.Components.BoxLabelStyle.NotConnected);
                         // hide raise hand button
                         this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
                     }
-                    else if (tokenData.Role === App.Roles.TC && t !== App.ConnectionType.AC) {
+                    else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
                         this.labelRight.setText("Teacher computer not connected.", App.Components.BoxLabelStyle.NotConnected);
                     }
@@ -84,14 +86,15 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
-                else {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     if (tokenData.Role === App.Roles.SC) {
                         // seat computer
                         this.boxSubscriberLeft.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[0]);
                     }
                     else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
-                        this.boxSubscriberRight.subscribe(this.session2TC, stream, this.dataResponse.ComputerSetting.Volume[1]);
+                        this.boxSubscriberRight.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[1]);
                     }
                 }
             }
@@ -99,7 +102,8 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
-                else {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     // seat or teacher computer
                     if (tokenData.Role === App.Roles.SC) {
                         // seat computer
@@ -107,7 +111,7 @@ var VC;
                     }
                     else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
-                        this.boxSubscriberRight.unsubscribe(this.session2TC);
+                        this.boxSubscriberRight.unsubscribe(this.session);
                     }
                 }
             }
@@ -288,16 +292,23 @@ var VC;
                 this.chatPublic.setChatUser({ uid: uid, name: name, role: role });
             }
             onChatPrivateItemSubmitted(item) {
-                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Chat, {
-                    userUid: item.userUid,
-                    userName: item.userName,
-                    userRole: item.userRole,
-                    message: item.message,
-                    type: App.Global.ChatType.Private
+                // private chat, all PCs of my group + SC of my group + me
+                let connections = [];
+                connections = connections.concat(this.getConnectionsOfMyGroup(App.Roles.PC), this.getConnectionsOfMyGroup(App.Roles.SC));
+                connections.push(this.getMyConnection());
+                // send signal
+                connections.forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Chat, {
+                        userUid: item.userUid,
+                        userName: item.userName,
+                        userRole: item.userRole,
+                        message: item.message,
+                        type: App.Global.ChatType.Private
+                    });
                 });
             }
             onChatPublicItemSubmitted(item) {
-                App.Global.Signaling.sendSignalAll(this.session2AC, App.Global.SignalTypes.Chat, {
+                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Chat, {
                     userUid: item.userUid,
                     userName: item.userName,
                     userRole: item.userRole,
@@ -314,7 +325,7 @@ var VC;
                 }
             }
             onAnswerStatusChanged(formUid, answerUid, type, status, resultData) {
-                App.Global.Signaling.sendSignal(this.session2TC, this.getTcConnection(), App.Global.SignalTypes.Forms, {
+                App.Global.Signaling.sendSignal(this.session, this.getTcConnection(), App.Global.SignalTypes.Forms, {
                     formId: formUid,
                     answerId: answerUid,
                     type: type,

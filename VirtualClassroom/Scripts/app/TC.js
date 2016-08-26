@@ -16,7 +16,7 @@ var VC;
             didMount() {
                 $(window).resize(() => this.fitHeightOfBox());
             }
-            connected(connection, t) {
+            connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -25,22 +25,23 @@ var VC;
                     // show share screen button
                     this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
                 }
-                else {
-                    if (tokenData.Role === App.Roles.PC && t !== App.ConnectionType.AC) {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.PC) {
                         // student
                         this.connectedPCsChanged();
                     }
-                    else if (tokenData.Role === App.Roles.AC) {
-                        // admin computer
-                        App.Global.Signaling.sendSignal(this.session2AC, this.getAcConnection(), App.Global.SignalTypes.Connected, {
-                            audio: this.dataResponse.ComputerSetting.Audio,
-                            video: this.dataResponse.ComputerSetting.Video,
-                            volume: this.dataResponse.ComputerSetting.Volume
-                        });
-                    }
+                }
+                else if (tokenData.Role === App.Roles.AC) {
+                    // admin computer
+                    App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
+                        audio: this.dataResponse.ComputerSetting.Audio,
+                        video: this.dataResponse.ComputerSetting.Video,
+                        volume: this.dataResponse.ComputerSetting.Volume
+                    });
                 }
             }
-            disconnected(connection, t) {
+            disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -49,7 +50,7 @@ var VC;
                     this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
                 }
                 else {
-                    if (tokenData.Role === App.Roles.PC && t !== App.ConnectionType.AC) {
+                    if (tokenData.Role === App.Roles.PC) {
                         // student
                         this.connectedPCsChanged();
                     }
@@ -142,7 +143,10 @@ var VC;
             }
             onFormSent() {
                 // send signal to all connected students for refresh
-                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Forms, {});
+                let connections = this.getConnectionsOfMyGroup(App.Roles.PC);
+                connections.forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Forms, {});
+                });
             }
             onAnswerDeleted(pcUid) {
                 // send signal to selected student for refresh
@@ -152,8 +156,11 @@ var VC;
                 }
             }
             onAllAnswersDeleted(formId) {
-                // send singnal to all connected students to delete form answers
-                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Forms, { formId: formId });
+                // send signal to all connected students to delete form answers
+                let connections = this.getConnectionsOfMyGroup(App.Roles.PC);
+                connections.forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Forms, {});
+                });
             }
             setStatusVisibility(visible) {
                 this.divStatus.style.display = visible ? "block" : "none";

@@ -233,6 +233,7 @@
     <Compile Include="Controllers\Interfaces\ApiControllerR.cs" />
     <Compile Include="Controllers\Interfaces\ControllerR.cs" />
     <Compile Include="Controllers\PCController.cs" />
+    <Compile Include="Controllers\FCController.cs" />
     <Compile Include="Controllers\SCController.cs" />
     <Compile Include="Controllers\TCController.cs" />
     <Compile Include="Global.asax.cs">
@@ -383,13 +384,15 @@
     <Content Include="Views\PC\Index.cshtml" />
     <Content Include="Views\SC\Index.cshtml" />
     <Content Include="Views\TC\Index.cshtml" />
-    <Content Include="Views\Home\Test.cshtml" />
     <None Include="tsconfig.json" />
+    <Content Include="Views\FC\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
     <TypeScriptCompile Include="Scripts\admin\components\Selector.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
     <TypeScriptCompile Include="Scripts\app\pc\FormsPc.tsx" />
+    <TypeScriptCompile Include="Scripts\app\FC.tsx" />
     <TypeScriptCompile Include="Scripts\app\tc\FormsTc.tsx" />
     <TypeScriptCompile Include="Scripts\forms\components\Chart.tsx" />
     <TypeScriptCompile Include="Scripts\global\components\Tabs.tsx" />

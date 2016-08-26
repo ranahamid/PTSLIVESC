@@ -1,6 +1,4 @@
-﻿USE [VC] 
-GO
-/****** Object:  Table [dbo].[TblClassroom]    Script Date: 10.08.2016 15:58:53 ******/
+﻿/****** Object:  Table [dbo].[TblClassroom]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +18,46 @@ CREATE TABLE [dbo].[TblClassroom](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[TblForm]    Script Date: 10.08.2016 15:58:53 ******/
+/****** Object:  Table [dbo].[TblFC]    Script Date: 25.08.2016 1:37:56 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[TblFC](
+	[Uid] [uniqueidentifier] NOT NULL,
+	[ClassroomId] [varchar](20) NOT NULL,
+	[Id] [varchar](20) NOT NULL,
+	[Name] [nvarchar](256) NOT NULL,
+ CONSTRAINT [PK_TblFC] PRIMARY KEY CLUSTERED 
+(
+	[Uid] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[TblFCPC]    Script Date: 25.08.2016 1:37:56 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TblFCPC](
+	[Uid] [uniqueidentifier] NOT NULL,
+	[FcUid] [uniqueidentifier] NOT NULL,
+	[PcUid] [uniqueidentifier] NOT NULL,
+	[Volume] [int] NOT NULL,
+	[Position] [int] NOT NULL,
+ CONSTRAINT [PK_TblFCPC] PRIMARY KEY CLUSTERED 
+(
+	[Uid] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[TblForm]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -42,7 +79,7 @@ CREATE TABLE [dbo].[TblForm](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[TblFormAnswer]    Script Date: 10.08.2016 15:58:53 ******/
+/****** Object:  Table [dbo].[TblFormAnswer]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -63,7 +100,7 @@ CREATE TABLE [dbo].[TblFormAnswer](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[TblPC]    Script Date: 10.08.2016 15:58:53 ******/
+/****** Object:  Table [dbo].[TblPC]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -91,7 +128,7 @@ CREATE TABLE [dbo].[TblPC](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[TblSC]    Script Date: 10.08.2016 15:58:53 ******/
+/****** Object:  Table [dbo].[TblSC]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -103,7 +140,6 @@ CREATE TABLE [dbo].[TblSC](
 	[ClassroomId] [varchar](20) NOT NULL,
 	[Id] [varchar](20) NOT NULL,
 	[Name] [nvarchar](256) NOT NULL,
-	[SessionId] [nvarchar](1024) NOT NULL,
 	[Audio] [bit] NOT NULL,
 	[Video] [bit] NOT NULL,
 	[Volume1] [int] NOT NULL,
@@ -123,7 +159,7 @@ CREATE TABLE [dbo].[TblSC](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[TblTC]    Script Date: 10.08.2016 15:58:53 ******/
+/****** Object:  Table [dbo].[TblTC]    Script Date: 25.08.2016 1:37:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,7 +171,6 @@ CREATE TABLE [dbo].[TblTC](
 	[ClassroomId] [varchar](20) NOT NULL,
 	[Id] [varchar](20) NOT NULL,
 	[Name] [nvarchar](256) NOT NULL,
-	[SessionId] [nvarchar](1024) NOT NULL,
 	[Audio] [bit] NOT NULL,
 	[Video] [bit] NOT NULL,
  CONSTRAINT [PK_TblTC_1] PRIMARY KEY CLUSTERED 
@@ -146,6 +181,21 @@ CREATE TABLE [dbo].[TblTC](
 
 GO
 SET ANSI_PADDING OFF
+GO
+ALTER TABLE [dbo].[TblFC]  WITH CHECK ADD  CONSTRAINT [FK_TblFC_TblClassroom] FOREIGN KEY([ClassroomId])
+REFERENCES [dbo].[TblClassroom] ([Id])
+GO
+ALTER TABLE [dbo].[TblFC] CHECK CONSTRAINT [FK_TblFC_TblClassroom]
+GO
+ALTER TABLE [dbo].[TblFCPC]  WITH CHECK ADD  CONSTRAINT [FK_TblFCPC_TblFC] FOREIGN KEY([FcUid])
+REFERENCES [dbo].[TblFC] ([Uid])
+GO
+ALTER TABLE [dbo].[TblFCPC] CHECK CONSTRAINT [FK_TblFCPC_TblFC]
+GO
+ALTER TABLE [dbo].[TblFCPC]  WITH CHECK ADD  CONSTRAINT [FK_TblFCPC_TblPC] FOREIGN KEY([PcUid])
+REFERENCES [dbo].[TblPC] ([Uid])
+GO
+ALTER TABLE [dbo].[TblFCPC] CHECK CONSTRAINT [FK_TblFCPC_TblPC]
 GO
 ALTER TABLE [dbo].[TblForm]  WITH CHECK ADD  CONSTRAINT [FK_TblForm_TblClassroom] FOREIGN KEY([ClassroomId])
 REFERENCES [dbo].[TblClassroom] ([Id])

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using VirtualClassroom.Code;
 using VirtualClassroom.Models;
@@ -54,23 +52,14 @@ namespace VirtualClassroom.Controllers
                 cData.Key = TokBoxHelper.Key;
                 cData.ComputerSetting = new TokBoxHelper.ComputerConfig(tc);
                 cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(tc.TblClassroom);
-                cData.ScSession = null;
-                cData.TcSession = TokBoxHelper.GetTcSession(tc.Uid,
+                cData.Session = TokBoxHelper.GetSession(tc.ClassroomId,
                     new TokBoxHelper.TokenData
                     {
                         Uid = tc.Uid,
                         Name = tc.Name,
-                        Role = (int)VC.VcRoles.TC,
-                        Position = 2
+                        Role = (int)VC.VcRoles.TC
                     });
-                cData.AcSession = TokBoxHelper.GetAcSession(tc.ClassroomId,
-                    new TokBoxHelper.TokenData
-                    {
-                        Uid = tc.Uid,
-                        Name = tc.Name,
-                        Role = (int)VC.VcRoles.TC,
-                        Position = 2
-                    });
+                cData.Group = TokBoxHelper.CreateGroup(tc);
 
                 return responseSuccess(cData);
             }

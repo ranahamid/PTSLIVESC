@@ -108,6 +108,9 @@ var VC;
                         case App.Roles.TC:
                             notFoundText = notFoundText.replace("@0", "Teacher");
                             break;
+                        case App.Roles.FC:
+                            notFoundText = notFoundText.replace("@0", "Featured");
+                            break;
                     }
                     return (React.createElement("table", {className: "table", align: "center"}, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {className: "text-muted"}, notFoundText))))));
                 }
@@ -121,7 +124,7 @@ var VC;
                             name = "Teacher";
                         }
                     }
-                    else if (this.state.selectedRole === App.Roles.SC) {
+                    else if (this.state.selectedRole === App.Roles.SC || this.state.selectedRole === App.Roles.FC) {
                         name = "Student #" + (index + 1);
                     }
                     return name;
@@ -129,7 +132,7 @@ var VC;
                 renderComputer(item) {
                     return (React.createElement("tr", {key: "tr_" + item.uid}, React.createElement("td", null, React.createElement("div", null, React.createElement("span", {className: "glyphicon glyphicon-link", style: { color: "green" }}), " ", item.name)), React.createElement("td", null, item.volume.map((v, index) => {
                         return (React.createElement(Components.Volume, {title: this.computerTitle(index), volume: v != null ? v : 0, display: v != null, onVolumeChanged: (vol) => this.changeVolume(item.uid, item.volume, index, vol)}));
-                    })), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("div", {className: "cListButton"}, React.createElement("button", {type: "button", className: "btn btn-xs btn-warning", onClick: () => this.props.turnOff(item.uid)}, React.createElement("span", {className: "glyphicon glyphicon-off"}))), React.createElement("div", {className: "cListButton"}, React.createElement("button", {type: "button", className: "btn btn-xs btn-default", disabled: "true"}, React.createElement("span", {className: "glyphicon glyphicon-record"}))), React.createElement(Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: this.getButtonStatus(item.video), onOn: () => this.props.turnAv(item.uid, null, true), onOff: () => this.props.turnAv(item.uid, null, false), className: "cListButton"}), React.createElement(Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: this.getButtonStatus(item.audio), onOn: () => this.props.turnAv(item.uid, true, null), onOff: () => this.props.turnAv(item.uid, false, null), className: "cListButton"}))));
+                    })), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("div", {className: "cListButton"}, React.createElement("button", {type: "button", className: "btn btn-xs btn-warning", onClick: () => this.props.turnOff(item.uid)}, React.createElement("span", {className: "glyphicon glyphicon-off"}))), React.createElement("div", {className: "cListButton", style: { display: 'none' }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-default", disabled: "true"}, React.createElement("span", {className: "glyphicon glyphicon-record"}))), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? 'none' : 'block') }}, React.createElement(Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: this.getButtonStatus(item.video), onOn: () => this.props.turnAv(item.uid, null, true), onOff: () => this.props.turnAv(item.uid, null, false), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? 'none' : 'block') }}, React.createElement(Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: this.getButtonStatus(item.audio), onOn: () => this.props.turnAv(item.uid, true, null), onOff: () => this.props.turnAv(item.uid, false, null), className: ""})))));
                 }
                 renderComputers() {
                     let items = [];
@@ -144,6 +147,9 @@ var VC;
                         }
                         else if (this.state.selectedRole === App.Roles.SC) {
                             return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Seat computer"), React.createElement("th", null, "Volume"), React.createElement("th", null))), React.createElement("tbody", null, items)));
+                        }
+                        else if (this.state.selectedRole === App.Roles.FC) {
+                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Featured computer"), React.createElement("th", null, "Volume"), React.createElement("th", null))), React.createElement("tbody", null, items)));
                         }
                         else {
                             return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Teacher computer"), React.createElement("th", null))), React.createElement("tbody", null, items)));

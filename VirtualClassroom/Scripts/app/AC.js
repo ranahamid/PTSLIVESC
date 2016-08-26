@@ -16,7 +16,7 @@ var VC;
                 this.setStatusVisibility(true);
                 this.status.setText(text, style);
             }
-            connected(connection, t) {
+            connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -24,7 +24,7 @@ var VC;
                     this.setUiVisibility(true);
                 }
             }
-            disconnected(connection, t) {
+            disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -135,6 +135,7 @@ var VC;
                 let badgeSC = 0;
                 let badgePC = 0;
                 let badgeTC = 0;
+                let badgeFC = 0;
                 this.connections.forEach((item) => {
                     let d = App.Global.Fce.toTokenData(item.data);
                     computers.push({ uid: d.Uid, name: d.Name, role: d.Role });
@@ -148,12 +149,16 @@ var VC;
                         case App.Roles.TC:
                             badgeTC++;
                             break;
+                        case App.Roles.FC:
+                            badgeFC++;
+                            break;
                     }
                 });
                 let tabItems = [
                     { id: App.Roles.SC, title: "Seat computers", onClick: this.tabOnClick.bind(this), badge: badgeSC, active: true },
                     { id: App.Roles.PC, title: "Student computers", onClick: this.tabOnClick.bind(this), badge: badgePC, active: false },
-                    { id: App.Roles.TC, title: "Teacher computers", onClick: this.tabOnClick.bind(this), badge: badgeTC, active: false }
+                    { id: App.Roles.TC, title: "Teacher computers", onClick: this.tabOnClick.bind(this), badge: badgeTC, active: false },
+                    { id: App.Roles.FC, title: "Featured computers", onClick: this.tabOnClick.bind(this), badge: badgeFC, active: false }
                 ];
                 let statusClasses = [
                     "alert alert-warning",

@@ -36,15 +36,21 @@ namespace VirtualClassroom.Models
     partial void InsertTblTC(TblTC instance);
     partial void UpdateTblTC(TblTC instance);
     partial void DeleteTblTC(TblTC instance);
-    partial void InsertTblPC(TblPC instance);
-    partial void UpdateTblPC(TblPC instance);
-    partial void DeleteTblPC(TblPC instance);
+    partial void InsertTblFC(TblFC instance);
+    partial void UpdateTblFC(TblFC instance);
+    partial void DeleteTblFC(TblFC instance);
+    partial void InsertTblFCPC(TblFCPC instance);
+    partial void UpdateTblFCPC(TblFCPC instance);
+    partial void DeleteTblFCPC(TblFCPC instance);
     partial void InsertTblForm(TblForm instance);
     partial void UpdateTblForm(TblForm instance);
     partial void DeleteTblForm(TblForm instance);
     partial void InsertTblFormAnswer(TblFormAnswer instance);
     partial void UpdateTblFormAnswer(TblFormAnswer instance);
     partial void DeleteTblFormAnswer(TblFormAnswer instance);
+    partial void InsertTblPC(TblPC instance);
+    partial void UpdateTblPC(TblPC instance);
+    partial void DeleteTblPC(TblPC instance);
     partial void InsertTblSC(TblSC instance);
     partial void UpdateTblSC(TblSC instance);
     partial void DeleteTblSC(TblSC instance);
@@ -96,11 +102,19 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<TblPC> TblPCs
+		public System.Data.Linq.Table<TblFC> TblFCs
 		{
 			get
 			{
-				return this.GetTable<TblPC>();
+				return this.GetTable<TblFC>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TblFCPC> TblFCPCs
+		{
+			get
+			{
+				return this.GetTable<TblFCPC>();
 			}
 		}
 		
@@ -117,6 +131,14 @@ namespace VirtualClassroom.Models
 			get
 			{
 				return this.GetTable<TblFormAnswer>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TblPC> TblPCs
+		{
+			get
+			{
+				return this.GetTable<TblPC>();
 			}
 		}
 		
@@ -143,9 +165,11 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblTC> _TblTCs;
 		
-		private EntitySet<TblPC> _TblPCs;
+		private EntitySet<TblFC> _TblFCs;
 		
 		private EntitySet<TblForm> _TblForms;
+		
+		private EntitySet<TblPC> _TblPCs;
 		
 		private EntitySet<TblSC> _TblSCs;
 		
@@ -164,8 +188,9 @@ namespace VirtualClassroom.Models
 		public TblClassroom()
 		{
 			this._TblTCs = new EntitySet<TblTC>(new Action<TblTC>(this.attach_TblTCs), new Action<TblTC>(this.detach_TblTCs));
-			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
+			this._TblFCs = new EntitySet<TblFC>(new Action<TblFC>(this.attach_TblFCs), new Action<TblFC>(this.detach_TblFCs));
 			this._TblForms = new EntitySet<TblForm>(new Action<TblForm>(this.attach_TblForms), new Action<TblForm>(this.detach_TblForms));
+			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
 			this._TblSCs = new EntitySet<TblSC>(new Action<TblSC>(this.attach_TblSCs), new Action<TblSC>(this.detach_TblSCs));
 			OnCreated();
 		}
@@ -243,16 +268,16 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblPCs", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblPC> TblPCs
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblFC", Storage="_TblFCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblFC> TblFCs
 		{
 			get
 			{
-				return this._TblPCs;
+				return this._TblFCs;
 			}
 			set
 			{
-				this._TblPCs.Assign(value);
+				this._TblFCs.Assign(value);
 			}
 		}
 		
@@ -266,6 +291,19 @@ namespace VirtualClassroom.Models
 			set
 			{
 				this._TblForms.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblPCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblPC> TblPCs
+		{
+			get
+			{
+				return this._TblPCs;
+			}
+			set
+			{
+				this._TblPCs.Assign(value);
 			}
 		}
 		
@@ -314,13 +352,13 @@ namespace VirtualClassroom.Models
 			entity.TblClassroom = null;
 		}
 		
-		private void attach_TblPCs(TblPC entity)
+		private void attach_TblFCs(TblFC entity)
 		{
 			this.SendPropertyChanging();
 			entity.TblClassroom = this;
 		}
 		
-		private void detach_TblPCs(TblPC entity)
+		private void detach_TblFCs(TblFC entity)
 		{
 			this.SendPropertyChanging();
 			entity.TblClassroom = null;
@@ -333,6 +371,18 @@ namespace VirtualClassroom.Models
 		}
 		
 		private void detach_TblForms(TblForm entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblPCs(TblPC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblPCs(TblPC entity)
 		{
 			this.SendPropertyChanging();
 			entity.TblClassroom = null;
@@ -365,8 +415,6 @@ namespace VirtualClassroom.Models
 		
 		private string _Name;
 		
-		private string _SessionId;
-		
 		private bool _Audio;
 		
 		private bool _Video;
@@ -387,8 +435,6 @@ namespace VirtualClassroom.Models
     partial void OnIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnSessionIdChanging(string value);
-    partial void OnSessionIdChanged();
     partial void OnAudioChanging(bool value);
     partial void OnAudioChanged();
     partial void OnVideoChanging(bool value);
@@ -482,26 +528,6 @@ namespace VirtualClassroom.Models
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SessionId", DbType="NVarChar(1024) NOT NULL", CanBeNull=false)]
-		public string SessionId
-		{
-			get
-			{
-				return this._SessionId;
-			}
-			set
-			{
-				if ((this._SessionId != value))
-				{
-					this.OnSessionIdChanging(value);
-					this.SendPropertyChanging();
-					this._SessionId = value;
-					this.SendPropertyChanged("SessionId");
-					this.OnSessionIdChanged();
 				}
 			}
 		}
@@ -626,8 +652,8 @@ namespace VirtualClassroom.Models
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblPC")]
-	public partial class TblPC : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblFC")]
+	public partial class TblFC : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -640,27 +666,9 @@ namespace VirtualClassroom.Models
 		
 		private string _Name;
 		
-		private System.Nullable<System.Guid> _ScUid;
-		
-		private System.Nullable<System.Guid> _TcUid;
-		
-		private int _Position;
-		
-		private bool _Audio;
-		
-		private bool _Video;
-		
-		private int _Volume1;
-		
-		private int _Volume2;
-		
-		private EntitySet<TblFormAnswer> _TblFormAnswers;
+		private EntitySet<TblFCPC> _TblFCPCs;
 		
 		private EntityRef<TblClassroom> _TblClassroom;
-		
-		private EntityRef<TblTC> _TblTC;
-		
-		private EntityRef<TblSC> _TblSC;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -674,28 +682,12 @@ namespace VirtualClassroom.Models
     partial void OnIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnScUidChanging(System.Nullable<System.Guid> value);
-    partial void OnScUidChanged();
-    partial void OnTcUidChanging(System.Nullable<System.Guid> value);
-    partial void OnTcUidChanged();
-    partial void OnPositionChanging(int value);
-    partial void OnPositionChanged();
-    partial void OnAudioChanging(bool value);
-    partial void OnAudioChanged();
-    partial void OnVideoChanging(bool value);
-    partial void OnVideoChanged();
-    partial void OnVolume1Changing(int value);
-    partial void OnVolume1Changed();
-    partial void OnVolume2Changing(int value);
-    partial void OnVolume2Changed();
     #endregion
 		
-		public TblPC()
+		public TblFC()
 		{
-			this._TblFormAnswers = new EntitySet<TblFormAnswer>(new Action<TblFormAnswer>(this.attach_TblFormAnswers), new Action<TblFormAnswer>(this.detach_TblFormAnswers));
+			this._TblFCPCs = new EntitySet<TblFCPC>(new Action<TblFCPC>(this.attach_TblFCPCs), new Action<TblFCPC>(this.detach_TblFCPCs));
 			this._TblClassroom = default(EntityRef<TblClassroom>);
-			this._TblTC = default(EntityRef<TblTC>);
-			this._TblSC = default(EntityRef<TblSC>);
 			OnCreated();
 		}
 		
@@ -783,168 +775,20 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ScUid
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblFC_TblFCPC", Storage="_TblFCPCs", ThisKey="Uid", OtherKey="FcUid")]
+		public EntitySet<TblFCPC> TblFCPCs
 		{
 			get
 			{
-				return this._ScUid;
+				return this._TblFCPCs;
 			}
 			set
 			{
-				if ((this._ScUid != value))
-				{
-					if (this._TblSC.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnScUidChanging(value);
-					this.SendPropertyChanging();
-					this._ScUid = value;
-					this.SendPropertyChanged("ScUid");
-					this.OnScUidChanged();
-				}
+				this._TblFCPCs.Assign(value);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> TcUid
-		{
-			get
-			{
-				return this._TcUid;
-			}
-			set
-			{
-				if ((this._TcUid != value))
-				{
-					if (this._TblTC.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTcUidChanging(value);
-					this.SendPropertyChanging();
-					this._TcUid = value;
-					this.SendPropertyChanged("TcUid");
-					this.OnTcUidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position", DbType="Int NOT NULL")]
-		public int Position
-		{
-			get
-			{
-				return this._Position;
-			}
-			set
-			{
-				if ((this._Position != value))
-				{
-					this.OnPositionChanging(value);
-					this.SendPropertyChanging();
-					this._Position = value;
-					this.SendPropertyChanged("Position");
-					this.OnPositionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Audio", DbType="Bit NOT NULL")]
-		public bool Audio
-		{
-			get
-			{
-				return this._Audio;
-			}
-			set
-			{
-				if ((this._Audio != value))
-				{
-					this.OnAudioChanging(value);
-					this.SendPropertyChanging();
-					this._Audio = value;
-					this.SendPropertyChanged("Audio");
-					this.OnAudioChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Video", DbType="Bit NOT NULL")]
-		public bool Video
-		{
-			get
-			{
-				return this._Video;
-			}
-			set
-			{
-				if ((this._Video != value))
-				{
-					this.OnVideoChanging(value);
-					this.SendPropertyChanging();
-					this._Video = value;
-					this.SendPropertyChanged("Video");
-					this.OnVideoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume1", DbType="Int NOT NULL")]
-		public int Volume1
-		{
-			get
-			{
-				return this._Volume1;
-			}
-			set
-			{
-				if ((this._Volume1 != value))
-				{
-					this.OnVolume1Changing(value);
-					this.SendPropertyChanging();
-					this._Volume1 = value;
-					this.SendPropertyChanged("Volume1");
-					this.OnVolume1Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume2", DbType="Int NOT NULL")]
-		public int Volume2
-		{
-			get
-			{
-				return this._Volume2;
-			}
-			set
-			{
-				if ((this._Volume2 != value))
-				{
-					this.OnVolume2Changing(value);
-					this.SendPropertyChanging();
-					this._Volume2 = value;
-					this.SendPropertyChanged("Volume2");
-					this.OnVolume2Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblPC_TblFormAnswer", Storage="_TblFormAnswers", ThisKey="Uid", OtherKey="PcUid")]
-		public EntitySet<TblFormAnswer> TblFormAnswers
-		{
-			get
-			{
-				return this._TblFormAnswers;
-			}
-			set
-			{
-				this._TblFormAnswers.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblFC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
 			get
@@ -961,12 +805,12 @@ namespace VirtualClassroom.Models
 					if ((previousValue != null))
 					{
 						this._TblClassroom.Entity = null;
-						previousValue.TblPCs.Remove(this);
+						previousValue.TblFCs.Remove(this);
 					}
 					this._TblClassroom.Entity = value;
 					if ((value != null))
 					{
-						value.TblPCs.Add(this);
+						value.TblFCs.Add(this);
 						this._ClassroomId = value.Id;
 					}
 					else
@@ -974,74 +818,6 @@ namespace VirtualClassroom.Models
 						this._ClassroomId = default(string);
 					}
 					this.SendPropertyChanged("TblClassroom");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblPC", Storage="_TblTC", ThisKey="TcUid", OtherKey="Uid", IsForeignKey=true)]
-		public TblTC TblTC
-		{
-			get
-			{
-				return this._TblTC.Entity;
-			}
-			set
-			{
-				TblTC previousValue = this._TblTC.Entity;
-				if (((previousValue != value) 
-							|| (this._TblTC.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TblTC.Entity = null;
-						previousValue.TblPCs.Remove(this);
-					}
-					this._TblTC.Entity = value;
-					if ((value != null))
-					{
-						value.TblPCs.Add(this);
-						this._TcUid = value.Uid;
-					}
-					else
-					{
-						this._TcUid = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TblTC");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblPC", Storage="_TblSC", ThisKey="ScUid", OtherKey="Uid", IsForeignKey=true)]
-		public TblSC TblSC
-		{
-			get
-			{
-				return this._TblSC.Entity;
-			}
-			set
-			{
-				TblSC previousValue = this._TblSC.Entity;
-				if (((previousValue != value) 
-							|| (this._TblSC.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TblSC.Entity = null;
-						previousValue.TblPCs.Remove(this);
-					}
-					this._TblSC.Entity = value;
-					if ((value != null))
-					{
-						value.TblPCs.Add(this);
-						this._ScUid = value.Uid;
-					}
-					else
-					{
-						this._ScUid = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TblSC");
 				}
 			}
 		}
@@ -1066,16 +842,256 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		private void attach_TblFormAnswers(TblFormAnswer entity)
+		private void attach_TblFCPCs(TblFCPC entity)
 		{
 			this.SendPropertyChanging();
-			entity.TblPC = this;
+			entity.TblFC = this;
 		}
 		
-		private void detach_TblFormAnswers(TblFormAnswer entity)
+		private void detach_TblFCPCs(TblFCPC entity)
 		{
 			this.SendPropertyChanging();
-			entity.TblPC = null;
+			entity.TblFC = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblFCPC")]
+	public partial class TblFCPC : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _Uid;
+		
+		private System.Guid _FcUid;
+		
+		private System.Guid _PcUid;
+		
+		private int _Volume;
+		
+		private int _Position;
+		
+		private EntityRef<TblFC> _TblFC;
+		
+		private EntityRef<TblPC> _TblPC;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUidChanging(System.Guid value);
+    partial void OnUidChanged();
+    partial void OnFcUidChanging(System.Guid value);
+    partial void OnFcUidChanged();
+    partial void OnPcUidChanging(System.Guid value);
+    partial void OnPcUidChanged();
+    partial void OnVolumeChanging(int value);
+    partial void OnVolumeChanged();
+    partial void OnPositionChanging(int value);
+    partial void OnPositionChanged();
+    #endregion
+		
+		public TblFCPC()
+		{
+			this._TblFC = default(EntityRef<TblFC>);
+			this._TblPC = default(EntityRef<TblPC>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Uid", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid Uid
+		{
+			get
+			{
+				return this._Uid;
+			}
+			set
+			{
+				if ((this._Uid != value))
+				{
+					this.OnUidChanging(value);
+					this.SendPropertyChanging();
+					this._Uid = value;
+					this.SendPropertyChanged("Uid");
+					this.OnUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FcUid", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid FcUid
+		{
+			get
+			{
+				return this._FcUid;
+			}
+			set
+			{
+				if ((this._FcUid != value))
+				{
+					if (this._TblFC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnFcUidChanging(value);
+					this.SendPropertyChanging();
+					this._FcUid = value;
+					this.SendPropertyChanged("FcUid");
+					this.OnFcUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PcUid", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid PcUid
+		{
+			get
+			{
+				return this._PcUid;
+			}
+			set
+			{
+				if ((this._PcUid != value))
+				{
+					if (this._TblPC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPcUidChanging(value);
+					this.SendPropertyChanging();
+					this._PcUid = value;
+					this.SendPropertyChanged("PcUid");
+					this.OnPcUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int NOT NULL")]
+		public int Volume
+		{
+			get
+			{
+				return this._Volume;
+			}
+			set
+			{
+				if ((this._Volume != value))
+				{
+					this.OnVolumeChanging(value);
+					this.SendPropertyChanging();
+					this._Volume = value;
+					this.SendPropertyChanged("Volume");
+					this.OnVolumeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position", DbType="Int NOT NULL")]
+		public int Position
+		{
+			get
+			{
+				return this._Position;
+			}
+			set
+			{
+				if ((this._Position != value))
+				{
+					this.OnPositionChanging(value);
+					this.SendPropertyChanging();
+					this._Position = value;
+					this.SendPropertyChanged("Position");
+					this.OnPositionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblFC_TblFCPC", Storage="_TblFC", ThisKey="FcUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblFC TblFC
+		{
+			get
+			{
+				return this._TblFC.Entity;
+			}
+			set
+			{
+				TblFC previousValue = this._TblFC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblFC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblFC.Entity = null;
+						previousValue.TblFCPCs.Remove(this);
+					}
+					this._TblFC.Entity = value;
+					if ((value != null))
+					{
+						value.TblFCPCs.Add(this);
+						this._FcUid = value.Uid;
+					}
+					else
+					{
+						this._FcUid = default(System.Guid);
+					}
+					this.SendPropertyChanged("TblFC");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblPC_TblFCPC", Storage="_TblPC", ThisKey="PcUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblPC TblPC
+		{
+			get
+			{
+				return this._TblPC.Entity;
+			}
+			set
+			{
+				TblPC previousValue = this._TblPC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblPC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblPC.Entity = null;
+						previousValue.TblFCPCs.Remove(this);
+					}
+					this._TblPC.Entity = value;
+					if ((value != null))
+					{
+						value.TblFCPCs.Add(this);
+						this._PcUid = value.Uid;
+					}
+					else
+					{
+						this._PcUid = default(System.Guid);
+					}
+					this.SendPropertyChanged("TblPC");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -1618,6 +1634,487 @@ namespace VirtualClassroom.Models
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblPC")]
+	public partial class TblPC : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _Uid;
+		
+		private string _ClassroomId;
+		
+		private string _Id;
+		
+		private string _Name;
+		
+		private System.Nullable<System.Guid> _ScUid;
+		
+		private System.Nullable<System.Guid> _TcUid;
+		
+		private int _Position;
+		
+		private bool _Audio;
+		
+		private bool _Video;
+		
+		private int _Volume1;
+		
+		private int _Volume2;
+		
+		private EntitySet<TblFCPC> _TblFCPCs;
+		
+		private EntitySet<TblFormAnswer> _TblFormAnswers;
+		
+		private EntityRef<TblClassroom> _TblClassroom;
+		
+		private EntityRef<TblTC> _TblTC;
+		
+		private EntityRef<TblSC> _TblSC;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUidChanging(System.Guid value);
+    partial void OnUidChanged();
+    partial void OnClassroomIdChanging(string value);
+    partial void OnClassroomIdChanged();
+    partial void OnIdChanging(string value);
+    partial void OnIdChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnScUidChanging(System.Nullable<System.Guid> value);
+    partial void OnScUidChanged();
+    partial void OnTcUidChanging(System.Nullable<System.Guid> value);
+    partial void OnTcUidChanged();
+    partial void OnPositionChanging(int value);
+    partial void OnPositionChanged();
+    partial void OnAudioChanging(bool value);
+    partial void OnAudioChanged();
+    partial void OnVideoChanging(bool value);
+    partial void OnVideoChanged();
+    partial void OnVolume1Changing(int value);
+    partial void OnVolume1Changed();
+    partial void OnVolume2Changing(int value);
+    partial void OnVolume2Changed();
+    #endregion
+		
+		public TblPC()
+		{
+			this._TblFCPCs = new EntitySet<TblFCPC>(new Action<TblFCPC>(this.attach_TblFCPCs), new Action<TblFCPC>(this.detach_TblFCPCs));
+			this._TblFormAnswers = new EntitySet<TblFormAnswer>(new Action<TblFormAnswer>(this.attach_TblFormAnswers), new Action<TblFormAnswer>(this.detach_TblFormAnswers));
+			this._TblClassroom = default(EntityRef<TblClassroom>);
+			this._TblTC = default(EntityRef<TblTC>);
+			this._TblSC = default(EntityRef<TblSC>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Uid", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid Uid
+		{
+			get
+			{
+				return this._Uid;
+			}
+			set
+			{
+				if ((this._Uid != value))
+				{
+					this.OnUidChanging(value);
+					this.SendPropertyChanging();
+					this._Uid = value;
+					this.SendPropertyChanged("Uid");
+					this.OnUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassroomId", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
+		public string ClassroomId
+		{
+			get
+			{
+				return this._ClassroomId;
+			}
+			set
+			{
+				if ((this._ClassroomId != value))
+				{
+					if (this._TblClassroom.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClassroomIdChanging(value);
+					this.SendPropertyChanging();
+					this._ClassroomId = value;
+					this.SendPropertyChanged("ClassroomId");
+					this.OnClassroomIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
+		public string Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(256) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScUid", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ScUid
+		{
+			get
+			{
+				return this._ScUid;
+			}
+			set
+			{
+				if ((this._ScUid != value))
+				{
+					if (this._TblSC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnScUidChanging(value);
+					this.SendPropertyChanging();
+					this._ScUid = value;
+					this.SendPropertyChanged("ScUid");
+					this.OnScUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> TcUid
+		{
+			get
+			{
+				return this._TcUid;
+			}
+			set
+			{
+				if ((this._TcUid != value))
+				{
+					if (this._TblTC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTcUidChanging(value);
+					this.SendPropertyChanging();
+					this._TcUid = value;
+					this.SendPropertyChanged("TcUid");
+					this.OnTcUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position", DbType="Int NOT NULL")]
+		public int Position
+		{
+			get
+			{
+				return this._Position;
+			}
+			set
+			{
+				if ((this._Position != value))
+				{
+					this.OnPositionChanging(value);
+					this.SendPropertyChanging();
+					this._Position = value;
+					this.SendPropertyChanged("Position");
+					this.OnPositionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Audio", DbType="Bit NOT NULL")]
+		public bool Audio
+		{
+			get
+			{
+				return this._Audio;
+			}
+			set
+			{
+				if ((this._Audio != value))
+				{
+					this.OnAudioChanging(value);
+					this.SendPropertyChanging();
+					this._Audio = value;
+					this.SendPropertyChanged("Audio");
+					this.OnAudioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Video", DbType="Bit NOT NULL")]
+		public bool Video
+		{
+			get
+			{
+				return this._Video;
+			}
+			set
+			{
+				if ((this._Video != value))
+				{
+					this.OnVideoChanging(value);
+					this.SendPropertyChanging();
+					this._Video = value;
+					this.SendPropertyChanged("Video");
+					this.OnVideoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume1", DbType="Int NOT NULL")]
+		public int Volume1
+		{
+			get
+			{
+				return this._Volume1;
+			}
+			set
+			{
+				if ((this._Volume1 != value))
+				{
+					this.OnVolume1Changing(value);
+					this.SendPropertyChanging();
+					this._Volume1 = value;
+					this.SendPropertyChanged("Volume1");
+					this.OnVolume1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume2", DbType="Int NOT NULL")]
+		public int Volume2
+		{
+			get
+			{
+				return this._Volume2;
+			}
+			set
+			{
+				if ((this._Volume2 != value))
+				{
+					this.OnVolume2Changing(value);
+					this.SendPropertyChanging();
+					this._Volume2 = value;
+					this.SendPropertyChanged("Volume2");
+					this.OnVolume2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblPC_TblFCPC", Storage="_TblFCPCs", ThisKey="Uid", OtherKey="PcUid")]
+		public EntitySet<TblFCPC> TblFCPCs
+		{
+			get
+			{
+				return this._TblFCPCs;
+			}
+			set
+			{
+				this._TblFCPCs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblPC_TblFormAnswer", Storage="_TblFormAnswers", ThisKey="Uid", OtherKey="PcUid")]
+		public EntitySet<TblFormAnswer> TblFormAnswers
+		{
+			get
+			{
+				return this._TblFormAnswers;
+			}
+			set
+			{
+				this._TblFormAnswers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
+		public TblClassroom TblClassroom
+		{
+			get
+			{
+				return this._TblClassroom.Entity;
+			}
+			set
+			{
+				TblClassroom previousValue = this._TblClassroom.Entity;
+				if (((previousValue != value) 
+							|| (this._TblClassroom.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblClassroom.Entity = null;
+						previousValue.TblPCs.Remove(this);
+					}
+					this._TblClassroom.Entity = value;
+					if ((value != null))
+					{
+						value.TblPCs.Add(this);
+						this._ClassroomId = value.Id;
+					}
+					else
+					{
+						this._ClassroomId = default(string);
+					}
+					this.SendPropertyChanged("TblClassroom");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblPC", Storage="_TblTC", ThisKey="TcUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblTC TblTC
+		{
+			get
+			{
+				return this._TblTC.Entity;
+			}
+			set
+			{
+				TblTC previousValue = this._TblTC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblTC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblTC.Entity = null;
+						previousValue.TblPCs.Remove(this);
+					}
+					this._TblTC.Entity = value;
+					if ((value != null))
+					{
+						value.TblPCs.Add(this);
+						this._TcUid = value.Uid;
+					}
+					else
+					{
+						this._TcUid = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("TblTC");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblPC", Storage="_TblSC", ThisKey="ScUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblSC TblSC
+		{
+			get
+			{
+				return this._TblSC.Entity;
+			}
+			set
+			{
+				TblSC previousValue = this._TblSC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblSC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblSC.Entity = null;
+						previousValue.TblPCs.Remove(this);
+					}
+					this._TblSC.Entity = value;
+					if ((value != null))
+					{
+						value.TblPCs.Add(this);
+						this._ScUid = value.Uid;
+					}
+					else
+					{
+						this._ScUid = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("TblSC");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TblFCPCs(TblFCPC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblPC = this;
+		}
+		
+		private void detach_TblFCPCs(TblFCPC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblPC = null;
+		}
+		
+		private void attach_TblFormAnswers(TblFormAnswer entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblPC = this;
+		}
+		
+		private void detach_TblFormAnswers(TblFormAnswer entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblPC = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblSC")]
 	public partial class TblSC : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1631,8 +2128,6 @@ namespace VirtualClassroom.Models
 		private string _Id;
 		
 		private string _Name;
-		
-		private string _SessionId;
 		
 		private bool _Audio;
 		
@@ -1670,8 +2165,6 @@ namespace VirtualClassroom.Models
     partial void OnIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnSessionIdChanging(string value);
-    partial void OnSessionIdChanged();
     partial void OnAudioChanging(bool value);
     partial void OnAudioChanged();
     partial void OnVideoChanging(bool value);
@@ -1781,26 +2274,6 @@ namespace VirtualClassroom.Models
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SessionId", DbType="NVarChar(1024) NOT NULL", CanBeNull=false)]
-		public string SessionId
-		{
-			get
-			{
-				return this._SessionId;
-			}
-			set
-			{
-				if ((this._SessionId != value))
-				{
-					this.OnSessionIdChanging(value);
-					this.SendPropertyChanging();
-					this._SessionId = value;
-					this.SendPropertyChanged("SessionId");
-					this.OnSessionIdChanged();
 				}
 			}
 		}

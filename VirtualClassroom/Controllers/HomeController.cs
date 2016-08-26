@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using VirtualClassroom.Models;
 
@@ -24,7 +21,7 @@ namespace VirtualClassroom.Controllers
                     {
                         id = x.Id,
                         name = x.Name,
-                        seats = x.TblSCs.OrderBy(xx => xx.Id).Select(y => new Seat()
+                        seats = x.TblSCs.OrderBy(y => y.Id).Select(y => new Seat()
                         {
                             id = y.Id,
                             name = y.Name,
@@ -34,20 +31,16 @@ namespace VirtualClassroom.Controllers
                         {
                             id = y.Id,
                             name = y.Name
+                        }).ToList(),
+                        featureds = x.TblFCs.OrderBy(y => y.Id).Select(y => new Featured()
+                        {
+                            id = y.Id,
+                            name = y.Name,
+                            students = y.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
                         }).ToList()
                     };
 
             return View(q.ToList());
-        }
-
-        public ActionResult Test()
-        {
-            return View();
-        }
-
-        public ActionResult Test2()
-        {
-            return View();
         }
 
         // dispose

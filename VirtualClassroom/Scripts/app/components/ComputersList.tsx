@@ -123,6 +123,7 @@ namespace VC.App.Components {
                 case Roles.PC: notFoundText = notFoundText.replace("@0", "Student"); break;
                 case Roles.SC: notFoundText = notFoundText.replace("@0", "Seat"); break;
                 case Roles.TC: notFoundText = notFoundText.replace("@0", "Teacher"); break;
+                case Roles.FC: notFoundText = notFoundText.replace("@0", "Featured"); break;
             }
             return (
                 <table className="table" align="center">
@@ -141,7 +142,7 @@ namespace VC.App.Components {
                 } else if (index === 1) {
                     name = "Teacher";
                 }
-            } else if (this.state.selectedRole === Roles.SC) {
+            } else if (this.state.selectedRole === Roles.SC || this.state.selectedRole === Roles.FC) {
 
                 name = "Student #" + (index + 1);
             }
@@ -155,15 +156,15 @@ namespace VC.App.Components {
                         {
                             item.volume.map((v, index) => {
                                 return (
-                                    <Volume title={this.computerTitle(index)} volume={v != null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
+                                    <Volume title={this.computerTitle(index) } volume={v != null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
                             })
                         }
                     </td>
                     <td style={{ textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>
-                        <div className="cListButton"><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
-                        <SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="cListButton" />
-                        <SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={this.getButtonStatus(item.audio) } onOn={() => this.props.turnAv(item.uid, true, null) } onOff={() => this.props.turnAv(item.uid, false, null) } className="cListButton" />
+                        <div className="cListButton" style={{ display: 'none' }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
+                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? 'none' : 'block') }}><SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="" /></div>
+                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? 'none' : 'block') }}><SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={this.getButtonStatus(item.audio) } onOn={() => this.props.turnAv(item.uid, true, null) } onOff={() => this.props.turnAv(item.uid, false, null) } className="" /></div>
                     </td>
                 </tr>
             );
@@ -197,6 +198,21 @@ namespace VC.App.Components {
                             <thead>
                                 <tr>
                                     <th style={{ width: "50%" }}>Seat computer</th>
+                                    <th>Volume</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items}
+                            </tbody>
+                        </table>
+                    );
+                } else if (this.state.selectedRole === Roles.FC) {
+                    return (
+                        <table className="table" align="center">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "50%" }}>Featured computer</th>
                                     <th>Volume</th>
                                     <th></th>
                                 </tr>

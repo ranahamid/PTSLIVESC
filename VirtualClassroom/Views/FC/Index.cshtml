@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Featured Computer";
+}
+
+@if (!String.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+else
+{
+    <div id="targetDiv" class="targetContainer"></div>
+
+    @Scripts.RenderFormat("<script src=\"{0}\"></script>", "https://static.opentok.com/v2/js/opentok.min.js")
+
+    @Scripts.Render("~/bundles/react")
+    @Scripts.Render("~/vc/global")
+    @Scripts.Render("~/vc/app")
+    @Scripts.Render("~/vc/app/FC")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var _c = new VC.App.InitFC('targetDiv', '@Url.Action()', @ViewBag.FcLayout);
+        });
+    </script>
+}
+

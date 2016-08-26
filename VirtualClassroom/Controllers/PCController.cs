@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using VirtualClassroom.Code;
 using VirtualClassroom.Models;
@@ -64,34 +61,14 @@ namespace VirtualClassroom.Controllers
                     cData.Key = TokBoxHelper.Key;
                     cData.ComputerSetting = new TokBoxHelper.ComputerConfig(pc);
                     cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(pc.TblClassroom);
-                    cData.ScSession = TokBoxHelper.GetScSession(pc.ScUid.Value,
+                    cData.Session = TokBoxHelper.GetSession(pc.ClassroomId,
                         new TokBoxHelper.TokenData
                         {
                             Uid = pc.Uid,
                             Name = pc.Name,
-                            Role = (int)VC.VcRoles.PC,
-                            Position = pc.Position
+                            Role = (int)VC.VcRoles.PC
                         });
-
-                    if (pc.TcUid.HasValue)
-                    {
-                        cData.TcSession = TokBoxHelper.GetTcSession(pc.TcUid.Value,
-                        new TokBoxHelper.TokenData
-                        {
-                            Uid = pc.Uid,
-                            Name = pc.Name,
-                            Role = (int)VC.VcRoles.PC,
-                            Position = pc.Position
-                        });
-                    }
-                    cData.AcSession = TokBoxHelper.GetAcSession(pc.ClassroomId,
-                        new TokBoxHelper.TokenData
-                        {
-                            Uid = pc.Uid,
-                            Name = pc.Name,
-                            Role = (int)VC.VcRoles.PC,
-                            Position = pc.Position
-                        });
+                    cData.Group = TokBoxHelper.CreateGroup(pc);
 
                     return responseSuccess(cData);
                 }

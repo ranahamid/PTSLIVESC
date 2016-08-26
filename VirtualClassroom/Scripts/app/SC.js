@@ -22,7 +22,7 @@ var VC;
             didMount() {
                 $(window).resize(() => window.setTimeout(() => this.fitLayout(), 0));
             }
-            connected(connection, t) {
+            connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -36,22 +36,24 @@ var VC;
                     // set chat name
                     this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
                 }
-                else {
-                    if (tokenData.Role === App.Roles.PC && t !== App.ConnectionType.AC) {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.PC) {
                         // student
-                        this.label[tokenData.Position - 1].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
-                    }
-                    else if (tokenData.Role === App.Roles.AC) {
-                        // admin computer
-                        App.Global.Signaling.sendSignal(this.session2AC, this.getAcConnection(), App.Global.SignalTypes.Connected, {
-                            audio: this.dataResponse.ComputerSetting.Audio,
-                            video: this.dataResponse.ComputerSetting.Video,
-                            volume: this.dataResponse.ComputerSetting.Volume
-                        });
+                        let groupComputer = this.getGroupComputer(tokenData.Uid);
+                        this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                     }
                 }
+                else if (tokenData.Role === App.Roles.AC) {
+                    // admin computer
+                    App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
+                        audio: this.dataResponse.ComputerSetting.Audio,
+                        video: this.dataResponse.ComputerSetting.Video,
+                        volume: this.dataResponse.ComputerSetting.Volume
+                    });
+                }
             }
-            disconnected(connection, t) {
+            disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                     // me
@@ -59,10 +61,12 @@ var VC;
                     this.setUiVisibility(false);
                     this.setStatusText("Disconnected from the session.", App.Components.StatusStyle.Error);
                 }
-                else {
-                    if (tokenData.Role === App.Roles.PC && t !== App.ConnectionType.AC) {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.PC) {
                         // student
-                        this.label[tokenData.Position - 1].setText("Student PC not connected.", App.Components.BoxLabelStyle.NotConnected);
+                        let groupComputer = this.getGroupComputer(tokenData.Uid);
+                        this.label[groupComputer.Position - 1].setText("Student PC not connected.", App.Components.BoxLabelStyle.NotConnected);
                     }
                 }
             }
@@ -77,18 +81,22 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
-                else {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    let groupComputer = this.getGroupComputer(tokenData.Uid);
                     // student
-                    this.boxSubscribers[tokenData.Position - 1].subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[tokenData.Position - 1]);
+                    this.boxSubscribers[groupComputer.Position - 1].subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[groupComputer.Position - 1]);
                 }
             }
             streamDestroyed(connection, stream) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
-                else {
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    let groupComputer = this.getGroupComputer(tokenData.Uid);
                     // student
-                    this.boxSubscribers[tokenData.Position - 1].unsubscribe(this.session);
+                    this.boxSubscribers[groupComputer.Position - 1].unsubscribe(this.session);
                 }
             }
             streamPropertyChanged(event) {
@@ -139,8 +147,9 @@ var VC;
             }
             raiseHandSignalReceived(event) {
                 let tokenData = App.Global.Fce.toTokenData(event.from.data);
+                let groupComputer = this.getGroupComputer(tokenData.Uid);
                 let data = JSON.parse(event.data);
-                this.label[tokenData.Position].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                this.label[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
             }
             chatSignalReceived(event) {
                 let data = JSON.parse(event.data);
@@ -159,7 +168,8 @@ var VC;
                         let connection = this.getConnectionByUid(data.userUid);
                         if (connection != null) {
                             let tokenData = App.Global.Fce.toTokenData(connection.data);
-                            this.floatingChat[tokenData.Position - 1].addItem({
+                            let groupComputer = this.getGroupComputer(tokenData.Uid);
+                            this.floatingChat[groupComputer.Position - 1].addItem({
                                 userUid: data.userUid,
                                 userRole: data.userRole,
                                 userName: data.userName,
@@ -336,16 +346,22 @@ var VC;
                 this.chatPublic.setChatUser({ uid: uid, name: name, role: role });
             }
             onChatPrivateItemSubmitted(item) {
-                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Chat, {
-                    userUid: item.userUid,
-                    userName: item.userName,
-                    userRole: item.userRole,
-                    message: item.message,
-                    type: App.Global.ChatType.Private
+                // private chat, all PCs of my group + me
+                let connections = this.getConnectionsOfMyGroup(App.Roles.PC);
+                connections.push(this.getMyConnection());
+                // send signal
+                connections.forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Chat, {
+                        userUid: item.userUid,
+                        userName: item.userName,
+                        userRole: item.userRole,
+                        message: item.message,
+                        type: App.Global.ChatType.Private
+                    });
                 });
             }
             onChatPublicItemSubmitted(item) {
-                App.Global.Signaling.sendSignalAll(this.session2AC, App.Global.SignalTypes.Chat, {
+                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.Chat, {
                     userUid: item.userUid,
                     userName: item.userName,
                     userRole: item.userRole,

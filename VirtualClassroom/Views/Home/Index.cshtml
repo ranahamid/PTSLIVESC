@@ -46,12 +46,17 @@
                                 <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
                             </ul>
                         }
+
+                        @foreach (var fc in item.featureds)
+                        {
+                            <ul>
+                                <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
+                            </ul>
+                        }
                     </li>
                 </ul>
             </div>
         }
     </div>
-
-    <div style="text-align:left;display:none"><h4>@Html.ActionLink("Test TC", "Test", "Home", routeValues: new { }, htmlAttributes: new { })</h4></div>
 
 </div>

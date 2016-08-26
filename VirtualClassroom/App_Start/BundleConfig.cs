@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 using System.Web.Optimization.React;
 
 namespace VirtualClassroom
@@ -66,6 +65,7 @@ namespace VirtualClassroom
                 "~/Scripts/admin/lists/Classrooms.js",
                 "~/Scripts/admin/lists/Seats.js",
                 "~/Scripts/admin/lists/Teachers.js",
+                "~/Scripts/admin/lists/Featureds.js",
                 "~/Scripts/admin/lists/Students.js",
                 "~/Scripts/admin/lists/Forms.js",
                 "~/Scripts/admin/Administration.js"
@@ -95,6 +95,7 @@ namespace VirtualClassroom
                 "~/Scripts/app/tc/FormsTc.js",
                 "~/Scripts/app/TC.js"
                 ));
+            bundles.Add(new BabelBundle("~/vc/app/FC").Include("~/Scripts/app/FC.js"));
             bundles.Add(new BabelBundle("~/vc/app/AC").Include("~/Scripts/app/AC.js"));
 
             BundleTable.EnableOptimizations = true;

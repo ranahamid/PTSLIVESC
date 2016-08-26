@@ -5,31 +5,31 @@ using VirtualClassroom.Models;
 
 namespace VirtualClassroom.Controllers
 {
-    public class SCController : Interfaces.ControllerR
+    public class FCController : Interfaces.ControllerR
     {
         private VirtualClassroomDataContext db;
 
-        public SCController()
+        public FCController()
         {
             db = new VirtualClassroomDataContext();
         }
 
         public ActionResult Index(string classroomId, string id)
         {
-            var q = from x in db.TblSCs
+            var q = from x in db.TblFCs
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
             if (q.Count() == 1)
             {
-                TblSC sc = q.Single();
-                ViewBag.Name = sc.TblClassroom.Name + " - " + sc.Name;
+                TblFC fc = q.Single();
+                ViewBag.Name = fc.TblClassroom.Name + " - " + fc.Name;
 
-                ViewBag.ScLayout = VC.ScLayout(sc.Uid);
+                ViewBag.FcLayout = VC.FcLayout(fc.Uid);
             }
             else
             {
-                ViewBag.Name = "Virtual Classroom - Seat computer";
+                ViewBag.Name = "Virtual Classroom - Featured computer";
                 ViewBag.ErrorMessage = "Invalid URL.";
             }
 
@@ -38,28 +38,28 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult GetData(string classroomId, string id)
         {
-            var q = from x in db.TblSCs
+            var q = from x in db.TblFCs
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
-
+            
             if (q.Count() == 1)
             {
-                TblSC sc = q.Single();
+                TblFC fc = q.Single();
 
                 TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
-                cData.Uid = sc.Uid;
+                cData.Uid = fc.Uid;
                 cData.Key = TokBoxHelper.Key;
-                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(sc);
-                cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(sc.TblClassroom);
-                cData.Session = TokBoxHelper.GetSession(sc.ClassroomId,
+                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(fc);
+                cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(fc.TblClassroom);
+                cData.Session = TokBoxHelper.GetSession(fc.ClassroomId,
                     new TokBoxHelper.TokenData
                     {
-                        Uid = sc.Uid,
-                        Name = sc.Name,
-                        Role = (int)VC.VcRoles.SC
+                        Uid = fc.Uid,
+                        Name = fc.Name,
+                        Role = (int)VC.VcRoles.FC
                     });
-                cData.Group = TokBoxHelper.CreateGroup(sc);
+                cData.Group = TokBoxHelper.CreateGroup(fc);
 
                 return responseSuccess(cData);
             }

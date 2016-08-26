@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
 using VirtualClassroom.Models;
 
 namespace VirtualClassroom.Code
@@ -15,7 +11,8 @@ namespace VirtualClassroom.Code
             PC = 1,
             SC = 2,
             TC = 3,
-            AC = 4
+            FC = 4,
+            AC = 5,
         }
 
         public const string RESPONSE_SUCCESS = "success";
@@ -24,7 +21,7 @@ namespace VirtualClassroom.Code
 
         public static int ScLayout(Guid scUid)
         {
-            VirtualClassroomDataContext db = new Models.VirtualClassroomDataContext();
+            VirtualClassroomDataContext db = new VirtualClassroomDataContext();
 
             // get PCs
             var qPC = from x in db.TblPCs
@@ -44,6 +41,29 @@ namespace VirtualClassroom.Code
             }
 
             return scLayout;
+        }
+        public static int FcLayout(Guid fcUid)
+        {
+            VirtualClassroomDataContext db = new VirtualClassroomDataContext();
+
+            // get PCs
+            var qPC = from x in db.TblFCPCs
+                      where x.FcUid == fcUid
+                      select x;
+
+            int fcLayout = 2;
+            if (qPC.Count() > 0)
+            {
+                int maxPosition = qPC.Max(x => x.Position);
+                if (maxPosition > 6)
+                    fcLayout = 8;
+                else if (maxPosition > 4)
+                    fcLayout = 6;
+                else if (maxPosition > 2)
+                    fcLayout = 4;
+            }
+
+            return fcLayout;
         }
     }
 }

@@ -16,12 +16,8 @@ namespace VC.App {
         PC = 1,
         SC = 2,
         TC = 3,
-        AC = 4
-    }
-    export enum ConnectionType {
-        XC = 1,
-        TC = 2,
-        AC = 3
+        FC = 4,
+        AC = 5
     }
     export enum PublishSources {
         Camera = 1,
@@ -33,13 +29,9 @@ namespace VC.App {
         public dataResponse: Global.IComputerData = null;
 
         public connections: Array<any> = [];
-        public connections2TC: Array<any> = [];
-        public connections2AC: Array<any> = [];
         public alreadyConnected: boolean = false;
 
         public session: any = null;
-        public session2TC: any = null;
-        public session2AC: any = null;
 
         // maxResolution — { width: 1920, height: 1920 }, mirror — false, fitMode — "contain"
         public publishProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "off" } };
@@ -134,17 +126,7 @@ namespace VC.App {
             this.connections = c;
             return removed;
         }
-        /* unused
-        private getConnection(id: string): any {
-            let c: any = null;
-            for (let i = 0; i < this.connections.length && c == null; i++) {
-                if (this.connections[i].connectionId == id) {
-                    c = this.connections[i];
-                }
-            }
-            return c;
-        }
-        */
+
         private isConnectionExists(uid: string): boolean {
             let exists: boolean = false;
             for (let i: number = 0; i < this.connections.length && !exists; i++) {
@@ -153,37 +135,6 @@ namespace VC.App {
                 }
             }
             return exists;
-        }
-
-        // for PC
-        public getScConnection(): any {
-            let c: any = null;
-            for (let i: number = 0; i < this.connections.length && c == null; i++) {
-                if (Global.Fce.toTokenData(this.connections[i].data).Role === Roles.SC) {
-                    c = this.connections[i];
-                }
-            }
-            return c;
-        }
-        // for PC, SC, TC
-        public getAcConnection(): any {
-            let c: any = null;
-            for (let i: number = 0; i < this.connections2AC.length && c == null; i++) {
-                if (Global.Fce.toTokenData(this.connections2AC[i].data).Role === Roles.AC) {
-                    c = this.connections2AC[i];
-                }
-            }
-            return c;
-        }
-        // for PC
-        public getTcConnection(): any {
-            let c: any = null;
-            for (let i: number = 0; i < this.connections2TC.length && c == null; i++) {
-                if (Global.Fce.toTokenData(this.connections2TC[i].data).Role === Roles.TC) {
-                    c = this.connections2TC[i];
-                }
-            }
-            return c;
         }
 
         public getConnectionByUid(uid: string): any {
@@ -196,50 +147,69 @@ namespace VC.App {
             return c;
         }
 
-        private addConnection2TC(connection: any): void {
-            this.connections2TC.push(connection);
-        }
-        private removeConnection2TC(id: string): boolean {
-            let removed: boolean = false;
-            let c: Array<any> = [];
-            for (let i: number = 0; i < this.connections2TC.length; i++) {
-                if (this.connections2TC[i].connectionId !== id) {
-                    c.push(this.connections2TC[i]);
-                } else {
-                    removed = true;
-                }
-            }
-            this.connections2TC = c;
-            return removed;
+        public getMyConnection(): any {
+            return this.getConnectionByUid(this.dataResponse.Uid);
         }
 
-        private addConnection2AC(connection: any): void {
-            this.connections2AC.push(connection);
-        }
-        private removeConnection2AC(id: string): boolean {
-            let removed: boolean = false;
-            let c: Array<any> = [];
-            for (let i: number = 0; i < this.connections2AC.length; i++) {
-                if (this.connections2AC[i].connectionId !== id) {
-                    c.push(this.connections2AC[i]);
-                } else {
-                    removed = true;
+        public getAcConnection(): any {
+            let c: any = null;
+            for (let i: number = 0; i < this.connections.length && c == null; i++) {
+                if (Global.Fce.toTokenData(this.connections[i].data).Role === Roles.AC) {
+                    c = this.connections[i];
                 }
             }
-            this.connections2AC = c;
-            return removed;
+            return c;
+        }
+        public getScConnection(): any {
+            let c: any = null;
+            for (let i: number = 0; i < this.connections.length && c == null; i++) {
+                let tokenData: Global.TokenData = Global.Fce.toTokenData(this.connections[i].data);
+                if (tokenData.Role === Roles.SC && this.isInMyGroup(tokenData.Uid)) {
+                    c = this.connections[i];
+                }
+            }
+            return c;
+        }
+        public getTcConnection(): any {
+            let c: any = null;
+            for (let i: number = 0; i < this.connections.length && c == null; i++) {
+                let tokenData: Global.TokenData = Global.Fce.toTokenData(this.connections[i].data);
+                if (tokenData.Role === Roles.TC && this.isInMyGroup(tokenData.Uid)) {
+                    c = this.connections[i];
+                }
+            }
+            return c;
+        }
+
+        public getGroupComputer(uid: string): Global.GroupComputer {
+            let iUser: Global.GroupComputer = null;
+
+            for (let i: number = 0; i < this.dataResponse.Group.length; i++) {
+                if (this.dataResponse.Group[i].Uid === uid) {
+                    iUser = this.dataResponse.Group[i];
+                    i = this.dataResponse.Group.length;
+                }
+            }
+
+            return iUser;
+        }
+        public isInMyGroup(uid: string): boolean {
+            return (this.getGroupComputer(uid) !== null);
+        }
+        public getConnectionsOfMyGroup(role: VC.App.Roles = null): Array<any> {
+            let connections: Array<any> = [];
+
+            for (let i: number = 0; i < this.dataResponse.Group.length; i++) {
+                if (role === null || this.dataResponse.Group[i].Role === role) {
+                    connections.push(this.getConnectionByUid(this.dataResponse.Group[i].Uid));
+                }
+            }
+
+            return connections;
         }
 
         private sessionConnect(): void {
-            let s: Global.TokBoxSession;
-
-            if (this.role === Roles.PC || this.role === Roles.SC) {
-                s = this.dataResponse.ScSession;
-            } else if (this.role === Roles.TC) {
-                s = this.dataResponse.TcSession;
-            } else if (this.role === Roles.AC) {
-                s = this.dataResponse.AcSession;
-            }
+            let s: Global.TokBoxSession = this.dataResponse.Session;
 
             this.session = OT.initSession(this.dataResponse.Key, s.SessionId);
             this.session.on({
@@ -253,20 +223,12 @@ namespace VC.App {
                         this.addConnection(event.connection);
                         if (this.session.connection.connectionId === event.connection.connectionId) {
                             // its me, successfully connected
-                            if (this.role === Roles.PC && this.dataResponse.TcSession != null) {
-                                // when PC & when TC is assigned, connect to teacher computer session
-                                this.sessionConnect2TC();
-                            }
-                            if (this.role !== Roles.AC && this.dataResponse.AcSession != null) {
-                                // connect to AC session
-                                this.sessionConnect2AC();
-                            }
                             this.setStatusText("Connected to the session.", Components.StatusStyle.Connected);
-                            this.connected(event.connection, ConnectionType.XC);
+                            this.connected(event.connection);
                         } else if (this.session.connection.connectionId !== event.connection.connectionId
                             && tokenData.Uid !== this.dataResponse.Uid) {
                             // not me and not already connected
-                            this.connected(event.connection, ConnectionType.XC);
+                            this.connected(event.connection);
                         }
                     } else if (this.session.connection.connectionId === event.connection.connectionId) {
                         // its me and already connected - disconnect
@@ -276,7 +238,7 @@ namespace VC.App {
                 },
                 connectionDestroyed: (event: any): void => {
                     if (this.removeConnection(event.connection.connectionId)) {
-                        this.disconnected(event.connection, ConnectionType.XC);
+                        this.disconnected(event.connection);
                     }
                 },
                 sessionCreated: (event: any): void => {
@@ -310,72 +272,8 @@ namespace VC.App {
                 }
             });
         }
-        private sessionConnect2TC(): void {
-            let s: Global.TokBoxSession = this.dataResponse.TcSession;
-            this.session2TC = OT.initSession(this.dataResponse.Key, s.SessionId);
-            this.session2TC.on({
-                signal: (event: any): void => {
-                    this.signalReceived(event);
-                },
-                connectionCreated: (event: any): void => {
-                    // add connection
-                    this.addConnection2TC(event.connection);
-                    if (this.session2TC.connection.connectionId !== event.connection.connectionId) {
-                        // if its not me
-                        this.connected(event.connection, ConnectionType.TC);
-                    }
-                },
-                connectionDestroyed: (event: any): void => {
-                    if (this.removeConnection2TC(event.connection.connectionId)) {
-                        if (this.session2TC.connection.connectionId !== event.connection.connectionId) {
-                            // if its not me
-                            this.disconnected(event.connection, ConnectionType.TC);
-                        }
-                    }
-                },
-                streamCreated: (event: any): void => {
-                    this.streamCreated(event.stream.connection, event.stream);
-                },
-                streamDestroyed: (event: any): void => {
-                    this.streamDestroyed(event.stream.connection, event.stream);
-                }
-            });
-            this.session2TC.connect(s.Token);
-        }
-        private sessionConnect2AC(): void {
-            let s: Global.TokBoxSession = this.dataResponse.AcSession;
-            this.session2AC = OT.initSession(this.dataResponse.Key, s.SessionId);
-            this.session2AC.on({
-                signal: (event: any): void => {
-                    this.signalReceived(event);
-                },
-                connectionCreated: (event: any): void => {
-                    // add connection
-                    this.addConnection2AC(event.connection);
-                    if (this.session2AC.connection.connectionId !== event.connection.connectionId) {
-                        // if its not me
-                        this.connected(event.connection, ConnectionType.AC);
-                    }
-                },
-                connectionDestroyed: (event: any): void => {
-                    if (this.removeConnection2AC(event.connection.connectionId)) {
-                        if (this.session2AC.connection.connectionId !== event.connection.connectionId) {
-                            // if its not me
-                            this.disconnected(event.connection, ConnectionType.AC);
-                        }
-                    }
-                },
-            });
-            this.session2AC.connect(s.Token);
-        }
 
         public disconnect(): void {
-            if (this.session2AC) {
-                this.session2AC.disconnect();
-            }
-            if (this.session2TC) {
-                this.session2TC.disconnect();
-            }
             if (this.session) {
                 this.session.disconnect();
             }
@@ -384,8 +282,8 @@ namespace VC.App {
         abstract setStatusText(text: string, style: Components.StatusStyle): void;
 
         abstract didMount(): void;
-        abstract connected(connectionObj: any, t: ConnectionType): void;
-        abstract disconnected(connectionObj: any, t: ConnectionType): void;
+        abstract connected(connectionObj: any): void;
+        abstract disconnected(connectionObj: any): void;
         abstract sessionConnected(event: any): void;
         abstract sessionDisconnected(event: any): void;
         abstract streamCreated(connectionObj: any, stream: any): void;

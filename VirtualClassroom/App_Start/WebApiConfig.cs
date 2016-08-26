@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Web;
+﻿using System.Net.Http.Headers;
 using System.Web.Http;
-using System.Web.Routing;
 
 namespace VirtualClassroom
 {

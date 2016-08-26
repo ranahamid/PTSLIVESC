@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Linq;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
-using System.Web.Mvc.Html;
-using VirtualClassroom.Code;
 using VirtualClassroom.Models;
 
 namespace VirtualClassroom.Controllers

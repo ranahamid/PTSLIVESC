@@ -35,7 +35,7 @@ namespace VC.App {
         didMount(): void {
             $(window).resize(() => window.setTimeout(() => this.fitLayout(), 0));
         }
-        connected(connection: any, t: ConnectionType): void {
+        connected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
@@ -54,35 +54,39 @@ namespace VC.App {
                 );
                 // set chat name
                 this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
-            } else {
-                if (tokenData.Role === Roles.PC && t !== ConnectionType.AC) {
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                if (tokenData.Role === Roles.PC) {
                     // student
-                    this.label[tokenData.Position - 1].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
-               } else if (tokenData.Role === Roles.AC) {
-                    // admin computer
-                    Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session2AC,
-                        this.getAcConnection(),
-                        Global.SignalTypes.Connected,
-                        {
-                            audio: this.dataResponse.ComputerSetting.Audio,
-                            video: this.dataResponse.ComputerSetting.Video,
-                            volume: this.dataResponse.ComputerSetting.Volume
-                        } as Global.ISignalConnectedData
-                    );
+                    let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
+                    this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
                 }
+            } else if (tokenData.Role === Roles.AC) {
+                // admin computer
+                Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session,
+                    this.getAcConnection(),
+                    Global.SignalTypes.Connected,
+                    {
+                        audio: this.dataResponse.ComputerSetting.Audio,
+                        video: this.dataResponse.ComputerSetting.Video,
+                        volume: this.dataResponse.ComputerSetting.Volume
+                    } as Global.ISignalConnectedData
+                );
             }
         }
-        disconnected(connection: any, t: ConnectionType): void {
+        disconnected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
                 this.boxPublisher.unpublish(this.session);
                 this.setUiVisibility(false);
                 this.setStatusText("Disconnected from the session.", Components.StatusStyle.Error);
-            } else {
-                if (tokenData.Role === Roles.PC && t !== ConnectionType.AC) {
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                if (tokenData.Role === Roles.PC) {
                     // student
-                    this.label[tokenData.Position - 1].setText("Student PC not connected.", Components.BoxLabelStyle.NotConnected);
+                    let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
+                    this.label[groupComputer.Position - 1].setText("Student PC not connected.", Components.BoxLabelStyle.NotConnected);
                 }
             }
         }
@@ -97,18 +101,22 @@ namespace VC.App {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me .. there is not fired this event for publisher
-            } else {
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
                 // student
-                this.boxSubscribers[tokenData.Position - 1].subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[tokenData.Position - 1]);
+                this.boxSubscribers[groupComputer.Position - 1].subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[groupComputer.Position - 1]);
             }
         }
         streamDestroyed(connection: any, stream: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me .. there is not fired this event for publisher
-            } else {
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
                 // student
-                this.boxSubscribers[tokenData.Position - 1].unsubscribe(this.session);
+                this.boxSubscribers[groupComputer.Position - 1].unsubscribe(this.session);
             }
         }
         streamPropertyChanged(event: any): void {
@@ -160,9 +168,9 @@ namespace VC.App {
         }
         private raiseHandSignalReceived(event: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
+            let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
             let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
-
-            this.label[tokenData.Position].setStyle(data.raised ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected);
+            this.label[groupComputer.Position - 1].setStyle(data.raised ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected);
         }
         private chatSignalReceived(event: any): void {
             let data: Global.ISignalChatData = JSON.parse(event.data) as Global.ISignalChatData;
@@ -181,7 +189,8 @@ namespace VC.App {
                     let connection: any = this.getConnectionByUid(data.userUid);
                     if (connection != null) {
                         let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
-                        this.floatingChat[tokenData.Position - 1].addItem({
+                        let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
+                        this.floatingChat[groupComputer.Position - 1].addItem({
                             userUid: data.userUid,
                             userRole: data.userRole,
                             userName: data.userName,
@@ -367,16 +376,22 @@ namespace VC.App {
         }
 
         private onChatPrivateItemSubmitted(item: Components.IChatListItem): void {
-            Global.Signaling.sendSignalAll<Global.ISignalChatData>(this.session, Global.SignalTypes.Chat, {
-                userUid: item.userUid,
-                userName: item.userName,
-                userRole: item.userRole,
-                message: item.message,
-                type: Global.ChatType.Private
-            } as Global.ISignalChatData);
+            // private chat, all PCs of my group + me
+            let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
+            connections.push(this.getMyConnection());
+            // send signal
+            connections.forEach((c) => {
+                Global.Signaling.sendSignal<Global.ISignalChatData>(this.session, c, Global.SignalTypes.Chat, {
+                    userUid: item.userUid,
+                    userName: item.userName,
+                    userRole: item.userRole,
+                    message: item.message,
+                    type: Global.ChatType.Private
+                } as Global.ISignalChatData);
+            });
         }
         private onChatPublicItemSubmitted(item: Components.IChatListItem): void {
-            Global.Signaling.sendSignalAll<Global.ISignalChatData>(this.session2AC, Global.SignalTypes.Chat, {
+            Global.Signaling.sendSignalAll<Global.ISignalChatData>(this.session, Global.SignalTypes.Chat, {
                 userUid: item.userUid,
                 userName: item.userName,
                 userRole: item.userRole,

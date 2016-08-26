@@ -24,7 +24,7 @@ namespace VC.App {
             this.status.setText(text, style);
         }
 
-        connected(connection: any, t: ConnectionType): void {
+        connected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
@@ -32,7 +32,7 @@ namespace VC.App {
                 this.setUiVisibility(true);
             }
         }
-        disconnected(connection: any, t: ConnectionType): void {
+        disconnected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
@@ -150,6 +150,7 @@ namespace VC.App {
             let badgeSC: number = 0;
             let badgePC: number = 0;
             let badgeTC: number = 0;
+            let badgeFC: number = 0;
 
             this.connections.forEach((item: any) => {
                 let d: Global.TokenData = Global.Fce.toTokenData(item.data);
@@ -160,13 +161,15 @@ namespace VC.App {
                     case Roles.PC: badgePC++; break;
                     case Roles.SC: badgeSC++; break;
                     case Roles.TC: badgeTC++; break;
+                    case Roles.FC: badgeFC++; break;
                 }
             });
 
             let tabItems: Array<VC.Global.Components.ITabItemProps> = [
                 { id: Roles.SC, title: "Seat computers", onClick: this.tabOnClick.bind(this), badge: badgeSC, active: true },
                 { id: Roles.PC, title: "Student computers", onClick: this.tabOnClick.bind(this), badge: badgePC, active: false },
-                { id: Roles.TC, title: "Teacher computers", onClick: this.tabOnClick.bind(this), badge: badgeTC, active: false }
+                { id: Roles.TC, title: "Teacher computers", onClick: this.tabOnClick.bind(this), badge: badgeTC, active: false },
+                { id: Roles.FC, title: "Featured computers", onClick: this.tabOnClick.bind(this), badge: badgeFC, active: false }
             ];
 
             let statusClasses: Array<string> = [

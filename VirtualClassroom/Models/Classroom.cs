@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Web;
 
 namespace VirtualClassroom.Models
 {
@@ -20,6 +19,7 @@ namespace VirtualClassroom.Models
         public string url { get; set; }
         public List<Seat> seats { get; set; }
         public List<Teacher> teachers { get; set; }
+        public List<Featured> featureds { get; set; }
     }
 
     [DataObject]
@@ -38,6 +38,12 @@ namespace VirtualClassroom.Models
     [DataObject]
     public class Teacher : Computer
     {
+    }
+
+    [DataObject]
+    public class Featured : Computer
+    {
+        public List<Student> students { get; set; }
     }
 
     [DataObject]

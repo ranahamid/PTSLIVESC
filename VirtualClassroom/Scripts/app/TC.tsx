@@ -29,7 +29,7 @@ namespace VC.App {
         didMount(): void {
             $(window).resize(() => this.fitHeightOfBox());
         }
-        connected(connection: any, t: ConnectionType): void {
+        connected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
@@ -37,22 +37,23 @@ namespace VC.App {
                 this.setUiVisibility(true);
                 // show share screen button
                 this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
-            } else {
-                if (tokenData.Role === Roles.PC && t !== ConnectionType.AC) {
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                if (tokenData.Role === Roles.PC) {
                     // student
                     this.connectedPCsChanged();
-                } else if (tokenData.Role === Roles.AC) {
-                    // admin computer
-                    Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session2AC, this.getAcConnection(), Global.SignalTypes.Connected,
-                        {
-                            audio: this.dataResponse.ComputerSetting.Audio,
-                            video: this.dataResponse.ComputerSetting.Video,
-                            volume: this.dataResponse.ComputerSetting.Volume
-                        } as Global.ISignalConnectedData);
                 }
+            } else if (tokenData.Role === Roles.AC) {
+                // admin computer
+                Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session, this.getAcConnection(), Global.SignalTypes.Connected,
+                    {
+                        audio: this.dataResponse.ComputerSetting.Audio,
+                        video: this.dataResponse.ComputerSetting.Video,
+                        volume: this.dataResponse.ComputerSetting.Volume
+                    } as Global.ISignalConnectedData);
             }
         }
-        disconnected(connection: any, t: ConnectionType): void {
+        disconnected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
@@ -60,7 +61,7 @@ namespace VC.App {
                 // hide share screen button
                 this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
             } else {
-                if (tokenData.Role === Roles.PC && t !== ConnectionType.AC) {
+                if (tokenData.Role === Roles.PC) {
                     // student
                     this.connectedPCsChanged();
                 }
@@ -158,7 +159,10 @@ namespace VC.App {
         }
         private onFormSent(): void {
             // send signal to all connected students for refresh
-            Global.Signaling.sendSignalAll<Global.ISignalFormsData>(this.session, Global.SignalTypes.Forms, {} as Global.ISignalFormsData);
+            let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
+            connections.forEach((c) => {
+                Global.Signaling.sendSignal<Global.ISignalFormsData>(this.session, c, Global.SignalTypes.Forms, {} as Global.ISignalFormsData);
+            });
         }
         private onAnswerDeleted(pcUid: string): void {
             // send signal to selected student for refresh
@@ -168,8 +172,11 @@ namespace VC.App {
             }
         }
         private onAllAnswersDeleted(formId: string): void {
-            // send singnal to all connected students to delete form answers
-            Global.Signaling.sendSignalAll<Global.ISignalFormsData>(this.session, Global.SignalTypes.Forms, { formId: formId } as Global.ISignalFormsData);
+            // send signal to all connected students to delete form answers
+            let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
+            connections.forEach((c) => {
+                Global.Signaling.sendSignal<Global.ISignalFormsData>(this.session, c, Global.SignalTypes.Forms, {} as Global.ISignalFormsData);
+            });
         }
 
         private setStatusVisibility(visible: boolean): void {

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using Newtonsoft.Json;
@@ -20,9 +18,8 @@ namespace VirtualClassroom.Code
             public string Key { get; set; }
             public ComputerConfig ComputerSetting { get; set; }
             public ClassroomConfig ClassroomSetting { get; set; }
-            public TokBoxSession ScSession { get; set; }
-            public TokBoxSession TcSession { get; set; }
-            public TokBoxSession AcSession { get; set; }
+            public TokBoxSession Session { get; set; }
+            public List<GroupComputer> Group { get; set; }
         }
 
         [DataObject]
@@ -98,6 +95,24 @@ namespace VirtualClassroom.Code
                 {
                 };
             }
+            public ComputerConfig(TblFC fc)
+            {
+                this.Video = false;
+                this.Audio = false;
+
+                var q = from x in fc.TblFCPCs
+                        orderby x.Position
+                        select x;
+
+                this.Volume = q.Select(x => (int?)x.Volume).ToList();
+            }
+        }
+        [DataObject]
+        public class GroupComputer
+        {
+            public Guid Uid { get; set; }
+            public int Role { get; set; }
+            public int Position { get; set; }
         }
 
         [DataObject]
@@ -113,7 +128,6 @@ namespace VirtualClassroom.Code
             public Guid Uid { get; set; }
             public string Name { get; set; }
             public int Role { get; set; }
-            public int Position { get; set; }
         }
 
         public static string Key
@@ -150,145 +164,7 @@ namespace VirtualClassroom.Code
             return sessionId;
         }
 
-        public static TokBoxSession GetScSession(Guid uid, TokenData data)
-        {
-            VirtualClassroomDataContext db = new VirtualClassroomDataContext();
-
-            var q = from x in db.TblSCs
-                    where x.Uid == uid
-                    select x;
-
-            if (q.Count() == 1)
-            {
-                // SC uid found
-                TblSC sc = q.Single();
-
-                string sessionId = String.Empty;
-
-                if (!String.IsNullOrEmpty(sc.SessionId))
-                {
-                    // session exists
-                    sessionId = sc.SessionId;
-                }
-                else
-                {
-                    // create new session
-                    sessionId = TokBoxHelper.CreateSession(HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"]);
-
-                    if (!String.IsNullOrEmpty(sessionId))
-                    {
-                        // session succefully created - update in db
-                        sc.SessionId = sessionId;
-                        db.SubmitChanges();
-                    }
-                    else
-                    {
-                        // session creation failed
-                        return null;
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(sessionId))
-                {
-                    // create token
-                    string token = TokBoxHelper.GenerateToken(sessionId, OpenTokSDK.Role.PUBLISHER, JsonConvert.SerializeObject(data));
-                    if (!String.IsNullOrEmpty(token))
-                    {
-                        // token created - return
-                        return new TokBoxHelper.TokBoxSession
-                        {
-                            SessionId = sessionId,
-                            Token = token
-                        };
-                    }
-                    else
-                    {
-                        // token creation failed
-                        return null;
-                    }
-                }
-                else
-                {
-                    // session empty
-                    return null;
-                }
-            }
-            else
-            {
-                // uid not found
-                return null;
-            }
-        }
-        public static TokBoxSession GetTcSession(Guid uid, TokenData data)
-        {
-            VirtualClassroomDataContext db = new VirtualClassroomDataContext();
-
-            var q = from x in db.TblTCs
-                    where x.Uid == uid
-                    select x;
-
-            if (q.Count() == 1)
-            {
-                // TC uid found
-                TblTC tc = q.Single();
-
-                string sessionId = String.Empty;
-
-                if (!String.IsNullOrEmpty(tc.SessionId))
-                {
-                    // session exists
-                    sessionId = tc.SessionId;
-                }
-                else
-                {
-                    // create new session
-                    sessionId = TokBoxHelper.CreateSession(HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"]);
-
-                    if (!String.IsNullOrEmpty(sessionId))
-                    {
-                        // session succefully created - update in db
-                        tc.SessionId = sessionId;
-                        db.SubmitChanges();
-                    }
-                    else
-                    {
-                        // session creation failed
-                        return null;
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(sessionId))
-                {
-                    // create token
-                    string token = TokBoxHelper.GenerateToken(sessionId, OpenTokSDK.Role.PUBLISHER, JsonConvert.SerializeObject(data));
-                    if (!String.IsNullOrEmpty(token))
-                    {
-                        // token created - return
-                        return new TokBoxHelper.TokBoxSession
-                        {
-                            SessionId = sessionId,
-                            Token = token
-                        };
-                    }
-                    else
-                    {
-                        // token creation failed
-                        return null;
-                    }
-                }
-                else
-                {
-                    // session empty
-                    return null;
-                }
-            }
-            else
-            {
-                // uid not found
-                return null;
-            }
-        }
-        public static TokBoxSession GetAcSession(string classroomId, TokenData data)
+        public static TokBoxSession GetSession(string classroomId, TokenData data)
         {
             VirtualClassroomDataContext db = new VirtualClassroomDataContext();
 
@@ -356,6 +232,112 @@ namespace VirtualClassroom.Code
                 // uid not found
                 return null;
             }
+        }
+
+        public static List<GroupComputer> CreateGroup(TblPC pc)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // seat computer
+            if (pc.ScUid.HasValue)
+            {
+                group.Add(new GroupComputer
+                {
+                    Uid = pc.ScUid.Value,
+                    Role = (int)VC.VcRoles.SC,
+                    Position = 0
+                });
+            }
+
+            // students within the seat (for private chat)
+            if (pc.ScUid.HasValue)
+            {
+                group.AddRange(
+                    pc.TblSC.TblPCs
+                        .Where(x => x.Uid != pc.Uid) // not me
+                        .Select(x => new GroupComputer
+                        {
+                            Uid = x.Uid,
+                            Role = (int)VC.VcRoles.PC,
+                            Position = x.Position
+                        }));
+            }
+
+            // teacher computer
+            if (pc.TcUid.HasValue)
+            {
+                group.Add(new GroupComputer
+                {
+                    Uid = pc.TcUid.Value,
+                    Role = (int)VC.VcRoles.TC,
+                    Position = 0
+                });
+            }
+
+            // featured computers
+            group.AddRange(
+                pc.TblFCPCs.Select(x =>
+                    new GroupComputer
+                    {
+                        Uid = x.TblFC.Uid,
+                        Role = (int)VC.VcRoles.FC,
+                        Position = 0
+                    }));
+
+            return group;
+        }
+        public static List<GroupComputer> CreateGroup(TblSC sc)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // student computers
+            group.AddRange(
+                sc.TblPCs.Select(x => new GroupComputer
+                {
+                    Uid = x.Uid,
+                    Role = (int)VC.VcRoles.PC,
+                    Position = x.Position
+                }));
+
+            return group;
+        }
+        public static List<GroupComputer> CreateGroup(TblTC tc)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // student computers
+            group.AddRange(
+                tc.TblPCs.Select(x => new GroupComputer
+                {
+                    Uid = x.Uid,
+                    Role = (int)VC.VcRoles.PC,
+                    Position = 0
+                }));
+
+            return group;
+        }
+        public static List<GroupComputer> CreateGroup(TblFC fc)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // student computers
+            group.AddRange(
+                fc.TblFCPCs.Select(x => new GroupComputer
+                {
+                    Uid = x.TblPC.Uid,
+                    Role = (int)VC.VcRoles.PC,
+                    Position = x.Position
+                }));
+
+            return group;
+        }
+        public static List<GroupComputer> CreateGroup(TblClassroom classroom)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // everyone in classroom, nothing to insert
+
+            return group;
         }
     }
 }

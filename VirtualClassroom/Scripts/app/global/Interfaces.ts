@@ -11,16 +11,14 @@ namespace VC.App.Global {
         Uid: string;
         Name: string;
         Role: number;
-        Position: number;
     }
     export interface IComputerData {
         Uid: string;
         Key: string;
         ClassroomSetting: IClassroomConfig;
         ComputerSetting: IComputerConfig;
-        ScSession?: TokBoxSession;
-        TcSession?: TokBoxSession;
-        AcSession?: TokBoxSession;
+        Session: TokBoxSession;
+        Group: Array<GroupComputer>
     }
     export interface IClassroomConfig {
     }
@@ -28,5 +26,10 @@ namespace VC.App.Global {
         Audio: boolean;
         Video: boolean;
         Volume: Array<number>;
+    }
+    export interface GroupComputer {
+        Uid: string;
+        Role: number;
+        Position: number;
     }
 }

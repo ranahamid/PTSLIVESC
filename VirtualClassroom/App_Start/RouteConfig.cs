@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace VirtualClassroom
@@ -31,6 +27,13 @@ namespace VirtualClassroom
                 name: "TC",
                 url: "TC/{classroomId}/{id}/{action}",
                 defaults: new { controller = "TC", action = "Index", classroomId = UrlParameter.Optional, id = UrlParameter.Optional },
+                constraints: new { classroomId = new RouteConstraints.StringConstraint(), id = new RouteConstraints.StringConstraint() }
+            );
+
+            routes.MapRoute(
+                name: "FC",
+                url: "FC/{classroomId}/{id}/{action}",
+                defaults: new { controller = "FC", action = "Index", classroomId = UrlParameter.Optional, id = UrlParameter.Optional },
                 constraints: new { classroomId = new RouteConstraints.StringConstraint(), id = new RouteConstraints.StringConstraint() }
             );
 

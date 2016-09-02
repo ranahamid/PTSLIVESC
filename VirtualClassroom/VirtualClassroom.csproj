@@ -252,6 +252,7 @@
   <ItemGroup>
     <Content Include="App_Data\DbScript.sql" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\images\logo-white.png" />
     <Content Include="Extensions\ScreenSharing\Chrome\background-script.js" />
     <Content Include="Extensions\ScreenSharing\Chrome\logo128.png" />
     <Content Include="Extensions\ScreenSharing\Chrome\logo128transparent.png" />
@@ -353,6 +354,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="Properties\PublishProfiles\LocalPublish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -384,7 +386,7 @@
     <Content Include="Views\PC\Index.cshtml" />
     <Content Include="Views\SC\Index.cshtml" />
     <Content Include="Views\TC\Index.cshtml" />
-    <None Include="tsconfig.json" />
+    <Content Include="tsconfig.json" />
     <Content Include="Views\FC\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

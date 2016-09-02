@@ -117,7 +117,11 @@ body {
     // Box component
     .cBox {
         float:left;
-        background-color:#dddddd;
+        background-color:#000000;
+        background-image:url('../images/logo-white.png');
+        background-size:contain;
+        background-position:center center;
+        background-repeat:no-repeat;
     }
 
     // BoxLabel component
@@ -125,19 +129,35 @@ body {
         position:absolute;
         font-weight:bold;
         white-space:nowrap;
-        padding-top:6px;
-        padding-left:5px;
-        text-shadow: 0 0 15px #ffffff;
+        // padding-top:6px;
+        // padding-left:5px;
+        // text-shadow: 0 0 15px #ffffff;
         overflow:hidden;
-        height:40px;
+        // height:40px;
+        text-align:center;
+        .lblText {
+            padding-top:3px;
+            padding-bottom:3px;
+            padding-left:3px;
+            padding-right:3px;
+        }
         .notConnected {
-            color:#ff6a00;   
+            .lblText;
+            // color:#ff6a00;
+            color:gray;
+            background-color:black;
         }
         .connected {
-            color:#008e10;   
+            .lblText;
+            // color:#008e10;   
+            color:#ffffff;
+            background-color:black;
         }
         .handRaised {
-            color:#0026ff;
+            .lblText;
+            // color:#0026ff;
+            color:#ffffff;
+            background-color:red;
         }
     }
 }

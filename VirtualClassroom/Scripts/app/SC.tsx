@@ -284,15 +284,15 @@ namespace VC.App {
             for (let i: number = 0; i < this.props.layout; i++) {
                 $(this.label[i].getParentDiv())
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
-                    .css("top", $(this.boxSubscribers[i].getBox()).position().top + "px");
+                    .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height()) + "px");
             }
             // floating chat
             for (let i: number = 0; i < this.props.layout; i++) {
 
                 $(this.divFloatingChat[i])
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
-                    .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.label[i].getParentDiv()).height()) + "px")
-                    .css("height", ($(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height()) + "px");
+                    .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.label[i].getParentDiv()).height() + 10) + "px")
+                    .css("height", ($(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height() - 10) + "px");
             }
         }
 
@@ -300,24 +300,28 @@ namespace VC.App {
             // fit buttons on the bottom of the page
             if (!this.privateChatOpened) {
                 this.divButtonChatPrivate.style.left = "0px";
-                this.divButtonChatPrivate.style.top = (windowHeight - this.divButtonChatPrivate.clientHeight) + "px";
+                //this.divButtonChatPrivate.style.top = (windowHeight - this.divButtonChatPrivate.clientHeight) + "px";
+                this.divButtonChatPrivate.style.top = "0px";
             } else {
                 this.divButtonChatPrivate.style.left = "0px";
-                this.divButtonChatPrivate.style.top = Math.abs(this.divButtonChatPrivate.clientHeight) + "px";
+                // this.divButtonChatPrivate.style.top = Math.abs(this.divButtonChatPrivate.clientHeight) + "px";
+                this.divButtonChatPrivate.style.top = "0px";
             }
 
             if (!this.publicChatOpened) {
                 this.divButtonChatPublic.style.left = (windowWidth / 2) + "px";
-                this.divButtonChatPublic.style.top = (windowHeight - this.divButtonChatPublic.clientHeight) + "px";
+                // this.divButtonChatPublic.style.top = (windowHeight - this.divButtonChatPublic.clientHeight) + "px";
+                this.divButtonChatPublic.style.top = "0px";
             } else {
                 this.divButtonChatPublic.style.left = "0px";
-                this.divButtonChatPublic.style.top = Math.abs(this.divButtonChatPublic.clientHeight) + "px";
+                // this.divButtonChatPublic.style.top = Math.abs(this.divButtonChatPublic.clientHeight) + "px";
+                this.divButtonChatPublic.style.top = "0px";
             }
         }
         private fitPositionOfChat(windowWidth: number, windowHeight: number): void {
             if (this.privateChatOpened) {
                 this.divChatPrivate.style.left = "0px";
-                this.divChatPrivate.style.top = (windowHeight - this.divChatPrivate.clientHeight) + "px";
+                this.divChatPrivate.style.top = (windowHeight - this.divChatPrivate.clientHeight - 8) + "px";
             } else {
                 this.divChatPrivate.style.left = "0px";
                 this.divChatPrivate.style.top = Math.abs(this.divChatPrivate.clientHeight) + "px";
@@ -325,7 +329,7 @@ namespace VC.App {
 
             if (this.publicChatOpened) {
                 this.divChatPublic.style.left = (windowWidth / 2) + "px";
-                this.divChatPublic.style.top = (windowHeight - this.divChatPublic.clientHeight) + "px";
+                this.divChatPublic.style.top = (windowHeight - this.divChatPublic.clientHeight - 8) + "px";
             } else {
                 this.divChatPublic.style.left = "0px";
                 this.divChatPublic.style.top = Math.abs(this.divChatPublic.clientHeight) + "px";
@@ -448,18 +452,22 @@ namespace VC.App {
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[6] = ref} className="floatingChat" style={{ display: (this.props.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[6] = ref} fadingOut={true} /></div>
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[7] = ref} className="floatingChat" style={{ display: (this.props.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[7] = ref} fadingOut={true} /></div>
 
-                        <div ref={(ref: HTMLDivElement) => this.divButtonChatPrivate = ref} className="floatingButton" style={{ display: "block" }}>
-                            <button type="button" className="btn btn-sm btn-default" onClick={() => this.showPrivateChat() }>Seat chat (Private) </button>
-                        </div>
-                        <div ref={(ref: HTMLDivElement) => this.divButtonChatPublic = ref} className="floatingButton" style={{ display: "block" }}>
-                            <button type="button" className="btn btn-sm btn-default" onClick={() => this.showPublicChat() }>Classroom chat (Public) </button>
-                        </div>
+                        <div style={{ display: "none" }}>
 
-                        <div ref={(ref: HTMLDivElement) => this.divChatPrivate = ref} style={{ display: "none" }} className="scChat">
-                            <Components.Chat ref={(ref: Components.Chat) => this.chatPrivate = ref} title="Seat chat (Private)" fixedHeight={true} onChatClosed={() => this.hidePrivateChat() } onItemSubmitted={(item: Components.IChatListItem) => this.onChatPrivateItemSubmitted(item) }  />
-                        </div>
-                        <div ref={(ref: HTMLDivElement) => this.divChatPublic = ref} style={{ display: "none" }}className="scChat">
-                            <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onChatClosed={() => this.hidePublicChat() } onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) }  />
+                            <div ref={(ref: HTMLDivElement) => this.divButtonChatPrivate = ref} className="floatingButton" style={{ display: "block" }}>
+                                <button type="button" className="btn btn-sm btn-default" onClick={() => this.showPrivateChat() }>Seat chat (Private) </button>
+                            </div>
+                            <div ref={(ref: HTMLDivElement) => this.divButtonChatPublic = ref} className="floatingButton" style={{ display: "block" }}>
+                                <button type="button" className="btn btn-sm btn-default" onClick={() => this.showPublicChat() }>Classroom chat (Public) </button>
+                            </div>
+
+                            <div ref={(ref: HTMLDivElement) => this.divChatPrivate = ref} style={{ display: "none" }} className="scChat">
+                                <Components.Chat ref={(ref: Components.Chat) => this.chatPrivate = ref} title="Seat chat (Private)" fixedHeight={true} onChatClosed={() => this.hidePrivateChat() } onItemSubmitted={(item: Components.IChatListItem) => this.onChatPrivateItemSubmitted(item) }  />
+                            </div>
+                            <div ref={(ref: HTMLDivElement) => this.divChatPublic = ref} style={{ display: "none" }}className="scChat">
+                                <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onChatClosed={() => this.hidePublicChat() } onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) }  />
+                            </div>
+
                         </div>
 
                     </div>

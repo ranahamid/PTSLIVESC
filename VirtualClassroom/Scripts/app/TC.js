@@ -7,6 +7,8 @@ var VC;
         class TC extends App.XC {
             constructor(props) {
                 super(props, App.Roles.TC);
+                this.isWebcamPublishing = false;
+                this.isScreenSharing = false;
             }
             // abstract methods
             setStatusText(text, style) {
@@ -23,7 +25,7 @@ var VC;
                     this.setStatusVisibility(false);
                     this.setUiVisibility(true);
                     // show share screen button
-                    this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
+                    this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Start);
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
@@ -47,7 +49,7 @@ var VC;
                     // me
                     this.setStatusText("Disconnected from the session.", App.Components.StatusStyle.Error);
                     // hide share screen button
-                    this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                    this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Hidden);
                 }
                 else {
                     if (tokenData.Role === App.Roles.PC) {
@@ -94,11 +96,11 @@ var VC;
                 var data = JSON.parse(event.data);
                 if (data.audio != null) {
                     this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisher.audio(data.audio);
+                    this.boxPublisherScreen.audio(data.audio);
                 }
                 if (data.video != null) {
                     this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisher.video(data.video);
+                    this.boxPublisherScreen.video(data.video);
                 }
             }
             turnOffSignalReceived(event) {
@@ -116,19 +118,46 @@ var VC;
                 }
             }
             publishStarted(event) {
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Stop);
+                if (this.isScreenSharing) {
+                    this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Stop);
+                }
+                else {
+                    this.switchButtonWebcam.setStatus(App.Components.SwitchButtonStatus.Stop);
+                }
             }
             publishStopped(event) {
-                this.boxPublisher.clearBox();
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
+                if (this.isScreenSharing) {
+                    this.boxPublisherScreen.clearBox();
+                    this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Start);
+                    this.isScreenSharing = false;
+                    this.tabs.showTab(0);
+                }
+                else {
+                    this.boxPublisherWebcam.clearBox();
+                    this.switchButtonWebcam.setStatus(App.Components.SwitchButtonStatus.Start);
+                    this.isWebcamPublishing = false;
+                    this.tabs.showTab(1);
+                }
             }
             screenSharingOn() {
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
-                this.boxPublisher.publish(this.session, App.PublishSources.Screen, this.dataResponse.ComputerSetting.Audio, this.dataResponse.ComputerSetting.Video, this.publishStarted.bind(this), this.publishStopped.bind(this));
+                this.isScreenSharing = true;
+                this.tabs.hideTab(0);
+                this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                this.boxPublisherScreen.publish(this.session, App.PublishSources.Screen, this.dataResponse.ComputerSetting.Audio, this.dataResponse.ComputerSetting.Video, this.publishStarted.bind(this), this.publishStopped.bind(this));
             }
             screenSharingOff() {
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
-                this.boxPublisher.unpublish(this.session);
+                this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                this.boxPublisherScreen.unpublish(this.session);
+            }
+            webcamPublishingOn() {
+                this.isWebcamPublishing = true;
+                this.tabs.hideTab(1);
+                this.switchButtonWebcam.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                this.boxPublisherWebcam.publish(this.session, App.PublishSources.Camera, this.dataResponse.ComputerSetting.Audio, this.dataResponse.ComputerSetting.Video, this.publishStarted.bind(this), this.publishStopped.bind(this));
+            }
+            webcamPublishingOff() {
+                this.switchButtonWebcam.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                this.boxPublisherWebcam.unpublish(this.session);
             }
             connectedPCsChanged() {
                 let connectedPCs = [];
@@ -172,41 +201,45 @@ var VC;
                 }
             }
             fitHeightOfBox() {
-                var boxPublisher1 = this.boxPublisher.getBox();
-                $(boxPublisher1).css("height", ($(boxPublisher1).width() / 16 * 9) + "px");
+                var boxPublisherScreen = this.boxPublisherScreen.getBox();
+                $(boxPublisherScreen).css("height", ($(boxPublisherScreen).width() / 16 * 9) + "px");
+                var boxPublisherWebcam = this.boxPublisherWebcam.getBox();
+                $(boxPublisherWebcam).css("height", ($(boxPublisherWebcam).width() / 16 * 9) + "px");
             }
             tabOnClick(id) {
                 this.tabs.selectItem(id);
+                this.divUIwebcam.style.display = "none";
+                this.divUIscreensharing.style.display = "none";
+                this.divUIsurveys.style.display = "none";
+                this.divUIpolls.style.display = "none";
                 if (id === 0) {
-                    this.divUIsurveys.style.display = "none";
-                    this.divUIpolls.style.display = "none";
-                    this.divUIscreensharing.style.display = "block";
+                    this.divUIwebcam.style.display = "block";
                 }
                 else if (id === 1) {
-                    this.divUIscreensharing.style.display = "none";
-                    this.divUIpolls.style.display = "none";
+                    this.divUIscreensharing.style.display = "block";
+                }
+                else if (id === 2) {
                     this.divUIsurveys.style.display = "block";
                     this.surveys.init();
                 }
-                else if (id === 2) {
-                    this.divUIscreensharing.style.display = "none";
-                    this.divUIsurveys.style.display = "none";
+                else if (id === 3) {
                     this.divUIpolls.style.display = "block";
                     this.polls.init();
                 }
             }
             render() {
                 let tabItems = [
-                    { id: 0, title: "Screen sharing", onClick: this.tabOnClick.bind(this), active: true },
-                    { id: 1, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
-                    { id: 2, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
+                    { id: 0, title: "Webcam publishing", onClick: this.tabOnClick.bind(this), active: true },
+                    { id: 1, title: "Screen sharing", onClick: this.tabOnClick.bind(this), active: false },
+                    { id: 2, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
+                    { id: 3, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
                 ];
                 var statusClasses = [
                     "alert alert-warning",
                     "alert alert-success",
                     "alert alert-danger" // error
                 ];
-                return (React.createElement("div", {className: "_cContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement("div", {ref: (ref) => this.divUIscreensharing = ref, style: { display: "block" }}, React.createElement("div", {style: { display: (this.state.extensionError === "" ? "none" : "block") }}, React.createElement("div", {className: "alert alert-danger"}, React.createElement("span", {className: "glyphicon glyphicon-warning-sign"}), " ", this.state.extensionError)), React.createElement("div", {style: { display: (this.state.extensionError !== "" ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButton = ref, status: App.Components.SwitchButtonStatus.Hidden, textOn: "Start screen sharing", textOff: "Stop screen sharing", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-blackboard", iconOff: "glyphicon glyphicon-blackboard", onOn: this.screenSharingOn.bind(this), onOff: this.screenSharingOff.bind(this), className: "sharingButton"}), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBox", visible: true}))), React.createElement("div", {ref: (ref) => this.divUIsurveys = ref, style: { display: "none" }}, React.createElement(App.TC.SurveysTc, {ref: (ref) => this.surveys = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})), React.createElement("div", {ref: (ref) => this.divUIpolls = ref, style: { display: "none" }}, React.createElement(App.TC.PollsTc, {ref: (ref) => this.polls = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})))));
+                return (React.createElement("div", {className: "_cContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement("div", {ref: (ref) => this.divUIwebcam = ref, style: { display: "block" }}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonWebcam = ref, status: App.Components.SwitchButtonStatus.Start, textOn: "Start webcam publishing", textOff: "Stop webcam publishing", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-blackboard", iconOff: "glyphicon glyphicon-blackboard", onOn: this.webcamPublishingOn.bind(this), onOff: this.webcamPublishingOff.bind(this), className: "publishingButton"}), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisherWebcam = ref, id: this.props.targetId + "_PublisherWebcam", streamProps: this.publishProps, className: "cBox", visible: true})), React.createElement("div", {ref: (ref) => this.divUIscreensharing = ref, style: { display: "none" }}, React.createElement("div", {style: { display: (this.state.extensionError === "" ? "none" : "block") }}, React.createElement("div", {className: "alert alert-danger"}, React.createElement("span", {className: "glyphicon glyphicon-warning-sign"}), " ", this.state.extensionError)), React.createElement("div", {style: { display: (this.state.extensionError !== "" ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonScreensharing = ref, status: App.Components.SwitchButtonStatus.Hidden, textOn: "Start screen sharing", textOff: "Stop screen sharing", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-blackboard", iconOff: "glyphicon glyphicon-blackboard", onOn: this.screenSharingOn.bind(this), onOff: this.screenSharingOff.bind(this), className: "publishingButton"}), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisherScreen = ref, id: this.props.targetId + "_PublisherScreen", streamProps: this.publishProps, className: "cBox", visible: true}))), React.createElement("div", {ref: (ref) => this.divUIsurveys = ref, style: { display: "none" }}, React.createElement(App.TC.SurveysTc, {ref: (ref) => this.surveys = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})), React.createElement("div", {ref: (ref) => this.divUIpolls = ref, style: { display: "none" }}, React.createElement(App.TC.PollsTc, {ref: (ref) => this.polls = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})))));
             }
         }
         class InitTC {

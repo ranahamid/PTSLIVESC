@@ -186,7 +186,7 @@ namespace VC.App {
             for (let i: number = 0; i < this.props.layout; i++) {
                 $(this.label[i].getParentDiv())
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
-                    .css("top", $(this.boxSubscribers[i].getBox()).position().top + "px");
+                    .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height()) + "px");
             }
         }
 

@@ -25,7 +25,7 @@ var VC;
                     if (this.props.badge != null) {
                         title = title + " ";
                     }
-                    return (React.createElement("li", {className: className}, React.createElement("a", {className: "link", onClick: () => this.onClick()}, title, badge)));
+                    return (React.createElement("li", {className: className, style: { display: (this.props.hidden ? "none" : "inline-block") }}, React.createElement("a", {className: "link", onClick: () => this.onClick()}, title, badge)));
                 }
             }
             class Tabs extends React.Component {
@@ -36,8 +36,9 @@ var VC;
                 setInitialState() {
                     let a = [];
                     let b = [];
-                    this.props.items.forEach((item) => { a.push(item.active); b.push(item.badge); });
-                    this.state = { active: a, badges: b };
+                    let h = [];
+                    this.props.items.forEach((item) => { a.push(item.active); b.push(item.badge); h.push(false); });
+                    this.state = { active: a, badges: b, hidden: h };
                 }
                 getSelectedItem() {
                     let selectedItem = null;
@@ -81,10 +82,26 @@ var VC;
                 decreaseBadge(id) {
                     this.changeBadge(id, -1);
                 }
+                changeHiddenState(id, hidden) {
+                    let found = false;
+                    for (var i = 0; i < this.props.items.length && !found; i++) {
+                        if (this.props.items[i].id === id) {
+                            this.state.hidden[i] = hidden;
+                            found = true;
+                        }
+                    }
+                    this.setState(this.state);
+                }
+                hideTab(id) {
+                    this.changeHiddenState(id, true);
+                }
+                showTab(id) {
+                    this.changeHiddenState(id, false);
+                }
                 render() {
                     let items = [];
                     for (let i = 0; i < this.props.items.length; i++) {
-                        items.push(React.createElement(TabItem, {key: this.props.items[i].id, id: this.props.items[i].id, title: this.props.items[i].title, onClick: this.props.items[i].onClick.bind(this), badge: this.state.badges[i], active: this.state.active[i]}));
+                        items.push(React.createElement(TabItem, {key: this.props.items[i].id, id: this.props.items[i].id, title: this.props.items[i].title, onClick: this.props.items[i].onClick.bind(this), badge: this.state.badges[i], active: this.state.active[i], hidden: this.state.hidden[i]}));
                     }
                     return (React.createElement("div", {className: this.props.className}, React.createElement("ul", {className: "nav nav-tabs"}, items)));
                 }

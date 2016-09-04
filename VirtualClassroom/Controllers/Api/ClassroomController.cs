@@ -743,7 +743,7 @@ namespace VirtualClassroom.Controllers
                 Id = item.id,
                 ClassroomId = classroomId,
                 Name = item.name,
-                Audio = false,
+                Audio = true,
                 Video = true
             });
 

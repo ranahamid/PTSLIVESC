@@ -9,6 +9,7 @@ namespace VC.Global.Components {
         badge?: number;
         onClick: (id: number) => void;
         active: boolean;
+        hidden?: boolean;
     }
     interface ITabItemState {
     }
@@ -35,7 +36,7 @@ namespace VC.Global.Components {
                 title = title + " ";
             }
             return (
-                <li className={className}><a className="link" onClick={() => this.onClick() }>{title}{badge}</a></li>
+                <li className={className} style={{ display: (this.props.hidden ? "none" : "inline-block") }}><a className="link" onClick={() => this.onClick() }>{title}{badge}</a></li>
             );
         }
     }
@@ -48,6 +49,7 @@ namespace VC.Global.Components {
     interface ITabsState {
         active: Array<boolean>;
         badges: Array<number>;
+        hidden: Array<boolean>;
     }
 
     export class Tabs extends React.Component<ITabsProps, ITabsState> {
@@ -59,8 +61,9 @@ namespace VC.Global.Components {
         private setInitialState(): void {
             let a: Array<boolean> = [];
             let b: Array<number> = [];
-            this.props.items.forEach((item: ITabItemProps) => { a.push(item.active); b.push(item.badge); });
-            this.state = { active: a, badges: b };
+            let h: Array<boolean> = [];
+            this.props.items.forEach((item: ITabItemProps) => { a.push(item.active); b.push(item.badge); h.push(false); });
+            this.state = { active: a, badges: b, hidden: h };
         }
 
         public getSelectedItem(): number {
@@ -105,10 +108,27 @@ namespace VC.Global.Components {
             this.changeBadge(id, -1);
         }
 
+        private changeHiddenState(id: number, hidden: boolean): void {
+            let found: boolean = false;
+            for (var i: number = 0; i < this.props.items.length && !found; i++) {
+                if (this.props.items[i].id === id) {
+                    this.state.hidden[i] = hidden;
+                    found = true;
+                }
+            }
+            this.setState(this.state);
+        }
+        public hideTab(id: number): void {
+            this.changeHiddenState(id, true);
+        }
+        public showTab(id: number): void {
+            this.changeHiddenState(id, false);
+        }
+
         render(): JSX.Element {
             let items: Array<JSX.Element> = [];
             for (let i: number = 0; i < this.props.items.length; i++) {
-                items.push(<TabItem key={this.props.items[i].id} id={this.props.items[i].id} title={this.props.items[i].title} onClick={this.props.items[i].onClick.bind(this) } badge={this.state.badges[i]} active={this.state.active[i]} />);
+                items.push(<TabItem key={this.props.items[i].id} id={this.props.items[i].id} title={this.props.items[i].title} onClick={this.props.items[i].onClick.bind(this) } badge={this.state.badges[i]} active={this.state.active[i]} hidden={this.state.hidden[i]} />);
             }
 
             return (

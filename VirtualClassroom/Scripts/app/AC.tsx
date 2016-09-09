@@ -8,7 +8,8 @@ namespace VC.App {
         private divStatus: HTMLDivElement;
         private divUI: HTMLDivElement;
         private tabs: VC.Global.Components.Tabs;
-        private computersList: Components.ComputersList;
+        private computersList: VC.App.AC.ComputersList;
+        private featuredBox: VC.App.AC.FeaturedBox;
 
         constructor(props: IProps) {
             super(props, Roles.AC);
@@ -80,7 +81,7 @@ namespace VC.App {
                 audio: data.audio,
                 video: data.video,
                 volume: data.volume
-            } as Components.IComputersListItem);
+            } as VC.App.AC.IComputersListItem);
             this.tabs.increaseBadge(tokenData.Role);
         }
 
@@ -144,9 +145,27 @@ namespace VC.App {
                 }
             });
         }
+        private featuredComputerClick(uid: string, name: string): void {
+            this.featuredBox.open(uid, name);
+        }
+        private onFeaturedUpdated(uid: string, layout: number): void {
+            // update volume bars of students in the list
+            let volume: Array<number> = [];
+            for (let i: number = 0; i < layout; i++) {
+                volume.push(80); // default volume
+            }
+            this.computersList.updateComputerVolume(uid, volume);
+
+            // send signal to FC to update group & layout
+            let connection: any = this.getConnectionByUid(uid);
+            Global.Signaling.sendSignal<Global.ISignalFeaturedChangedData>(this.session, connection, Global.SignalTypes.FeaturedChanged, {} as Global.ISignalFeaturedChangedData);
+
+            // todo: send signal to PCs to update group
+            // **** we do not need it now, but if PC is going to start using FC group, then we need to implement it somehow ****
+        }
 
         render(): JSX.Element {
-            let computers: Array<Components.IComputersListItem> = [];
+            let computers: Array<VC.App.AC.IComputersListItem> = [];
             let badgeSC: number = 0;
             let badgePC: number = 0;
             let badgeTC: number = 0;
@@ -155,7 +174,7 @@ namespace VC.App {
             this.connections.forEach((item: any) => {
                 let d: Global.TokenData = Global.Fce.toTokenData(item.data);
                 computers.push(
-                    { uid: d.Uid, name: d.Name, role: d.Role } as Components.IComputersListItem
+                    { uid: d.Uid, name: d.Name, role: d.Role } as VC.App.AC.IComputersListItem
                 );
                 switch (d.Role) {
                     case Roles.PC: badgePC++; break;
@@ -186,7 +205,12 @@ namespace VC.App {
                     <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }}>
                         <div className="labelContainer"><h3>Connected computers: </h3></div>
                         <VC.Global.Components.Tabs ref={(ref: VC.Global.Components.Tabs) => this.tabs = ref} items={tabItems} className="cTabs" />
-                        <Components.ComputersList ref={(ref: Components.ComputersList) => this.computersList = ref} selectedRole={Roles.SC} computers={computers} turnAv={this.turnAv.bind(this) } turnOff={this.turnOff.bind(this) } changeVolume={this.changeVolume.bind(this) } />
+                        <VC.App.AC.ComputersList ref={(ref: VC.App.AC.ComputersList) => this.computersList = ref} selectedRole={Roles.SC} computers={computers}
+                            turnAv={(uid: string, audio?: boolean, video?: boolean) => this.turnAv(uid, audio, video) }
+                            turnOff={(uid: string) => this.turnOff(uid) }
+                            changeVolume={(uid: string, volume: Array<number>) => this.changeVolume(uid, volume) }
+                            featuredComputerClick={(uid: string, name: string) => this.featuredComputerClick(uid, name) } />
+                        <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, layout: number) => this.onFeaturedUpdated(uid, layout) } />
                     </div>
                 </div>
             );
@@ -194,8 +218,8 @@ namespace VC.App {
     }
 
     export class InitAC {
-        constructor(targetId: string, actionUrl: string) {
-            ReactDOM.render(<div><AC targetId={targetId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><AC targetId={targetId} classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

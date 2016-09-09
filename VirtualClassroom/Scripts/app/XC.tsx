@@ -5,11 +5,12 @@ namespace VC.App {
 
     export interface IProps {
         targetId: string;
+        classroomId: string;
         actionUrl: string;
-        layout?: number;
     }
     export interface IState {
         extensionError: string;
+        layout: number;
     }
 
     export enum Roles {
@@ -33,6 +34,8 @@ namespace VC.App {
 
         public session: any = null;
 
+        public streams: Array<any> = [];
+
         // maxResolution — { width: 1920, height: 1920 }, mirror — false, fitMode — "contain"
         public publishProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "off" } };
         public subscribeProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "on" } };
@@ -41,7 +44,7 @@ namespace VC.App {
 
         constructor(props: IProps, public role: Roles) {
             super(props);
-            this.state = { extensionError: "" };
+            this.state = { extensionError: "", layout: 0 } as IState;
         }
 
         componentDidMount(): void {
@@ -71,9 +74,9 @@ namespace VC.App {
                     OT.registerScreenSharingExtension("chrome", this.screenSharingExtensionId, 2);
                     OT.checkScreenSharingCapability((response: any) => {
                         if (!response.supported || response.extensionRegistered === false) {
-                            this.setState({ extensionError: "This browser does not support screen sharing." });
+                            this.setState({ extensionError: "This browser does not support screen sharing." } as IState);
                         } else if (response.extensionInstalled === false && response.extensionRequired) {
-                            this.setState({ extensionError: "Please install the screen-sharing extension and load this page over HTTPS." });
+                            this.setState({ extensionError: "Please install the screen-sharing extension and load this page over HTTPS." } as IState);
                         }
                         this.getData();
                     });
@@ -110,6 +113,7 @@ namespace VC.App {
             });
         }
 
+        // connections
         private addConnection(connection: any): void {
             this.connections.push(connection);
         }
@@ -181,13 +185,42 @@ namespace VC.App {
             return c;
         }
 
+        // streams
+        private addStream(stream: any) {
+            this.streams.push(stream);
+        }
+        private removeStream(stream: any): boolean {
+            let removed: boolean = false;
+            let s: Array<any> = [];
+
+            for (let i: number = 0; i < this.streams.length; i++) {
+                if (this.streams[i].connection.connectionId !== stream.connection.connectionId) {
+                    s.push(this.streams[i]);
+                } else {
+                    removed = true;
+                }
+            }
+            this.streams = s;
+            return removed;
+        }
+        public getStream(userUid: string): any {
+            let s: any = null;
+            for (let i: number = 0; i < this.streams.length && s == null; i++) {
+                let tokenData: Global.TokenData = Global.Fce.toTokenData(this.streams[i].connection.data);
+                if (tokenData.Uid === userUid) {
+                    s = this.streams[i];
+                }
+            }
+            return s;
+        }
+
+        // groups
         public getGroupComputer(uid: string): Global.GroupComputer {
             let iUser: Global.GroupComputer = null;
 
-            for (let i: number = 0; i < this.dataResponse.Group.length; i++) {
+            for (let i: number = 0; i < this.dataResponse.Group.length && iUser === null; i++) {
                 if (this.dataResponse.Group[i].Uid === uid) {
                     iUser = this.dataResponse.Group[i];
-                    i = this.dataResponse.Group.length;
                 }
             }
 
@@ -255,9 +288,11 @@ namespace VC.App {
                     this.sessionDisconnected(event);
                 },
                 streamCreated: (event: any): void => {
+                    this.addStream(event.stream);
                     this.streamCreated(event.stream.connection, event.stream);
                 },
                 streamDestroyed: (event: any): void => {
+                    this.removeStream(event.stream);
                     this.streamDestroyed(event.stream.connection, event.stream);
                 },
                 streamPropertyChanged: (event: any): void => {

@@ -21,26 +21,31 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
+            ComputerViewModel viewModel = new ComputerViewModel();
+
             if (q.Count() == 1)
             {
                 TblPC pc = q.Single();
-                if (pc.ScUid.HasValue)
+
+                if (pc.ScUid.HasValue || pc.TcUid.HasValue)
                 {
-                    ViewBag.Name = pc.TblClassroom.Name + " - " + pc.Name;
+                    viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
+                    viewModel.ClassroomId = pc.TblClassroom.Id;
+                    viewModel.ActionUrl = Url.Action();
                 }
                 else
                 {
-                    ViewBag.Name = "Virtual Classroom - Personal computer";
-                    ViewBag.ErrorMessage = "No seat computer assigned.";
+                    viewModel.Name = "Virtual Classroom - Personal computer";
+                    viewModel.ErrorMessage = "No seat or teacher computer assigned.";
                 }
             }
             else
             {
-                ViewBag.Name = "Virtual Classroom - Personal computer";
-                ViewBag.ErrorMessage = "Invalid URL.";
+                viewModel.Name = "Virtual Classroom - Personal computer";
+                viewModel.ErrorMessage = "Invalid URL.";
             }
 
-            return View();
+            return View(viewModel);
         }
 
         public ActionResult GetData(string classroomId, string id)
@@ -53,7 +58,7 @@ namespace VirtualClassroom.Controllers
             {
                 TblPC pc = q.Single();
 
-                if (pc.ScUid.HasValue)
+                if (pc.ScUid.HasValue || pc.TcUid.HasValue)
                 {
                     TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
@@ -75,7 +80,7 @@ namespace VirtualClassroom.Controllers
                 else
                 {
                     // error
-                    return responseError("No seat computer assigned.");
+                    return responseError("No seat or teacher computer assigned.");
                 }
             }
             else

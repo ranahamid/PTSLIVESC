@@ -41,7 +41,8 @@ namespace VirtualClassroom
             // global scripts
             bundles.Add(new BabelBundle("~/vc/global").Include(
                 "~/Scripts/global/Data.js",
-                "~/Scripts/global/components/Tabs.js"
+                "~/Scripts/global/components/Tabs.js",
+                "~/Scripts/global/components/Selector.js"
                 ));
 
             // forms - for TC, PC
@@ -60,7 +61,6 @@ namespace VirtualClassroom
 
             // admin scripts
             bundles.Add(new BabelBundle("~/vc/admin").Include(
-                "~/Scripts/admin/components/Selector.js",
                 "~/Scripts/admin/lists/Base.js",
                 "~/Scripts/admin/lists/Classrooms.js",
                 "~/Scripts/admin/lists/Seats.js",
@@ -81,7 +81,6 @@ namespace VirtualClassroom
                 "~/Scripts/app/components/Status.js",
                 "~/Scripts/app/components/Box.js",
                 "~/Scripts/app/components/BoxLabel.js",
-                "~/Scripts/app/components/ComputersList.js",
                 "~/Scripts/app/components/Chat.js",
                 "~/Scripts/app/XC.js"
                 ));
@@ -96,7 +95,11 @@ namespace VirtualClassroom
                 "~/Scripts/app/TC.js"
                 ));
             bundles.Add(new BabelBundle("~/vc/app/FC").Include("~/Scripts/app/FC.js"));
-            bundles.Add(new BabelBundle("~/vc/app/AC").Include("~/Scripts/app/AC.js"));
+            bundles.Add(new BabelBundle("~/vc/app/AC").Include(
+                "~/Scripts/app/ac/ComputersList.js",
+                "~/Scripts/app/ac/FeaturedBox.js",
+                "~/Scripts/app/AC.js"
+                ));
 
             BundleTable.EnableOptimizations = true;
         }

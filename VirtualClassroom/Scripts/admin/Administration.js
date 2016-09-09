@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -28,11 +27,9 @@ var VC;
             tabOnClick(id) {
                 this.tabs.selectItem(id);
                 if (id === -1) {
-                    // back to Classrooms
                     top.location = "/Admin/";
                 }
                 else {
-                    // tabs
                     this.divSeats.style.display = "none";
                     this.divStudents.style.display = "none";
                     this.divTeachers.style.display = "none";
@@ -68,7 +65,6 @@ var VC;
                 }
             }
             componentDidMount() {
-                // init active tab
                 this.seats.init();
             }
             render() {
@@ -91,8 +87,8 @@ var VC;
         }
         Admin.InitAdministration = InitAdministration;
         class InitClassrooms {
-            constructor(targetId, actionUrl, classroomId) {
-                ReactDOM.render(React.createElement("div", null, React.createElement(Classrooms, {actionUrl: actionUrl, classroomId: classroomId})), document.getElementById(targetId));
+            constructor(targetId, classroomId, actionUrl) {
+                ReactDOM.render(React.createElement("div", null, React.createElement(Classrooms, {classroomId: classroomId, actionUrl: actionUrl})), document.getElementById(targetId));
             }
         }
         Admin.InitClassrooms = InitClassrooms;

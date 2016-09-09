@@ -23,19 +23,23 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == classroomId.ToLower()
                     select x;
 
+            ComputerViewModel viewModel = new ComputerViewModel();
+
             if (q.Count() == 1)
             {
                 TblClassroom ac = q.Single();
 
-                ViewBag.Name = "Admin computer - " + ac.Name;
+                viewModel.Name = "Admin computer - " + ac.Name;
+                viewModel.ClassroomId = ac.Id;
+                viewModel.ActionUrl = Url.Action();
             }
             else
             {
-                ViewBag.Name = "Virtual Classroom - Admin computer";
-                ViewBag.ErrorMessage = "Invalid URL.";
+                viewModel.Name = "Virtual Classroom - Admin computer";
+                viewModel.ErrorMessage = "Invalid URL.";
             }
 
-            return View();
+            return View(viewModel);
         }
 
         public ActionResult GetData(string classroomId)
@@ -219,6 +223,45 @@ namespace VirtualClassroom.Controllers
                     tblSC.Volume7 = volume[6].Value;
                 if (volume.Count > 7 && volume[7].HasValue)
                     tblSC.Volume8 = volume[7].Value;
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError("Id not found.");
+            }
+        }
+        [HttpPost]
+        public ActionResult VolumeFC(string classroomId, Guid uid, List<int?> volume)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                var qPCs = from x in db.TblFCPCs
+                           where x.FcUid == uid
+                           select x;
+
+                foreach (TblFCPC tbl in qPCs.Select(x => x))
+                {
+                    if (volume.Count >= tbl.Position)
+                    {
+                        if (volume[tbl.Position - 1].HasValue)
+                        {
+                            tbl.Volume = volume[tbl.Position - 1].Value;
+                        }
+                    }
+                }
 
                 try
                 {

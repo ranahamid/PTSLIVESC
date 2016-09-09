@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -15,6 +14,7 @@ var VC;
                 SignalTypes[SignalTypes["TurnOff"] = 5] = "TurnOff";
                 SignalTypes[SignalTypes["Chat"] = 6] = "Chat";
                 SignalTypes[SignalTypes["Forms"] = 7] = "Forms";
+                SignalTypes[SignalTypes["FeaturedChanged"] = 8] = "FeaturedChanged";
             })(Global.SignalTypes || (Global.SignalTypes = {}));
             var SignalTypes = Global.SignalTypes;
             (function (ChatType) {
@@ -77,6 +77,9 @@ var VC;
                             break;
                         case signalPrefix + this.signalTypeAsString(SignalTypes.Forms).toLowerCase():
                             signalType = SignalTypes.Forms;
+                            break;
+                        case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
+                            signalType = SignalTypes.FeaturedChanged;
                             break;
                     }
                     return signalType;

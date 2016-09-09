@@ -1,6 +1,6 @@
 ﻿/* tslint:disable:max-line-length */
 
-namespace VC.App.Components {
+namespace VC.App.AC {
     "use strict";
 
     export interface IComputersListItem {
@@ -18,6 +18,7 @@ namespace VC.App.Components {
         turnAv: (uid: string, audio?: boolean, video?: boolean) => void;
         turnOff: (uid: string) => void;
         changeVolume: (uid: string, volume: Array<number>) => void;
+        featuredComputerClick: (uid: string, name: string) => void;
     }
     interface IComputersListState {
         selectedRole: Roles;
@@ -65,6 +66,20 @@ namespace VC.App.Components {
                 this.state.computers = c;
             }
             return removed;
+        }
+
+        public updateComputerVolume(uid: string, volume: Array<number>): void {
+            this.state.computers.forEach((item: IComputersListItem) => {
+                if (item.uid === uid) {
+                    // update existing volume bars to default volume
+                    for (let i: number = 0; i < item.volume.length; i++) {
+                        (this.refs["RefVolumeBar_" + item.uid + "_" + i] as Components.Volume).resetVolume(80); // default volume
+                    }
+                    // set new volume
+                    item.volume = volume;
+                }
+            });
+            this.setState(this.state);
         }
 
         public updateComputerAvState(uid: string, audio?: boolean, video?: boolean): void {
@@ -135,7 +150,7 @@ namespace VC.App.Components {
         }
 
         private computerTitle(index:number): string {
-            let name: string = '';
+            let name: string = "";
             if (this.state.selectedRole === Roles.PC) {
                 if (index === 0) {
                     name = "Seat";
@@ -154,17 +169,18 @@ namespace VC.App.Components {
                     <td><div><span className="glyphicon glyphicon-link" style={{ color: "green" }}></span> {item.name}</div></td>
                     <td>
                         {
-                            item.volume.map((v, index) => {
+                            item.volume.map((v: number, index: number) => {
                                 return (
-                                    <Volume title={this.computerTitle(index) } volume={v != null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
+                                    <Components.Volume ref={"RefVolumeBar_" + item.uid + "_" + index} title={this.computerTitle(index) } volume={v != null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
                             })
                         }
                     </td>
                     <td style={{ textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>
-                        <div className="cListButton" style={{ display: 'none' }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
-                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? 'none' : 'block') }}><SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="" /></div>
-                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? 'none' : 'block') }}><SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={this.getButtonStatus(item.audio) } onOn={() => this.props.turnAv(item.uid, true, null) } onOff={() => this.props.turnAv(item.uid, false, null) } className="" /></div>
+                        <div className="cListButton" style={{ display: "none" }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
+                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? "none" : "block") }}><Components.SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="" /></div>
+                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? "none" : "block") }}><Components.SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={this.getButtonStatus(item.audio) } onOn={() => this.props.turnAv(item.uid, true, null) } onOff={() => this.props.turnAv(item.uid, false, null) } className="" /></div>
+                        <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? "block" : "none") }}><button type="button" className="btn btn-xs btn-info" onClick={() => this.props.featuredComputerClick(item.uid, item.name) }><span className="glyphicon glyphicon-th"></span></button></div>
                     </td>
                 </tr>
             );

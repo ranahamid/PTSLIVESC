@@ -1,6 +1,6 @@
 ﻿/* tslint:disable:max-line-length */
 
-namespace VC.Admin.Components {
+namespace VC.Global.Components {
     "use strict";
 
     interface ISelectorItemProps {
@@ -34,7 +34,6 @@ namespace VC.Admin.Components {
     }
 
     interface ISelectorProps {
-        actionUrl: string;
         classroomId: string;
         loadAction: string;
         defaultName: string;

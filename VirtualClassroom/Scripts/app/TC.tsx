@@ -191,7 +191,7 @@ namespace VC.App {
         private onFormSent(): void {
             // send signal to all connected students for refresh
             let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
-            connections.forEach((c) => {
+            connections.forEach((c: any) => {
                 Global.Signaling.sendSignal<Global.ISignalFormsData>(this.session, c, Global.SignalTypes.Forms, {} as Global.ISignalFormsData);
             });
         }
@@ -205,7 +205,7 @@ namespace VC.App {
         private onAllAnswersDeleted(formId: string): void {
             // send signal to all connected students to delete form answers
             let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
-            connections.forEach((c) => {
+            connections.forEach((c: any) => {
                 Global.Signaling.sendSignal<Global.ISignalFormsData>(this.session, c, Global.SignalTypes.Forms, {} as Global.ISignalFormsData);
             });
         }
@@ -298,8 +298,8 @@ namespace VC.App {
     }
 
     export class InitTC {
-        constructor(targetId: string, actionUrl: string) {
-            ReactDOM.render(<div><TC targetId={targetId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><TC targetId={targetId} classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

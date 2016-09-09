@@ -240,6 +240,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Classroom.cs" />
+    <Compile Include="Models\ComputerViewModel.cs" />
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\Forms.cs" />
     <Compile Include="Models\VirtualClassroom.designer.cs">
@@ -386,13 +387,14 @@
     <Content Include="Views\PC\Index.cshtml" />
     <Content Include="Views\SC\Index.cshtml" />
     <Content Include="Views\TC\Index.cshtml" />
-    <Content Include="tsconfig.json" />
+    <None Include="tsconfig.json.bak" />
     <Content Include="Views\FC\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\components\Selector.tsx" />
+    <TypeScriptCompile Include="Scripts\global\components\Selector.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
+    <TypeScriptCompile Include="Scripts\app\ac\FeaturedBox.tsx" />
     <TypeScriptCompile Include="Scripts\app\pc\FormsPc.tsx" />
     <TypeScriptCompile Include="Scripts\app\FC.tsx" />
     <TypeScriptCompile Include="Scripts\app\tc\FormsTc.tsx" />
@@ -408,7 +410,7 @@
     <TypeScriptCompile Include="Scripts\app\components\Box.tsx" />
     <TypeScriptCompile Include="Scripts\app\components\BoxLabel.tsx" />
     <TypeScriptCompile Include="Scripts\app\components\Chat.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\ComputersList.tsx" />
+    <TypeScriptCompile Include="Scripts\app\ac\ComputersList.tsx" />
     <TypeScriptCompile Include="Scripts\app\components\Status.tsx" />
     <TypeScriptCompile Include="Scripts\app\components\SwitchButton.tsx" />
     <TypeScriptCompile Include="Scripts\app\components\Volume.tsx" />
@@ -449,7 +451,9 @@
     </Content>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Scripts\admin\components\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

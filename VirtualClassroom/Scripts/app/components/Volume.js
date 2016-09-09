@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -15,6 +14,11 @@ var VC;
                     if (this.state.volume !== volume) {
                         this.setState({ volume: volume });
                         this.props.onVolumeChanged(volume);
+                    }
+                }
+                resetVolume(volume) {
+                    if (this.state.volume !== volume) {
+                        this.setState({ volume: volume });
                     }
                 }
                 increaseVolume() {

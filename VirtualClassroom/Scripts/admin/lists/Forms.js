@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -72,7 +71,7 @@ var VC;
                     }
                 }
                 isTitleValid(title) {
-                    return !(title.length === 0 || !title.trim()); // cannot be empty
+                    return !(title.length === 0 || !title.trim());
                 }
                 validateTitle(focusOnError) {
                     let valid = true;
@@ -117,15 +116,12 @@ var VC;
                         this.divButtons.style.display = "none";
                         this.divProcessing.style.display = "block";
                         if (this.state.type === Lists.BoxTypes.Create) {
-                            // create
                             this.doCreate();
                         }
                         else if (this.state.type === Lists.BoxTypes.Edit) {
-                            // edit
                             this.doUpdate();
                         }
                         else {
-                            // delete
                             this.doDelete();
                         }
                     }
@@ -135,14 +131,11 @@ var VC;
                     let titleVal = $(tbTitle).val();
                     let formData = this.form.getData(VC.Forms.DataType.Form);
                     VC.Forms.FormApi.Insert({ classroomId: this.props.classroomId, type: this.props.formType, title: titleVal, formData: formData }, (id) => {
-                        // success
                         this.hide();
-                        // add to list
                         let d = this.props.getListItems();
                         d.push({ id: id, title: titleVal });
                         this.props.setListItems(d);
                     }, (error) => {
-                        // error
                         alert("ERROR: " + error);
                         this.hide();
                     });
@@ -152,9 +145,7 @@ var VC;
                     let titleVal = $(tbTitle).val();
                     let formData = this.form.getData(VC.Forms.DataType.Form);
                     VC.Forms.FormApi.Update({ uid: this.state.item.id, classroomId: this.props.classroomId, type: this.props.formType, title: titleVal, formData: formData }, () => {
-                        // success
                         this.hide();
-                        // update list
                         let d = this.props.getListItems();
                         for (let i = 0; i < d.length; i++) {
                             if (d[i].id === this.state.item.id) {
@@ -163,16 +154,13 @@ var VC;
                         }
                         this.props.setListItems(d);
                     }, (error) => {
-                        // error
                         alert("ERROR: " + error);
                         this.hide();
                     });
                 }
                 doDelete() {
                     VC.Forms.FormApi.Delete(this.state.item.id, () => {
-                        // success
                         this.hide();
-                        // remove from list
                         let d = this.props.getListItems();
                         let _d = [];
                         for (let i = 0; i < d.length; i++) {
@@ -182,7 +170,6 @@ var VC;
                         }
                         this.props.setListItems(_d);
                     }, (error) => {
-                        // error
                         alert("ERROR: " + error);
                         this.hide();
                     });

@@ -38,6 +38,7 @@ namespace VirtualClassroom.Code
             public bool Audio;
             public bool Video;
             public List<int?> Volume;
+            public int Layout;
 
             public ComputerConfig()
             {
@@ -64,24 +65,24 @@ namespace VirtualClassroom.Code
                 this.Video = sc.Video;
                 this.Volume = new List<int?>();
 
-                int scLayout = VC.ScLayout(sc.Uid);
+                this.Layout = VC.ScLayout(sc.Uid);
 
-                if (scLayout > 0)
+                if (this.Layout > 0)
                 {
                     this.Volume.Add(sc.Volume1);
                     this.Volume.Add(sc.Volume2);
                 }
-                if (scLayout > 2)
+                if (this.Layout > 2)
                 {
                     this.Volume.Add(sc.Volume3);
                     this.Volume.Add(sc.Volume4);
                 }
-                if (scLayout > 4)
+                if (this.Layout > 4)
                 {
                     this.Volume.Add(sc.Volume5);
                     this.Volume.Add(sc.Volume6);
                 }
-                if (scLayout > 6)
+                if (this.Layout > 6)
                 {
                     this.Volume.Add(sc.Volume7);
                     this.Volume.Add(sc.Volume8);
@@ -99,12 +100,97 @@ namespace VirtualClassroom.Code
             {
                 this.Video = false;
                 this.Audio = false;
+                this.Volume = new List<int?>();
 
                 var q = from x in fc.TblFCPCs
                         orderby x.Position
                         select x;
 
-                this.Volume = q.Select(x => (int?)x.Volume).ToList();
+                List<TblFCPC> tbl = q.ToList();
+
+                this.Layout = VC.FcLayout(fc.Uid);
+
+                if (this.Layout > 0)
+                {
+                    if (tbl.Where(x => x.Position == 1).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 1).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                    if (tbl.Where(x => x.Position == 2).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 2).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                }
+
+                if (this.Layout > 2)
+                {
+                    if (tbl.Where(x => x.Position == 3).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 3).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                    if (tbl.Where(x => x.Position == 4).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 4).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                }
+
+                if (this.Layout > 4)
+                {
+                    if (tbl.Where(x => x.Position == 5).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 5).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                    if (tbl.Where(x => x.Position == 6).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 6).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                }
+
+                if (this.Layout > 6)
+                {
+                    if (tbl.Where(x => x.Position == 7).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 7).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                    if (tbl.Where(x => x.Position == 8).Count() == 1)
+                    {
+                        this.Volume.Add(tbl.Where(x => x.Position == 8).Single().Volume);
+                    }
+                    else
+                    {
+                        this.Volume.Add(80);
+                    }
+                }
+
+                // this.Volume = q.Select(x => (int?)x.Volume).ToList();
             }
         }
         [DataObject]
@@ -274,7 +360,7 @@ namespace VirtualClassroom.Code
                 });
             }
 
-            // featured computers
+            // featured computer
             group.AddRange(
                 pc.TblFCPCs.Select(x =>
                     new GroupComputer

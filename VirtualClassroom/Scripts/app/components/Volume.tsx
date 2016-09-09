@@ -28,6 +28,13 @@ namespace VC.App.Components {
             }
         }
 
+        public resetVolume(volume: number): void {
+            // same as set Volume, just without callback
+            if (this.state.volume !== volume) {
+                this.setState({ volume: volume } as IVolumeState);
+            }
+        }
+
         private increaseVolume(): void {
             let v: number = this.state.volume;
             if (v < 100) {

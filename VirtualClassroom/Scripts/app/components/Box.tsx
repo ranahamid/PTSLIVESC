@@ -130,6 +130,10 @@ namespace VC.App.Components {
             }
         }
 
+        public isConnected(): boolean {
+            return this.streamHandler !== null;
+        }
+
         render(): JSX.Element {
             return (
                 <div ref={(ref: HTMLDivElement) => this.divBox = ref} className={this.props.className} style={{ display: (this.props.visible ? "block" : "none") }}></div>

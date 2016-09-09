@@ -1,10 +1,13 @@
-﻿@{
+﻿@model VirtualClassroom.Models.ComputerViewModel
+
+@{
     ViewBag.Title = "Personal Computer";
+    ViewBag.Name = Model.Name;
 }
 
-@if (!String.IsNullOrEmpty(ViewBag.ErrorMessage))
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
 {
-    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
 }
 else
 {
@@ -20,7 +23,7 @@ else
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var _c = new VC.App.InitPC('targetDiv', '@Url.Action()');
+            var _c = new VC.App.InitPC('targetDiv', '@Model.ClassroomId', '@Model.ActionUrl');
         });
     </script>
 }

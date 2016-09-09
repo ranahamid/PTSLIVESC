@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -60,7 +59,6 @@ var VC;
                 onCheckedItemChanged(id, e) {
                     let checkedItems = this.answer().checkedItems;
                     if (!(e.target.checked) && this.isChecked(id)) {
-                        // remove from list
                         let _checkedItems = [];
                         for (let i = 0; i < checkedItems.length; i++) {
                             if (checkedItems[i] !== id) {
@@ -70,7 +68,6 @@ var VC;
                         this.saveAnswer({ checkedItems: _checkedItems });
                     }
                     else if (e.target.checked && !this.isChecked(id)) {
-                        // add to list
                         checkedItems.push(id);
                         this.saveAnswer({ checkedItems: checkedItems });
                     }
@@ -143,15 +140,13 @@ var VC;
                     for (let i = 0; i < resultData.checkedItems.length; i++) {
                         result[resultData.checkedItems[i] - 1]++;
                     }
-                    result[result.length - 1]++; // total count
-                    // update chart
+                    result[result.length - 1]++;
                     this.chart.update(this.buildDataPoints(result));
                     return result;
                 }
                 componentDidMount() {
                     let result = this.result();
                     if (this.props.view === Forms.FormViews.Result && result !== null) {
-                        // show chart
                         this.chart.show(this.buildDataPoints(result));
                     }
                 }

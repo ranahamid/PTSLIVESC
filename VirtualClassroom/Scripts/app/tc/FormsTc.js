@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -29,22 +28,18 @@ var VC;
                         contentType: "application/json",
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // success
                                 this.setState({ status: ListStatus.Success, errorMessage: "", items: r.data });
                             }
                             else {
-                                // error
                                 this.setState({ status: ListStatus.Error, errorMessage: r.message, items: null });
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             this.setState({ status: ListStatus.Error, errorMessage: error, items: null });
                         }
                     });
                 }
                 answerReceived(formId, status, count) {
-                    // try to find the form and update status
                     if (count === undefined) {
                         count = 1;
                     }
@@ -89,11 +84,9 @@ var VC;
                 renderBody() {
                     let body;
                     if (this.state.status === ListStatus.Loading) {
-                        // loading
                         body = this.renderLoader();
                     }
                     else if (this.state.status === ListStatus.Error) {
-                        // error
                         body = this.renderError(this.state.errorMessage);
                     }
                     else if (this.state.items.length === 0) {
@@ -215,22 +208,18 @@ var VC;
                         contentType: "application/json",
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // success
                                 this.setState({ formId: this.state.formId, formTitle: this.state.formTitle, status: ListStatus.Success, errorMessage: "", items: r.data });
                             }
                             else {
-                                // error
                                 this.setState({ formId: this.state.formId, formTitle: this.state.formTitle, status: ListStatus.Error, errorMessage: r.message, items: null });
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             this.setState({ formId: this.state.formId, formTitle: this.state.formTitle, status: ListStatus.Error, errorMessage: error, items: null });
                         }
                     });
                 }
                 answerReceived(answerId, status) {
-                    // try to find the answer and update status
                     this.state.items.forEach((item) => {
                         if (item.id === answerId) {
                             item.status = status;
@@ -268,11 +257,9 @@ var VC;
                 renderBody() {
                     let body;
                     if (this.state.status === ListStatus.Loading) {
-                        // loading
                         body = this.renderLoader();
                     }
                     else if (this.state.status === ListStatus.Error) {
-                        // error
                         body = this.renderError(this.state.errorMessage);
                     }
                     else if (this.state.items.length === 0) {
@@ -285,29 +272,23 @@ var VC;
                 }
                 renderItemStatus(item) {
                     if (item.status === VC.Forms.FormAnswerStatus.Pending) {
-                        // pending
                         return (React.createElement("span", {className: "label label-warning"}, "Pending ", FormsTc.getTitleByType(this.props.type)));
                     }
                     else if (item.status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("span", {className: "label label-success"}, "Answer Received"));
                     }
                     else {
-                        // declined
                         return (React.createElement("span", {className: "label label-danger"}, FormsTc.getTitleByType(this.props.type), " Declined"));
                     }
                 }
                 renderItemButtons(item) {
                     if (item.status === VC.Forms.FormAnswerStatus.Pending) {
-                        // received
                         return (React.createElement("div", null, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-eye-open"}), " View")));
                     }
                     else if (item.status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("div", null, React.createElement("button", {type: "button", className: "btn btn-sm btn-success", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-eye-open"}), " View")));
                     }
                     else {
-                        // declined
                         return (React.createElement("div", null, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-eye-open"}), " View")));
                     }
                 }
@@ -335,7 +316,6 @@ var VC;
                 }
                 answerReceived(formId, status, resultData) {
                     if (status === VC.Forms.FormAnswerStatus.Answered && resultData !== null) {
-                        // update result in the form
                         this.form.updateResult(resultData);
                     }
                     this.answersStatus.answerReceived(status);
@@ -436,15 +416,12 @@ var VC;
                 }
                 renderBoxStatus(status) {
                     if (status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("span", {className: "label label-success"}, "Answered"));
                     }
                     else if (status === VC.Forms.FormAnswerStatus.Declined) {
-                        // declined
                         return (React.createElement("span", {className: "label label-danger"}, "Declined"));
                     }
                     else if (status === VC.Forms.FormAnswerStatus.Pending) {
-                        // pending
                         return (React.createElement("span", {className: "label label-warning"}, "Pending"));
                     }
                     else {
@@ -481,7 +458,6 @@ var VC;
                     return title;
                 }
             }
-            // surveys TC
             class SurveysTc extends FormsTc {
                 init() {
                     this.divAnswersList.style.display = "none";
@@ -504,7 +480,6 @@ var VC;
                     this.formBox.openAnswer(item);
                 }
                 onSendFormClick(formId) {
-                    // send
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -515,29 +490,24 @@ var VC;
                             this.formBox.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 if (r.data) {
-                                    // success
                                     this.props.onFormSent();
                                     this.formsList.answerReceived(formId, VC.Forms.FormAnswerStatus.Pending, r.data);
                                 }
                                 else {
-                                    // not send
                                     alert("Something went wrong: The survey has not been sent.");
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.formBox.hide();
                         }
                     });
                 }
                 onDeleteAnswerClick(answerId) {
-                    // delete
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -548,29 +518,24 @@ var VC;
                             this.formBox.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 if (r.data !== null) {
-                                    // success - update list
                                     this.props.onAnswerDeleted(r.data);
                                     this.answersList.deleteAnswer(answerId);
                                 }
                                 else {
-                                    // not deleted
                                     alert("Something went wrong: The survey answer has not been deleted.");
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.formBox.hide();
                         }
                     });
                 }
                 onDeleteAllClick(formId) {
-                    // delete all answers
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -581,22 +546,18 @@ var VC;
                             this.formBox.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 if (r.data !== null) {
-                                    // success - update list
                                     this.props.onAllAnswersDeleted(r.data);
                                     this.answersList.deleteAllAnswers();
                                 }
                                 else {
-                                    // not deleted
                                     alert("Something went wrong: The survey answers has not been deleted.");
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.formBox.hide();
                         }
@@ -617,7 +578,6 @@ var VC;
                 }
             }
             TC.SurveysTc = SurveysTc;
-            // polls TC
             class PollsTc extends FormsTc {
                 init() {
                     this.divAnswersResult.style.display = "none";
@@ -637,7 +597,6 @@ var VC;
                     this.answersResult.init(item);
                 }
                 onSendFormClick(formId) {
-                    // send
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -648,32 +607,26 @@ var VC;
                             this.formBox.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 if (r.data) {
-                                    // success
                                     this.props.onFormSent();
                                     this.formsList.answerReceived(formId, VC.Forms.FormAnswerStatus.Pending, r.data);
                                 }
                                 else {
-                                    // not send
                                     alert("Something went wrong: The poll has not been sent.");
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.formBox.hide();
                         }
                     });
                 }
                 onDeleteAnswerClick(answerId) {
-                    // delete single answer, not used
                 }
                 onDeleteAllClick(formId) {
-                    // delete all answers
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -684,22 +637,18 @@ var VC;
                             this.formBox.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 if (r.data !== null) {
-                                    // success - update list
                                     this.props.onAllAnswersDeleted(r.data);
                                     this.answersResult.deleteAllAnswers();
                                 }
                                 else {
-                                    // not deleted
                                     alert("Something went wrong: The poll answers has not been deleted.");
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.formBox.hide();
                         }

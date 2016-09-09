@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -87,7 +86,6 @@ var VC;
                     }
                 }
                 onKeyDown(e) {
-                    // if enter
                     let message = this.tb.value;
                     if (e.which === 13) {
                         e.preventDefault();
@@ -99,11 +97,8 @@ var VC;
                     else {
                         let message = this.tb.value;
                         if (message.length >= this.maxLength) {
-                            // allow: backspace, delete, tab, escape, and enter
                             if (e.keyCode === 46 || e.keyCode === 8 || e.keyCode === 9 || e.keyCode === 27 || e.keyCode === 13 ||
-                                // allow: Ctrl+A
                                 (e.keyCode === 65 && e.ctrlKey === true) ||
-                                // allow: home, end, left, right, top, bottom
                                 (e.keyCode >= 35 && e.keyCode <= 40)) {
                             }
                             else {
@@ -117,7 +112,6 @@ var VC;
                     this.fitTbHeight();
                 }
                 onPaste(e) {
-                    // paste disabled
                     e.preventDefault();
                 }
                 focus() {
@@ -158,7 +152,6 @@ var VC;
                     this.chatBox.focus();
                 }
                 addItem(item) {
-                    // avoid double item from signaling
                     if (item.me || item.userUid !== this.state.uid) {
                         this.chatList.addItem(item);
                     }

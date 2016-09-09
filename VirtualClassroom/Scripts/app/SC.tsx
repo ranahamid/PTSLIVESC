@@ -39,6 +39,7 @@ namespace VC.App {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
+                this.setState({ layout: this.dataResponse.ComputerSetting.Layout } as IState);
                 this.setStatusVisibility(false);
                 this.setUiVisibility(true);
                 this.boxPublisher.publish(this.session,
@@ -247,24 +248,24 @@ namespace VC.App {
         }
         private fitLayerSizes(windowWidth: number, windowHeight: number): void {
             // boxes + width of labels & floating chat divs
-            if (this.props.layout > 6) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            if (this.state.layout > 6) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "25%")
                         .css("height", windowHeight / 2 + "px"); // 8
                     $(this.label[i].getParentDiv()).css("width", "25%");
                     $(this.divFloatingChat[i]).css("width", "25%");
                 }
-            } else if (this.props.layout > 4) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            } else if (this.state.layout > 4) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "33.33%")
                         .css("height", windowHeight / 2 + "px"); // 6
                     $(this.label[i].getParentDiv()).css("width", "33.33%");
                     $(this.divFloatingChat[i]).css("width", "33.33%");
                 }
-            } else if (this.props.layout > 2) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            } else if (this.state.layout > 2) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "50%")
                         .css("height", windowHeight / 2 + "px"); // 4
@@ -272,7 +273,7 @@ namespace VC.App {
                     $(this.divFloatingChat[i]).css("width", "50%");
                 }
             } else {
-                for (let i: number = 0; i < this.props.layout; i++) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "50%")
                         .css("height", windowHeight + "px"); // 2
@@ -281,13 +282,13 @@ namespace VC.App {
                 }
             }
             // labels
-            for (let i: number = 0; i < this.props.layout; i++) {
+            for (let i: number = 0; i < this.state.layout; i++) {
                 $(this.label[i].getParentDiv())
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
                     .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height()) + "px");
             }
             // floating chat
-            for (let i: number = 0; i < this.props.layout; i++) {
+            for (let i: number = 0; i < this.state.layout; i++) {
 
                 $(this.divFloatingChat[i])
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
@@ -300,7 +301,7 @@ namespace VC.App {
             // fit buttons on the bottom of the page
             if (!this.privateChatOpened) {
                 this.divButtonChatPrivate.style.left = "0px";
-                //this.divButtonChatPrivate.style.top = (windowHeight - this.divButtonChatPrivate.clientHeight) + "px";
+                // this.divButtonChatPrivate.style.top = (windowHeight - this.divButtonChatPrivate.clientHeight) + "px";
                 this.divButtonChatPrivate.style.top = "0px";
             } else {
                 this.divButtonChatPrivate.style.left = "0px";
@@ -337,7 +338,7 @@ namespace VC.App {
         }
 
         private showPrivateChat(): void {
-            for (let i: number = 0; i < this.props.layout; i++) {
+            for (let i: number = 0; i < this.state.layout; i++) {
                 this.divFloatingChat[i].style.display = "none";
             }
             this.divButtonChatPrivate.style.display = "none";
@@ -358,7 +359,7 @@ namespace VC.App {
 
         private hidePrivateChat(): void {
             this.divChatPrivate.style.display = "none";
-            for (let i: number = 0; i < this.props.layout; i++) {
+            for (let i: number = 0; i < this.state.layout; i++) {
                 this.divFloatingChat[i].style.display = "block";
             }
             this.divButtonChatPrivate.style.display = "block";
@@ -384,7 +385,7 @@ namespace VC.App {
             let connections: Array<any> = this.getConnectionsOfMyGroup(Roles.PC);
             connections.push(this.getMyConnection());
             // send signal
-            connections.forEach((c) => {
+            connections.forEach((c: any) => {
                 Global.Signaling.sendSignal<Global.ISignalChatData>(this.session, c, Global.SignalTypes.Chat, {
                     userUid: item.userUid,
                     userName: item.userName,
@@ -425,32 +426,32 @@ namespace VC.App {
                     <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }}>
                         <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="" visible={false} />
 
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 0} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 0} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 2} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 2} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 4} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 4} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 6} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 6} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 4} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 4} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 6} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 6} />
 
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 0} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 0} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[2] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 2} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[3] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 2} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[4] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 4} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[5] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 4} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[6] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 6} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[7] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 6} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[2] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[3] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[4] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 4} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[5] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 4} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[6] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 6} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[7] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 6} />
 
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[0] = ref} className="floatingChat" style={{ display: (this.props.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[0] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[1] = ref} className="floatingChat" style={{ display: (this.props.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[1] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[2] = ref} className="floatingChat" style={{ display: (this.props.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[2] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[3] = ref} className="floatingChat" style={{ display: (this.props.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[3] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[4] = ref} className="floatingChat" style={{ display: (this.props.layout > 4 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[4] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[5] = ref} className="floatingChat" style={{ display: (this.props.layout > 4 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[5] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[6] = ref} className="floatingChat" style={{ display: (this.props.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[6] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[7] = ref} className="floatingChat" style={{ display: (this.props.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[7] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[0] = ref} className="floatingChat" style={{ display: (this.state.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[0] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[1] = ref} className="floatingChat" style={{ display: (this.state.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[1] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[2] = ref} className="floatingChat" style={{ display: (this.state.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[2] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[3] = ref} className="floatingChat" style={{ display: (this.state.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[3] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[4] = ref} className="floatingChat" style={{ display: (this.state.layout > 4 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[4] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[5] = ref} className="floatingChat" style={{ display: (this.state.layout > 4 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[5] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[6] = ref} className="floatingChat" style={{ display: (this.state.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[6] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[7] = ref} className="floatingChat" style={{ display: (this.state.layout > 6 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[7] = ref} fadingOut={true} /></div>
 
                         <div style={{ display: "none" }}>
 
@@ -477,8 +478,8 @@ namespace VC.App {
     }
 
     export class InitSC {
-        constructor(targetId: string, actionUrl: string, layout: number) {
-            ReactDOM.render(<div><SC targetId={targetId} actionUrl={actionUrl} layout={layout} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><SC targetId={targetId} classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

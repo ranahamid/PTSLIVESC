@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -25,20 +24,15 @@ var VC;
                         url: this.props.actionUrl + "/LoadAnswers",
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // success
-                                this.setState({ status: ListStatus.Success, errorMessage: "", items: r.data }, 
-                                // callback
-                                    () => {
+                                this.setState({ status: ListStatus.Success, errorMessage: "", items: r.data }, () => {
                                     this.props.onPendingAnswersChanged(this.getPendingAnswersCount());
                                 });
                             }
                             else {
-                                // error
                                 this.setState({ status: ListStatus.Error, errorMessage: r.message, items: null });
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             this.setState({ status: ListStatus.Error, errorMessage: error, items: null });
                         }
                     });
@@ -61,9 +55,7 @@ var VC;
                             item.status = status;
                         }
                     });
-                    this.setState({ items: this.state.items }, 
-                    // callback
-                        () => {
+                    this.setState({ items: this.state.items }, () => {
                         this.props.onPendingAnswersChanged(this.getPendingAnswersCount());
                     });
                 }
@@ -80,9 +72,7 @@ var VC;
                         }
                     }
                     if (removed) {
-                        this.setState({ items: _items }, 
-                        // callback
-                            () => {
+                        this.setState({ items: _items }, () => {
                             this.props.onPendingAnswersChanged(this.getPendingAnswersCount());
                         });
                     }
@@ -99,11 +89,9 @@ var VC;
                 renderBody() {
                     let body;
                     if (this.state.status === ListStatus.Loading) {
-                        // loading
                         body = this.renderLoader();
                     }
                     else if (this.state.status === ListStatus.Error) {
-                        // error
                         body = this.renderError(this.state.errorMessage);
                     }
                     else if (this.state.items.length === 0) {
@@ -116,29 +104,23 @@ var VC;
                 }
                 renderItemStatus(item) {
                     if (item.status === VC.Forms.FormAnswerStatus.Pending) {
-                        // pending
                         return (React.createElement("span", {className: "label label-warning"}, "Pending ", FormsPc.getTitleByType(item.form.type)));
                     }
                     else if (item.status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("span", {className: "label label-success"}, FormsPc.getTitleByType(item.form.type), " Submitted"));
                     }
                     else {
-                        // declined
                         return (React.createElement("span", {className: "label label-danger"}, FormsPc.getTitleByType(item.form.type), " Declined"));
                     }
                 }
                 renderItemButton(item) {
                     if (item.status === VC.Forms.FormAnswerStatus.Pending) {
-                        // pending
                         return (React.createElement("button", {type: "button", className: "btn btn-sm btn-success", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-play-circle"}), " Start ", FormsPc.getTitleByType(item.form.type)));
                     }
                     else if (item.status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-eye-open"}), " View"));
                     }
                     else {
-                        // declined
                         return (React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.props.onViewClick(item)}, React.createElement("span", {className: "glyphicon glyphicon-eye-open"}), " View"));
                     }
                 }
@@ -167,7 +149,6 @@ var VC;
                 componentDidUpdate(prevProps, prevState) {
                     if (this.showBox) {
                         this.showBox = false;
-                        // show
                         $(this.divBox).modal("show");
                         this.boxWillShow();
                     }
@@ -184,7 +165,6 @@ var VC;
                 }
                 open(item) {
                     this.showBox = true;
-                    // form view
                     if (item.status === VC.Forms.FormAnswerStatus.Pending) {
                         this.form.changeView(VC.Forms.FormViews.View);
                     }
@@ -205,12 +185,10 @@ var VC;
                         this.divProcessing.style.display = "block";
                         let answerData = this.form.getData(VC.Forms.DataType.Answer);
                         VC.Forms.FormApi.UpdateAnswer({ uid: this.state.answerId, formData: answerData, status: VC.Forms.FormAnswerStatus.Answered }, () => {
-                            // success
                             let resultData = this.form.getData(VC.Forms.DataType.Result);
                             this.hide();
                             this.props.onAnswerSubmitted(this.state.answerId, this.state.formId, this.state.type, resultData);
                         }, (error) => {
-                            // error
                             alert(error);
                             this.hide();
                         });
@@ -220,22 +198,18 @@ var VC;
                     this.divButtons.style.display = "none";
                     this.divProcessing.style.display = "block";
                     VC.Forms.FormApi.UpdateAnswer({ uid: this.state.answerId, status: VC.Forms.FormAnswerStatus.Declined }, () => {
-                        // success
                         this.hide();
                         this.props.onAnswerDeclined(this.state.answerId, this.state.formId, this.state.type);
                     }, (error) => {
-                        // error
                         alert(error);
                         this.hide();
                     });
                 }
                 renderBoxStatus(status) {
                     if (status === VC.Forms.FormAnswerStatus.Answered) {
-                        // answered
                         return (React.createElement("span", {className: "label label-success"}, "Submitted"));
                     }
                     else if (status === VC.Forms.FormAnswerStatus.Declined) {
-                        // declined
                         return (React.createElement("span", {className: "label label-danger"}, "Declined"));
                     }
                     else {

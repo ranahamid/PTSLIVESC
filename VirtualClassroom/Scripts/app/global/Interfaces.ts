@@ -26,6 +26,7 @@ namespace VC.App.Global {
         Audio: boolean;
         Video: boolean;
         Volume: Array<number>;
+        Layout: number;
     }
     export interface GroupComputer {
         Uid: string;

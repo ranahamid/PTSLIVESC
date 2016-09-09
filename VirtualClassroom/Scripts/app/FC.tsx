@@ -27,6 +27,7 @@ namespace VC.App {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me
+                this.setState({ layout: this.dataResponse.ComputerSetting.Layout } as IState);
                 this.setStatusVisibility(false);
                 this.setUiVisibility(true);
             } else if (this.isInMyGroup(tokenData.Uid)) {
@@ -106,6 +107,9 @@ namespace VC.App {
                 case Global.SignalTypes.TurnOff:
                     this.turnOffSignalReceived(event);
                     break;
+                case Global.SignalTypes.FeaturedChanged:
+                    this.featuredChanged(event);
+                    break;
             }
         }
         private volumeSignalReceived(event: any): void {
@@ -119,6 +123,90 @@ namespace VC.App {
         }
         private turnOffSignalReceived(event: any): void {
             this.disconnect();
+        }
+        private featuredChanged(event: any): void {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: this.props.actionUrl + "/GetData",
+                success: (r: VC.Global.Data.IDataResponse<Global.IComputerData>): void => {
+                    if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
+                        this.featuredStudentsChanged(r.data);
+                    } else {
+                        // error
+                        alert(r.message);
+                    }
+                },
+                error: (xhr: JQueryXHR, status: string, error: string): void => {
+                    // error
+                    alert("XHR Error: " + xhr.statusText);
+                }
+            });
+        }
+        private featuredStudentsChanged(data: Global.IComputerData): void {
+            // go thru current layout and unsubscribe from students that doesn't match their position anymore
+            for (let i: number = 0; i < this.state.layout; i++) {
+                if (this.boxSubscribers[i].isConnected()) {
+                    let newStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, data);
+                    let currentStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, this.dataResponse);
+                    if (!this.compareGroupComputers(newStudent, currentStudent)) {
+                        // unsubscribe
+                        this.boxSubscribers[i].unsubscribe(this.session);
+                        this.label[i].setText("Student PC not connected.", Components.BoxLabelStyle.NotConnected);
+                    } else {
+                        // since the student is recreated, update to default volume
+                        this.boxSubscribers[i].audioVolume(80);
+                    }
+                }
+            }
+            // update layout when need
+            if (this.dataResponse.ComputerSetting.Layout !== data.ComputerSetting.Layout) {
+                this.setState({ layout: data.ComputerSetting.Layout } as IState, () => {
+                    this.fitLayout();
+                });
+            }
+
+            // subscribe to new students
+            for (let i: number = 0; i < this.state.layout; i++) {
+                if (!this.boxSubscribers[i].isConnected()) {
+                    let newStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, data);
+                    if (newStudent !== null) {
+                        // try to get stream
+                        let stream: any = this.getStream(newStudent.Uid);
+                        if (stream !== null) {
+                            // subscribe
+                            this.boxSubscribers[i].subscribe(this.session, stream, data.ComputerSetting.Volume[i]);
+                            // label
+                            let newStudentConnection: any = this.getConnectionByUid(newStudent.Uid);
+                            let tokenData: Global.TokenData = Global.Fce.toTokenData(newStudentConnection.data);
+                            this.label[i].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
+                        }
+                    }
+                }
+            }
+
+            // update data response
+            this.dataResponse = data;
+        }
+        private compareGroupComputers(c1: Global.GroupComputer, c2: Global.GroupComputer): boolean {
+            let isEqual: boolean = false;
+
+            if (c1 === null && c2 === null) {
+                isEqual = true;
+            } else if (c1 !== null && c2 !== null) {
+                isEqual = (c1.Uid === c2.Uid);
+            }
+
+            return isEqual;
+        }
+        private getGroupStudentComputerByPosition(position: number, data: Global.IComputerData): Global.GroupComputer {
+            let iUser: Global.GroupComputer = null;
+            for (let i: number = 0; i < data.Group.length && iUser === null; i++) {
+                if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
+                    iUser = data.Group[i];
+                }
+            }
+            return iUser;
         }
 
         private setStatusVisibility(visible: boolean): void {
@@ -153,29 +241,29 @@ namespace VC.App {
         }
         private fitLayerSizes(windowWidth: number, windowHeight: number): void {
             // boxes + width of labels & floating chat divs
-            if (this.props.layout > 6) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            if (this.state.layout > 6) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "25%")
                         .css("height", windowHeight / 2 + "px"); // 8
                     $(this.label[i].getParentDiv()).css("width", "25%");
                 }
-            } else if (this.props.layout > 4) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            } else if (this.state.layout > 4) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "33.33%")
                         .css("height", windowHeight / 2 + "px"); // 6
                     $(this.label[i].getParentDiv()).css("width", "33.33%");
                 }
-            } else if (this.props.layout > 2) {
-                for (let i: number = 0; i < this.props.layout; i++) {
+            } else if (this.state.layout > 2) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "50%")
                         .css("height", windowHeight / 2 + "px"); // 4
                     $(this.label[i].getParentDiv()).css("width", "50%");
                 }
             } else {
-                for (let i: number = 0; i < this.props.layout; i++) {
+                for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "50%")
                         .css("height", windowHeight + "px"); // 2
@@ -183,7 +271,7 @@ namespace VC.App {
                 }
             }
             // labels
-            for (let i: number = 0; i < this.props.layout; i++) {
+            for (let i: number = 0; i < this.state.layout; i++) {
                 $(this.label[i].getParentDiv())
                     .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
                     .css("top", ($(this.boxSubscribers[i].getBox()).position().top + $(this.boxSubscribers[i].getBox()).height() - $(this.label[i].getParentDiv()).height()) + "px");
@@ -209,23 +297,23 @@ namespace VC.App {
                         <Components.Status ref={(ref: Components.Status) => this.status = ref} text="Connecting ..." style={Components.StatusStyle.Connecting} className="cStatus" statusClasses={statusClasses} />
                     </div>
                     <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }}>
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 0} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 0} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 2} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 2} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 4} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 4} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 6} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={this.props.layout > 6} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 4} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 4} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 6} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 6} />
 
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 0} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 0} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[2] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 2} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[3] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 2} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[4] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 4} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[5] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 4} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[6] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 6} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[7] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.props.layout > 6} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[2] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[3] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[4] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 4} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[5] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 4} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[6] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 6} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[7] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 6} />
                     </div>
                 </div>
             );
@@ -233,8 +321,8 @@ namespace VC.App {
     }
 
     export class InitFC {
-        constructor(targetId: string, actionUrl: string, layout: number) {
-            ReactDOM.render(<div><FC targetId={targetId} actionUrl={actionUrl} layout={layout} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><FC targetId={targetId} classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

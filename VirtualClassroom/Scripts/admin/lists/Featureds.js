@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -30,7 +29,7 @@ var VC;
             Lists.Featureds = Featureds;
             class FeaturedsList extends Lists.List {
                 renderItemCols(d) {
-                    let names = '';
+                    let names = "";
                     if (d.students.length === 0) {
                         names = "-";
                     }
@@ -84,7 +83,6 @@ var VC;
                     $(tbName).val(this.state.item.name);
                     this.setValidationStatus(FORM_ID, Lists.BoxValidationStatus.None, "");
                     this.setValidationStatus(FORM_NAME, Lists.BoxValidationStatus.None, "");
-                    console.log(this.state.item.students);
                     let tbStudent1 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT1];
                     let tbStudent2 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT2];
                     let tbStudent3 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT3];
@@ -121,9 +119,8 @@ var VC;
                     }
                 }
                 isIdValid(id) {
-                    let valid = id.length > 0; // cannot be empty
+                    let valid = id.length > 0;
                     let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
-                    // check allowed chars
                     if (valid) {
                         for (let i = 0; i < id.length && valid; i++) {
                             if (allowedChars.indexOf(id[i].toLowerCase()) === -1) {
@@ -134,7 +131,7 @@ var VC;
                     return valid;
                 }
                 isNameValid(name) {
-                    return name.trim().length > 0; // cannot be empty
+                    return name.trim().length > 0;
                 }
                 validateId(focusOnError) {
                     let valid = true;
@@ -347,12 +344,10 @@ var VC;
                                 callback(r.data);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -366,15 +361,12 @@ var VC;
                         this.divButtons.style.display = "none";
                         this.divProcessing.style.display = "block";
                         if (this.state.type === Lists.BoxTypes.Create) {
-                            // check for existing item before create
                             this.checkForExistingId(valId, this.state.item.id, this.submitFormIdValidated.bind(this));
                         }
                         else if (this.state.type === Lists.BoxTypes.Edit) {
-                            // edit
                             this.doUpdate();
                         }
                         else {
-                            // delete
                             this.doDelete();
                         }
                     }
@@ -388,7 +380,6 @@ var VC;
                         $(tbId).focus();
                     }
                     else {
-                        // create
                         this.doCreate();
                     }
                 }
@@ -455,18 +446,15 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // add to list
                                 let d = this.props.getListItems();
                                 d.push(r.data);
                                 this.props.setListItems(d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -535,7 +523,6 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // update list
                                 let d = this.props.getListItems();
                                 for (let i = 0; i < d.length; i++) {
                                     if (d[i].id === this.state.item.id) {
@@ -545,12 +532,10 @@ var VC;
                                 this.props.setListItems(d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -566,7 +551,6 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // remove from list
                                 let d = this.props.getListItems();
                                 let _d = [];
                                 for (let i = 0; i < d.length; i++) {
@@ -577,12 +561,10 @@ var VC;
                                 this.props.setListItems(_d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -592,7 +574,7 @@ var VC;
                     this.validateStudents(false);
                 }
                 renderForm() {
-                    return (React.createElement("form", {className: "form-horizontal", role: "form"}, React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_ID, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_ID}, "Id: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_ID, type: "text", className: "form-control", disabled: this.state.type !== Lists.BoxTypes.Create, placeholder: "Featured computer Id", maxLength: "25", onPaste: () => this.validateId(false), onCut: () => this.validateId(false), onKeyUp: (e) => this.onKeyPressId(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_ID, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_NAME, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_NAME}, "Name: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_NAME, type: "text", className: "form-control", disabled: this.state.type === Lists.BoxTypes.Delete, placeholder: "Featured computer name", maxLength: "150", onPaste: () => this.validateName(false), onCut: () => this.validateName(false), onKeyUp: (e) => this.onKeyPressName(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_NAME, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT1, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT1}, "Student 1: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT1, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT1, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT2, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT2}, "Student 2: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT2, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT2, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT3, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT3}, "Student 3: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT3, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT3, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT4, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT4}, "Student 4: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT4, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT4, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT5, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT5}, "Student 5: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT5, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT5, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT6, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT6}, "Student 6: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT6, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT6, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT7, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT7}, "Student 7: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT7, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT7, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT8, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT8}, "Student 8: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(Admin.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT8, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: this.onSelectedStudentChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT8, style: { display: "none" }})))));
+                    return (React.createElement("form", {className: "form-horizontal", role: "form"}, React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_ID, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_ID}, "Id: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_ID, type: "text", className: "form-control", disabled: this.state.type !== Lists.BoxTypes.Create, placeholder: "Featured computer Id", maxLength: "25", onPaste: () => this.validateId(false), onCut: () => this.validateId(false), onKeyUp: (e) => this.onKeyPressId(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_ID, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_NAME, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_NAME}, "Name: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_NAME, type: "text", className: "form-control", disabled: this.state.type === Lists.BoxTypes.Delete, placeholder: "Featured computer name", maxLength: "150", onPaste: () => this.validateName(false), onCut: () => this.validateName(false), onKeyUp: (e) => this.onKeyPressName(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_NAME, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT1, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT1}, "Student 1: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT1, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT1, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT2, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT2}, "Student 2: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT2, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT2, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT3, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT3}, "Student 3: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT3, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT3, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT4, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT4}, "Student 4: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT4, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT4, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT5, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT5}, "Student 5: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT5, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT5, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT6, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT6}, "Student 6: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT6, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT6, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT7, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT7}, "Student 7: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT7, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT7, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_STUDENT8, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_STUDENT8}, "Student 8: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_STUDENT8, classroomId: this.props.classroomId, loadAction: "GetAvailableFeaturedStudents", defaultName: "Select Student computer", onSelectedItemChanged: () => this.onSelectedStudentChanged(), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_STUDENT8, style: { display: "none" }})))));
                 }
             }
         })(Lists = Admin.Lists || (Admin.Lists = {}));

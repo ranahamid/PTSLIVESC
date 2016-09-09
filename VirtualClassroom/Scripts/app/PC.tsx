@@ -328,7 +328,7 @@ namespace VC.App {
             connections = connections.concat(this.getConnectionsOfMyGroup(Roles.PC), this.getConnectionsOfMyGroup(Roles.SC));
             connections.push(this.getMyConnection());
             // send signal
-            connections.forEach((c) => {
+            connections.forEach((c: any) => {
                 Global.Signaling.sendSignal<Global.ISignalChatData>(this.session, c, Global.SignalTypes.Chat, {
                     userUid: item.userUid,
                     userName: item.userName,
@@ -431,8 +431,8 @@ namespace VC.App {
     }
 
     export class InitPC {
-        constructor(targetId: string, actionUrl: string) {
-            ReactDOM.render(<div><PC targetId={targetId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><PC targetId={targetId} classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

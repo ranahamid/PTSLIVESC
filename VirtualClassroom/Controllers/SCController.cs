@@ -20,20 +20,23 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
+            ComputerViewModel viewModel = new ComputerViewModel();
+
             if (q.Count() == 1)
             {
                 TblSC sc = q.Single();
-                ViewBag.Name = sc.TblClassroom.Name + " - " + sc.Name;
 
-                ViewBag.ScLayout = VC.ScLayout(sc.Uid);
+                viewModel.Name = sc.TblClassroom.Name + " - " + sc.Name;
+                viewModel.ClassroomId = sc.TblClassroom.Id;
+                viewModel.ActionUrl = Url.Action();
             }
             else
             {
-                ViewBag.Name = "Virtual Classroom - Seat computer";
-                ViewBag.ErrorMessage = "Invalid URL.";
+                viewModel.Name = "Virtual Classroom - Seat computer";
+                viewModel.ErrorMessage = "Invalid URL.";
             }
 
-            return View();
+            return View(viewModel);
         }
 
         public ActionResult GetData(string classroomId, string id)

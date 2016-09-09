@@ -11,7 +11,8 @@ namespace VC.App.Global {
         Volume = 4,     // used for AC => PC, SC, TC
         TurnOff = 5,    // used for AC => PC, SC, TC
         Chat = 6,
-        Forms = 7
+        Forms = 7,
+        FeaturedChanged = 8 // used for AC => FC
     }
 
     export interface ISignalRaiseHandData {
@@ -43,13 +44,14 @@ namespace VC.App.Global {
         userRole: Roles;
         message: string;
     }
-
     export interface ISignalFormsData {
         formId: string;
         answerId: string;
         type: Forms.FormType;
         status: Forms.FormAnswerStatus;
         resultData: string;
+    }
+    export interface ISignalFeaturedChangedData {
     }
 
     export class Signaling {
@@ -106,6 +108,9 @@ namespace VC.App.Global {
                     break;
                 case signalPrefix + this.signalTypeAsString(SignalTypes.Forms).toLowerCase():
                     signalType = SignalTypes.Forms;
+                    break;
+                case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
+                    signalType = SignalTypes.FeaturedChanged;
                     break;
             }
             return signalType;

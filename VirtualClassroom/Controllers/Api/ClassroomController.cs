@@ -421,17 +421,6 @@ namespace VirtualClassroom.Controllers
             }
         }
 
-        [HttpPost]
-        public DataResponse<bool> IsFeaturedExists(string classroomId, string id, [FromBody] string excludeId)
-        {
-            var q = from x in db.TblFCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.Id.ToLower() != excludeId.ToLower()
-                    select x;
-
-            bool exists = q.Count() > 0;
-
-            return responseSuccess(exists);
-        }
         private TblFCPC createStudentFcPc(string classroomId, Student student, Guid fcUid, int position)
         {
             if (student != null)
@@ -455,6 +444,31 @@ namespace VirtualClassroom.Controllers
             }
 
             return null;
+        }
+        [HttpPost]
+        public DataResponse<bool> IsFeaturedExists(string classroomId, string id, [FromBody] string excludeId)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.Id.ToLower() != excludeId.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return responseSuccess(exists);
+        }
+        [HttpGet]
+        public DataResponse<Featured> LoadFeatured(string classroomId, string id)
+        {
+            Guid uid = new Guid(id);
+
+            Featured data = db.TblFCs.Where(x => x.Uid == uid && x.ClassroomId.ToLower() == classroomId.ToLower()).Select(x => new Featured()
+            {
+                id = x.Id,
+                name = x.Name,
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+            }).SingleOrDefault();
+
+            return responseSuccess(data);
         }
         [HttpPost]
         public DataResponse<Featured> CreateFeatured(string classroomId, [FromBody] Featured item)

@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -60,9 +59,8 @@ var VC;
                     }
                 }
                 isIdValid(id) {
-                    let valid = id.length > 0; // cannot be empty
+                    let valid = id.length > 0;
                     let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
-                    // check allowed chars
                     if (valid) {
                         for (let i = 0; i < id.length && valid; i++) {
                             if (allowedChars.indexOf(id[i].toLowerCase()) === -1) {
@@ -73,7 +71,7 @@ var VC;
                     return valid;
                 }
                 isNameValid(name) {
-                    return name.trim().length > 0; // cannot be empty
+                    return name.trim().length > 0;
                 }
                 validateId(focusOnError) {
                     let valid = true;
@@ -151,12 +149,10 @@ var VC;
                                 callback(r.data);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -170,15 +166,12 @@ var VC;
                         this.divButtons.style.display = "none";
                         this.divProcessing.style.display = "block";
                         if (this.state.type === Lists.BoxTypes.Create) {
-                            // check for existing item before create
                             this.checkForExistingId(valId, this.state.item.id, this.submitFormIdValidated.bind(this));
                         }
                         else if (this.state.type === Lists.BoxTypes.Edit) {
-                            // edit
                             this.doUpdate();
                         }
                         else {
-                            // delete
                             this.doDelete();
                         }
                     }
@@ -192,7 +185,6 @@ var VC;
                         $(tbId).focus();
                     }
                     else {
-                        // create
                         this.doCreate();
                     }
                 }
@@ -210,18 +202,15 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // add to list
                                 let d = this.props.getListItems();
                                 d.push(r.data);
                                 this.props.setListItems(d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -240,7 +229,6 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // update list
                                 let d = this.props.getListItems();
                                 for (let i = 0; i < d.length; i++) {
                                     if (d[i].id === this.state.item.id) {
@@ -250,12 +238,10 @@ var VC;
                                 this.props.setListItems(d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }
@@ -271,7 +257,6 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // remove from list
                                 let d = this.props.getListItems();
                                 let _d = [];
                                 for (let i = 0; i < d.length; i++) {
@@ -282,12 +267,10 @@ var VC;
                                 this.props.setListItems(_d);
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }

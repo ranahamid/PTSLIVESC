@@ -74,7 +74,7 @@ namespace VC.Admin.Lists {
             this.setValidationStatus(FORM_ID, BoxValidationStatus.None, "");
             this.setValidationStatus(FORM_NAME, BoxValidationStatus.None, "");
 
-            let tbTeacher: Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Components.Selector;
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
             tbTeacher.init(this.state.item.teacher !== null ? this.state.item.teacher.id : null);
         }
         boxDidShow(): void {
@@ -242,7 +242,7 @@ namespace VC.Admin.Lists {
             let nameVal: string = $(tbName).val();
 
             let teacher: ITeachersListItem = null;
-            let tbTeacher: Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Components.Selector;
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
             let selectedTeacher: string = tbTeacher.getSelectedValue();
             if (selectedTeacher !== "") {
                 teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
@@ -280,7 +280,7 @@ namespace VC.Admin.Lists {
             let nameVal: string = $(tbName).val();
 
             let teacher: ITeachersListItem = null;
-            let tbTeacher: Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Components.Selector;
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
             let selectedTeacher: string = tbTeacher.getSelectedValue();
             if (selectedTeacher !== "") {
                 teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
@@ -371,7 +371,7 @@ namespace VC.Admin.Lists {
                     <div ref={REF_FORM_DIV + FORM_TEACHER} className="form-group">
                         <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_TEACHER}>Teacher: </label>
                         <div className="col-sm-10">
-                            <Components.Selector ref={REF_FORM_TB + FORM_TEACHER} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadAction="GetAvailableTeachers" defaultName="Select Teacher computer" onSelectedItemChanged={this.onSelectedTeacherChanged.bind(this) } className="form-control" />
+                            <Global.Components.Selector ref={REF_FORM_TB + FORM_TEACHER} classroomId={this.props.classroomId} loadAction="GetAvailableTeachers" defaultName="Select Teacher computer" onSelectedItemChanged={this.onSelectedTeacherChanged.bind(this) } className="form-control" />
                             <span ref={REF_FORM_ICON + FORM_TEACHER} style={{ display: "none" }}></span>
                         </div>
                     </div>

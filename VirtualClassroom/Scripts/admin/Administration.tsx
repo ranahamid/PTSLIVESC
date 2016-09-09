@@ -147,8 +147,8 @@ namespace VC.Admin {
     }
 
     export class InitClassrooms {
-        constructor(targetId: string, actionUrl: string, classroomId: string) {
-            ReactDOM.render(<div><Classrooms actionUrl={actionUrl} classroomId={classroomId} /></div>, document.getElementById(targetId));
+        constructor(targetId: string, classroomId: string, actionUrl: string) {
+            ReactDOM.render(<div><Classrooms classroomId={classroomId} actionUrl={actionUrl} /></div>, document.getElementById(targetId));
         }
     }
 }

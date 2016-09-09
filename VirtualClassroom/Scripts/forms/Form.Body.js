@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -32,7 +31,6 @@ var VC;
                 let components = this.state.components;
                 if (components.length > 0) {
                     if (id === undefined) {
-                        // set last component
                         id = components[components.length - 1].id;
                     }
                     let _components = [];
@@ -51,13 +49,11 @@ var VC;
                 let components = this.state.components;
                 let error = Errors.None;
                 if (components.length === 0) {
-                    // empty form
                     error = Errors.FormIsEmpty;
                     valid = false;
                 }
                 else {
                     let hasInteractiveComponent = false;
-                    // validate each component
                     for (let i = components.length - 1; i >= 0; i--) {
                         if (components[i].ref !== undefined) {
                             let c = components[i].ref;
@@ -69,7 +65,6 @@ var VC;
                             hasInteractiveComponent = Forms.Components.Component.isInteractiveComponent(components[i].type);
                         }
                     }
-                    // check for active component
                     if (!hasInteractiveComponent) {
                         error = Errors.NoInteractiveComponent;
                         valid = false;
@@ -87,10 +82,10 @@ var VC;
                     let configData = null;
                     let answerData = null;
                     if (dataType === DataType.Form || dataType === DataType.Answer) {
-                        configData = components[i].ref.getConfigData(); // when type Result, configData will be null
+                        configData = components[i].ref.getConfigData();
                     }
                     if (dataType === DataType.Answer || dataType === DataType.Result) {
-                        answerData = components[i].ref.getAnswerData(); // when type Form, answerData will be null
+                        answerData = components[i].ref.getAnswerData();
                     }
                     data.push({ type: components[i].type, configData: configData, answerData: answerData });
                 }

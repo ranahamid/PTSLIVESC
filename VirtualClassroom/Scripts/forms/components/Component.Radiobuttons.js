@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -21,7 +20,7 @@ var VC;
                     return { items: items };
                 }
                 defaultAnswer() {
-                    return { selectedItem: 1 }; // selected first item
+                    return { selectedItem: 1 };
                 }
                 onAdd_Click() {
                     let items = this.config().items;
@@ -117,15 +116,13 @@ var VC;
                 }
                 updateResultData(result, resultData) {
                     result[resultData.selectedItem - 1]++;
-                    result[result.length - 1]++; // total count
-                    // update chart
+                    result[result.length - 1]++;
                     this.chart.update(this.buildDataPoints(result));
                     return result;
                 }
                 componentDidMount() {
                     let result = this.result();
                     if (this.props.view === Forms.FormViews.Result && result !== null) {
-                        // show chart
                         this.chart.show(this.buildDataPoints(result));
                     }
                 }

@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -9,7 +8,6 @@ var VC;
             Lists.REF_FORM_DIV = "div";
             Lists.REF_FORM_TB = "tb";
             Lists.REF_FORM_ICON = "ico";
-            // enums
             (function (ListStatus) {
                 ListStatus[ListStatus["Loading"] = 0] = "Loading";
                 ListStatus[ListStatus["Success"] = 1] = "Success";
@@ -39,13 +37,11 @@ var VC;
                     $(this.divBox).on("hidden.bs.modal", () => this.boxDidHide());
                 }
                 show() {
-                    // show
                     this.boxWillShow();
                     $(this.divBox).modal("show");
                     this.divButtons.style.display = "block";
                     this.divProcessing.style.display = "none";
                 }
-                // box methods
                 open(type, item) {
                     this.setState({ type: type, item: item }, () => this.show());
                 }
@@ -90,7 +86,6 @@ var VC;
                         $(tb).tooltip("destroy");
                     }
                 }
-                // render
                 render() {
                     let title = "";
                     let buttonTitle = "";
@@ -176,11 +171,9 @@ var VC;
                 renderBody() {
                     let body;
                     if (this.state.status === ListStatus.Loading) {
-                        // loading
                         body = this.renderLoader();
                     }
                     else if (this.state.status === ListStatus.Error) {
-                        // error
                         body = this.renderError(this.state.errorMessage);
                     }
                     else if (this.state.data.length === 0) {
@@ -204,7 +197,6 @@ var VC;
                 }
             }
             Lists.List = List;
-            // === BASE ===
             class Base extends React.Component {
                 constructor(props) {
                     super(props);

@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -17,12 +16,10 @@ var VC;
                 defaultAnswer() {
                     return { text: "" };
                 }
-                // config
                 onRequiredChanged(e) {
                     let config = { required: e.target.checked };
                     this.saveConfig(config);
                 }
-                // answer
                 onTextChanged(e) {
                     let answer = { text: e.target.value };
                     this.saveAnswer(answer);
@@ -77,7 +74,6 @@ var VC;
                     return (React.createElement("div", {className: "form-group"}, this.answer().text));
                 }
                 renderResult() {
-                    // same as preview
                     return this.renderPreview();
                 }
             }

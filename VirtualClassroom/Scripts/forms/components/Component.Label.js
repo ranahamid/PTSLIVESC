@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -17,7 +16,6 @@ var VC;
                 defaultAnswer() {
                     return null;
                 }
-                // config
                 onTextChanged(e) {
                     let config = { text: e.target.value };
                     this.saveConfig(config);
@@ -61,18 +59,15 @@ var VC;
                     return (React.createElement("div", {ref: (ref) => this.div = ref, key: "edit_" + this.props.component.id, className: "form-group"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control lbl", onChange: (e) => this.onTextChanged(e), placeholder: "Enter text"}, this.config().text)));
                 }
                 renderPreview() {
-                    // same as view
                     return this.renderView();
                 }
                 renderView() {
                     return (React.createElement("div", {key: "view_" + this.props.component.id, className: "form-group lbl"}, this.config().text));
                 }
                 renderAnswer() {
-                    // same as view
                     return this.renderView();
                 }
                 renderResult() {
-                    // same as view
                     return this.renderView();
                 }
             }

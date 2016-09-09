@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -33,16 +32,13 @@ var VC;
                     data: JSON.stringify(data),
                     success: (r) => {
                         if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                            // success
                             onSuccess(r.data);
                         }
                         else {
-                            // error
                             onError(r.message);
                         }
                     },
                     error: (xhr, status, error) => {
-                        // error
                         onError(error);
                     }
                 });
@@ -57,21 +53,17 @@ var VC;
                     success: (r) => {
                         if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                             if (r.data) {
-                                // success
                                 onSuccess();
                             }
                             else {
-                                // not updated
                                 onError("Something went wrong and the record is not updated.");
                             }
                         }
                         else {
-                            // error
                             onError(r.message);
                         }
                     },
                     error: (xhr, status, error) => {
-                        // error
                         onError(error);
                     }
                 });
@@ -86,21 +78,17 @@ var VC;
                     success: (r) => {
                         if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                             if (r.data) {
-                                // success
                                 onSuccess();
                             }
                             else {
-                                // not deleted
                                 onError("Something went wrong and the record is not deleted.");
                             }
                         }
                         else {
-                            // error
                             onError(r.message);
                         }
                     },
                     error: (xhr, status, error) => {
-                        // error
                         onError(error);
                     }
                 });
@@ -115,21 +103,17 @@ var VC;
                     success: (r) => {
                         if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                             if (r.data) {
-                                // success
                                 onSuccess();
                             }
                             else {
-                                // not updated
                                 onError("Something went wrong and the record is not updated.");
                             }
                         }
                         else {
-                            // error
                             onError(r.message);
                         }
                     },
                     error: (xhr, status, error) => {
-                        // error
                         onError(error);
                     }
                 });
@@ -142,7 +126,6 @@ var VC;
                 this.state = { view: props.view, components: undefined };
             }
             componentDidMount() {
-                // this.saveForm();
             }
             loading() {
                 this.setState({
@@ -161,105 +144,87 @@ var VC;
                 });
             }
             initForm(formUid) {
-                // clear & set loading
                 this.setState({
                     view: this.state.view,
                     formUid: formUid,
                     answerUid: undefined,
                     components: undefined
                 }, () => {
-                    // load form on callback
                     $.ajax({
                         cache: false,
                         type: "GET",
                         url: "/api/Form/Get/" + formUid,
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // successfully loaded - init
                                 this.init();
-                                // parse & add components
                                 let components = JSON.parse(r.data.formData);
                                 for (let i = 0; i < components.length; i++) {
-                                    this.addComponent(components[i].type, components[i].configData, null, null); // no answer or result
+                                    this.addComponent(components[i].type, components[i].configData, null, null);
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                         }
                     });
                 });
             }
             initAnswer(answerUid) {
-                // clear & set loading
                 this.setState({
                     view: this.state.view,
                     formUid: undefined,
                     answerUid: answerUid,
                     componets: undefined
                 }, () => {
-                    // load form answer on callback
                     $.ajax({
                         cache: false,
                         type: "GET",
                         url: "/api/Form/GetAnswer/" + answerUid,
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // successfully loaded - init
                                 this.init();
-                                // parse & add components
                                 let components = JSON.parse(r.data.formData);
                                 for (let i = 0; i < components.length; i++) {
-                                    this.addComponent(components[i].type, components[i].configData, components[i].answerData, null); // answer
+                                    this.addComponent(components[i].type, components[i].configData, components[i].answerData, null);
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                         }
                     });
                 });
             }
             initResult(formUid) {
-                // clear & set loading
                 this.setState({
                     view: this.state.view,
                     formUid: formUid,
                     answerUid: undefined,
                     components: undefined
                 }, () => {
-                    // load form on callback
                     $.ajax({
                         cache: false,
                         type: "GET",
                         url: "/api/Form/GetResult/" + formUid,
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
-                                // successfully loaded - init
                                 this.init();
-                                // parse & add components
                                 let components = JSON.parse(r.data.formData);
                                 for (let i = 0; i < components.length; i++) {
-                                    this.addComponent(components[i].type, components[i].configData, null, components[i].answerData); // result
+                                    this.addComponent(components[i].type, components[i].configData, null, components[i].answerData);
                                 }
                             }
                             else {
-                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
-                            // error
                             alert("ERROR: " + error);
                         }
                     });
@@ -282,7 +247,6 @@ var VC;
                 this.formPanel.componentCount(countOfComponents);
             }
             changeView(view) {
-                // save
                 this.setState({ view: view });
             }
             validate() {

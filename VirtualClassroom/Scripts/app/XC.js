@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -27,6 +28,7 @@ var VC;
                 this.alreadyConnected = false;
                 this.session = null;
                 this.streams = [];
+                // maxResolution — { width: 1920, height: 1920 }, mirror — false, fitMode — "contain"
                 this.publishProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "off" } };
                 this.subscribeProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "on" } };
                 this.screenSharingExtensionId = "gedopbhbkblbppgdhhinadlfcphccpch";
@@ -35,7 +37,26 @@ var VC;
             componentDidMount() {
                 this.didMount();
                 if (OT.checkSystemRequirements() === 1) {
+                    /*
                     if (this.role === Roles.TC) {
+                        // check for screensharing support
+                        OT.registerScreenSharingExtension("chrome", this.screenSharingExtensionId, 2);
+                        OT.checkScreenSharingCapability((response: any) => {
+                            if (!response.supported || response.extensionRegistered === false) {
+                                this.setStatusText("This browser does not support screen sharing.", Components.StatusStyle.Error);
+                            } else if (response.extensionInstalled === false && response.extensionRequired) {
+                                this.setStatusText("Please install the screen-sharing extension and load this page over HTTPS.",
+                                    Components.StatusStyle.Error);
+                            } else {
+                                this.getData();
+                            }
+                        });
+                    } else {
+                        this.getData();
+                    }
+                    */
+                    if (this.role === Roles.TC) {
+                        // check for screensharing support
                         OT.registerScreenSharingExtension("chrome", this.screenSharingExtensionId, 2);
                         OT.checkScreenSharingCapability((response) => {
                             if (!response.supported || response.extensionRegistered === false) {
@@ -52,6 +73,7 @@ var VC;
                     }
                 }
                 else {
+                    // the client does not support WebRTC
                     this.setStatusText("WebRTC is not supported.", App.Components.StatusStyle.Error);
                 }
             }
@@ -78,6 +100,7 @@ var VC;
                     }
                 });
             }
+            // connections
             addConnection(connection) {
                 this.connections.push(connection);
             }
@@ -145,6 +168,7 @@ var VC;
                 }
                 return c;
             }
+            // streams
             addStream(stream) {
                 this.streams.push(stream);
             }
@@ -172,6 +196,7 @@ var VC;
                 }
                 return s;
             }
+            // groups
             getGroupComputer(uid) {
                 let iUser = null;
                 for (let i = 0; i < this.dataResponse.Group.length && iUser === null; i++) {
@@ -203,17 +228,21 @@ var VC;
                     connectionCreated: (event) => {
                         let tokenData = App.Global.Fce.toTokenData(event.connection.data);
                         if (!this.isConnectionExists(tokenData.Uid)) {
+                            // add connection
                             this.addConnection(event.connection);
                             if (this.session.connection.connectionId === event.connection.connectionId) {
+                                // its me, successfully connected
                                 this.setStatusText("Connected to the session.", App.Components.StatusStyle.Connected);
                                 this.connected(event.connection);
                             }
                             else if (this.session.connection.connectionId !== event.connection.connectionId
                                 && tokenData.Uid !== this.dataResponse.Uid) {
+                                // not me and not already connected
                                 this.connected(event.connection);
                             }
                         }
                         else if (this.session.connection.connectionId === event.connection.connectionId) {
+                            // its me and already connected - disconnect
                             this.alreadyConnected = true;
                             this.session.disconnect();
                         }
@@ -224,6 +253,7 @@ var VC;
                         }
                     },
                     sessionCreated: (event) => {
+                        // session created
                     },
                     sessionDisconnected: (event) => {
                         if (this.alreadyConnected) {
@@ -246,6 +276,7 @@ var VC;
                         this.streamDestroyed(event.stream.connection, event.stream);
                     },
                     streamPropertyChanged: (event) => {
+                        // video / audio changed
                     }
                 });
                 this.session.connect(s.Token, (err) => {

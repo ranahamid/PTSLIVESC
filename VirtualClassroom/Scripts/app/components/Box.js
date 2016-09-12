@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -23,9 +24,11 @@ var VC;
                     this.clearBox();
                     this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
                         if (error) {
+                            // error
                             alert("ERROR: " + error);
                         }
                         else {
+                            // subscribed
                             this.streamHandler.setAudioVolume(volume);
                         }
                     });
@@ -55,6 +58,8 @@ var VC;
                     this.clearBox();
                     this.streamHandler = OT.initPublisher(this.props.id, publishProps, (error) => {
                         if (error) {
+                            // initPublisher error
+                            // alert("Something went wrong: " + error.message);
                             stoppedHandler(null);
                         }
                         else {
@@ -65,11 +70,14 @@ var VC;
                             });
                             session.publish(this.streamHandler, (error) => {
                                 if (error) {
+                                    // alert("Something went wrong: " + error.message);
                                     stoppedHandler(null);
                                 }
                                 else {
+                                    // audio/video
                                     this.streamHandler.publishAudio(audio);
                                     this.streamHandler.publishVideo(video);
+                                    // publishing
                                     startedHandler(null);
                                 }
                             });

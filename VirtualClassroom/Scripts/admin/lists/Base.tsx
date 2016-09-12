@@ -43,6 +43,7 @@ namespace VC.Admin.Lists {
         classroomId?: string;
         loadMethod: string;
         title: string;
+        showBoxImport?: () => void;
         showBoxNew: () => void;
         showBoxEdit: (id: R) => void;
         showBoxDelete: (id: R) => void;
@@ -70,6 +71,7 @@ namespace VC.Admin.Lists {
     export interface IBox<R, D> {
         defaultItem: D;
         open(type: BoxTypes, item: D): void;
+        close(): void;
     }
     export abstract class Box<R, D extends IDataItem<R>, P extends IBoxProps<D>, S extends IBoxState<D>> extends React.Component<P, S> implements IBox<R, D> {
         private divBox: HTMLDivElement;
@@ -103,10 +105,13 @@ namespace VC.Admin.Lists {
         abstract boxWillShow(): void; // abstract
         abstract boxDidShow(): void; // abstract
 
-        public hide(): void {
+        public close(): void {
+            this.hide();
+        }
+        private hide(): void {
             $(this.divBox).modal("hide");
         }
-        public boxDidHide(): void {
+        private boxDidHide(): void {
             this.divButtons.style.display = "block";
             this.divProcessing.style.display = "none";
         }
@@ -193,6 +198,126 @@ namespace VC.Admin.Lists {
                             </div>
                             <div ref={(ref: HTMLDivElement) => this.divButtons = ref} style={{ display: "block" }} className="modal-footer">
                                 <button type="button" className={buttonClassName} onClick={() => this.submitForm() }><span className={buttonIcon}></span> {buttonTitle}</button>
+                                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <div ref={(ref: HTMLDivElement) => this.divProcessing = ref} style={{ display: "none" }} className="modal-footer">
+                                <span>Processing ...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    // === IMPORT BOX ===
+    export interface IImportBoxProps<D> {
+        title: string;
+        classroomId?: string;
+        getListItems: () => Array<D>;
+        setListItems: (data: Array<D>) => void;
+    }
+    export interface IImportBoxState<D> {
+        errorMessage: string;
+        errorTime: number;
+    }
+
+    export interface IImportBox<R, D> {
+        open(): void;
+        close(): void;
+    }
+
+    export abstract class ImportBox<R, D extends IDataItem<R>, P extends IImportBoxProps<D>, S extends IImportBoxState<D>> extends React.Component<P, S> implements IImportBox<R, D> {
+        private divBox: HTMLDivElement;
+        public divButtons: HTMLDivElement;
+        public divProcessing: HTMLDivElement;
+        private divError: HTMLDivElement;
+        private divHelp: HTMLDivElement;
+        public tb: HTMLTextAreaElement;
+
+        constructor(props: P) {
+            super(props);
+            this.state = { errorMessage: "", errorTime: 0 } as S;
+        }
+
+        componentDidMount(): void {
+            $(this.divBox).on("shown.bs.modal", () => this.boxDidShow());
+            $(this.divBox).on("hidden.bs.modal", () => this.boxDidHide());
+        }
+
+        public open(): void {
+            this.show();
+        }
+        private show(): void {
+            this.boxWillShow();
+
+            $(this.divBox).modal("show");
+
+            this.divButtons.style.display = "block";
+            this.divProcessing.style.display = "none";
+            this.divError.style.display = "none";
+        }
+        private boxWillShow(): void {
+            // implement
+        }
+        private boxDidShow(): void {
+            // implement
+        }
+
+        public close(): void {
+            this.hide();
+        }
+        private hide(): void {
+            $(this.divBox).modal("hide");
+        }
+        private boxDidHide(): void {
+            this.divButtons.style.display = "block";
+            this.divProcessing.style.display = "none";
+            this.divError.style.display = "none";
+        }
+
+        public showError(errorMessage: string, errorTime: number = null): void {
+            this.setState({ errorMessage: errorMessage } as S);
+            this.divError.style.display = "block";
+            if (errorTime) {
+                window.setTimeout(() => { this.hideError(); }, errorTime);
+            }
+        }
+        public hideError(): void {
+            this.divError.style.display = "none";
+        }
+
+        public setProcessing(processing: boolean): void {
+            this.divButtons.style.display = processing ? "none" : "block";
+            this.divProcessing.style.display = processing ? "block" : "none";
+        }
+
+        private helpClick(): void {
+            $(this.divHelp).slideToggle();
+        }
+
+        abstract import(): void;
+
+        abstract renderHelp(): JSX.Element;
+        abstract placeholder(): string;
+
+        render(): JSX.Element {
+            return (
+                <div ref={(ref: HTMLDivElement) => this.divBox = ref} className="modal fade" role="dialog">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" data-dismiss="modal">&times; </button>
+                                <h4 className="modal-title">{this.props.title}</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div style={{ textAlign: "right" }}><span className="glyphicon glyphicon-info-sign" style={{ cursor: "pointer" }} onClick={() => this.helpClick() }></span></div>
+                                <div ref={(ref: HTMLDivElement) => this.divHelp = ref} style={{ display: "none" }}>{this.renderHelp() }</div>
+                                <div><textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="importTextbox" placeholder={this.placeholder() }></textarea></div>
+                                <div ref={(ref: HTMLDivElement) => this.divError = ref} className="text-danger" style={{ display: "none" }}>{this.state.errorMessage}</div>
+                            </div>
+                            <div ref={(ref: HTMLDivElement) => this.divButtons = ref} style={{ display: "block" }} className="modal-footer">
+                                <button type="button" className="btn btn-success" onClick={() => this.import() }><span className="glyphicon glyphicon-import"></span> Import</button>
                                 <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
                             <div ref={(ref: HTMLDivElement) => this.divProcessing = ref} style={{ display: "none" }} className="modal-footer">
@@ -335,7 +460,8 @@ namespace VC.Admin.Lists {
                         {this.renderBody() }
                     </div>
                     <div style={{ display: (this.state.data != null ? "block" : "none") }}>
-                        <button type="button" className="btn btn-sm btn-success" onClick={() => this.props.showBoxNew() }><span className="glyphicon glyphicon-plus"></span> Add New {this.props.title}</button>
+                        <div style={{ display: "inline", paddingRight: "5px" }}><button type="button" className="btn btn-sm btn-success" onClick={() => this.props.showBoxNew() }><span className="glyphicon glyphicon-plus"></span> Add New {this.props.title}</button></div>
+                        <div style={{ display: (this.props.showBoxImport !== undefined ? "inline" : "none") }}><button type="button" className="btn btn-sm btn-info" onClick={() => this.props.showBoxImport() }><span className="glyphicon glyphicon-import"></span> Import {this.props.title}s</button></div>
                     </div>
                 </div>
             );
@@ -343,7 +469,7 @@ namespace VC.Admin.Lists {
     }
 
     // === BASE ===
-    export abstract class Base<R, D, L extends IList<R, D>, B extends IBox<R, D>> extends React.Component<IProps, IState> {
+    export abstract class Base<R, D, L extends IList<R, D>, B extends IBox<R, D>, I extends IImportBox<R, D>> extends React.Component<IProps, IState> {
         private initied: boolean = false;
 
         constructor(props: IProps) {
@@ -373,6 +499,10 @@ namespace VC.Admin.Lists {
                 Box1.open(BoxTypes.Delete, item);
             }
         }
+        public showBoxImport(): void {
+            let ImportBox1: I = this.getImportBox();
+            ImportBox1.open();
+        }
 
         public getListItems(): Array<D> {
             let List1: L = this.getList();
@@ -385,6 +515,7 @@ namespace VC.Admin.Lists {
 
         abstract getList(): L;
         abstract getBox(): B;
+        abstract getImportBox(): I;
 
         public init(): void {
             if (!this.initied) {

@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -9,6 +10,7 @@ var VC;
                 this.boxSubscribers = new Array(8);
                 this.label = new Array(8);
             }
+            // abstract methods
             setStatusText(text, style) {
                 this.setStatusVisibility(true);
                 this.status.setText(text, style);
@@ -19,17 +21,21 @@ var VC;
             connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
+                    // me
                     this.setState({ layout: this.dataResponse.ComputerSetting.Layout });
                     this.setStatusVisibility(false);
                     this.setUiVisibility(true);
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     if (tokenData.Role === App.Roles.PC) {
+                        // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
                         this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                     }
                 }
                 else if (tokenData.Role === App.Roles.AC) {
+                    // admin computer
                     App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
@@ -40,17 +46,21 @@ var VC;
             disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
+                    // me
                     this.setUiVisibility(false);
                     this.setStatusText("Disconnected from the session.", App.Components.StatusStyle.Error);
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     if (tokenData.Role === App.Roles.PC) {
+                        // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
                         this.label[groupComputer.Position - 1].setText("Student PC not connected.", App.Components.BoxLabelStyle.NotConnected);
                     }
                 }
             }
             sessionConnected(event) {
+                // nothing to do
             }
             sessionDisconnected(event) {
                 this.setUiVisibility(false);
@@ -61,7 +71,9 @@ var VC;
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     let groupComputer = this.getGroupComputer(tokenData.Uid);
+                    // student
                     this.boxSubscribers[groupComputer.Position - 1].subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[groupComputer.Position - 1]);
                 }
             }
@@ -70,11 +82,14 @@ var VC;
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     let groupComputer = this.getGroupComputer(tokenData.Uid);
+                    // student
                     this.boxSubscribers[groupComputer.Position - 1].unsubscribe(this.session);
                 }
             }
             streamPropertyChanged(event) {
+                // nothing to do
             }
             signalReceived(event) {
                 let signalType = App.Global.Signaling.getSignalType(event.type);
@@ -112,40 +127,50 @@ var VC;
                             this.featuredStudentsChanged(r.data);
                         }
                         else {
+                            // error
                             alert(r.message);
                         }
                     },
                     error: (xhr, status, error) => {
+                        // error
                         alert("XHR Error: " + xhr.statusText);
                     }
                 });
             }
             featuredStudentsChanged(data) {
+                // go thru current layout and unsubscribe from students that doesn't match their position anymore
                 for (let i = 0; i < this.state.layout; i++) {
                     if (this.boxSubscribers[i].isConnected()) {
                         let newStudent = this.getGroupStudentComputerByPosition(i + 1, data);
                         let currentStudent = this.getGroupStudentComputerByPosition(i + 1, this.dataResponse);
                         if (!this.compareGroupComputers(newStudent, currentStudent)) {
+                            // unsubscribe
                             this.boxSubscribers[i].unsubscribe(this.session);
                             this.label[i].setText("Student PC not connected.", App.Components.BoxLabelStyle.NotConnected);
                         }
                         else {
+                            // since the student is recreated, update to default volume
                             this.boxSubscribers[i].audioVolume(80);
                         }
                     }
                 }
+                // update layout when need
                 if (this.dataResponse.ComputerSetting.Layout !== data.ComputerSetting.Layout) {
                     this.setState({ layout: data.ComputerSetting.Layout }, () => {
                         this.fitLayout();
                     });
                 }
+                // subscribe to new students
                 for (let i = 0; i < this.state.layout; i++) {
                     if (!this.boxSubscribers[i].isConnected()) {
                         let newStudent = this.getGroupStudentComputerByPosition(i + 1, data);
                         if (newStudent !== null) {
+                            // try to get stream
                             let stream = this.getStream(newStudent.Uid);
                             if (stream !== null) {
+                                // subscribe
                                 this.boxSubscribers[i].subscribe(this.session, stream, data.ComputerSetting.Volume[i]);
+                                // label
                                 let newStudentConnection = this.getConnectionByUid(newStudent.Uid);
                                 let tokenData = App.Global.Fce.toTokenData(newStudentConnection.data);
                                 this.label[i].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
@@ -153,6 +178,7 @@ var VC;
                         }
                     }
                 }
+                // update data response
                 this.dataResponse = data;
             }
             compareGroupComputers(c1, c2) {
@@ -178,10 +204,13 @@ var VC;
                 this.divStatus.style.display = visible ? "block" : "none";
             }
             setLayoutVisibility(visible) {
+                // divBody1 class
                 let divBody1 = document.getElementById("DivBody1");
                 divBody1.className = visible ? "divBody" : "";
+                // header1
                 let header1 = document.getElementById("Header1");
                 header1.style.display = visible ? "block" : "none";
+                // footer1
                 let footer1 = document.getElementById("Footer1");
                 footer1.style.display = visible ? "block" : "none";
             }
@@ -198,11 +227,12 @@ var VC;
                 this.fitLayerSizes(windowWidth, windowHeight);
             }
             fitLayerSizes(windowWidth, windowHeight) {
+                // boxes + width of labels & floating chat divs
                 if (this.state.layout > 6) {
                     for (let i = 0; i < this.state.layout; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "25%")
-                            .css("height", windowHeight / 2 + "px");
+                            .css("height", windowHeight / 2 + "px"); // 8
                         $(this.label[i].getParentDiv()).css("width", "25%");
                     }
                 }
@@ -210,7 +240,7 @@ var VC;
                     for (let i = 0; i < this.state.layout; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "33.33%")
-                            .css("height", windowHeight / 2 + "px");
+                            .css("height", windowHeight / 2 + "px"); // 6
                         $(this.label[i].getParentDiv()).css("width", "33.33%");
                     }
                 }
@@ -218,7 +248,7 @@ var VC;
                     for (let i = 0; i < this.state.layout; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "50%")
-                            .css("height", windowHeight / 2 + "px");
+                            .css("height", windowHeight / 2 + "px"); // 4
                         $(this.label[i].getParentDiv()).css("width", "50%");
                     }
                 }
@@ -226,10 +256,11 @@ var VC;
                     for (let i = 0; i < this.state.layout; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "50%")
-                            .css("height", windowHeight + "px");
+                            .css("height", windowHeight + "px"); // 2
                         $(this.label[i].getParentDiv()).css("width", "50%");
                     }
                 }
+                // labels
                 for (let i = 0; i < this.state.layout; i++) {
                     $(this.label[i].getParentDiv())
                         .css("left", $(this.boxSubscribers[i].getBox()).position().left + "px")
@@ -240,7 +271,7 @@ var VC;
                 let statusClasses = [
                     "alert alert-warning",
                     "alert alert-success",
-                    "alert alert-danger"
+                    "alert alert-danger" // error
                 ];
                 let labelClasses = [
                     "notConnected",

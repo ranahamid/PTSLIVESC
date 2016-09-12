@@ -10,9 +10,10 @@ namespace VC.Admin.Lists {
         name: string;
     }
 
-    export class Teachers extends Base<string, ITeachersListItem, TeachersList, TeachersBox> {
+    export class Teachers extends Base<string, ITeachersListItem, TeachersList, TeachersBox, TeachersImportBox> {
         private list: TeachersList;
         private box: TeachersBox;
+        private boxImport: TeachersImportBox;
 
         public getList(): TeachersList {
             return this.list;
@@ -20,12 +21,16 @@ namespace VC.Admin.Lists {
         public getBox(): TeachersBox {
             return this.box;
         }
+        public getImportBox(): TeachersImportBox {
+            return this.boxImport;
+        }
 
         render(): JSX.Element {
             return (
                 <div>
-                    <TeachersList ref={(ref: TeachersList) => this.list = ref} title="Teacher computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadTeachers" showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                    <TeachersList ref={(ref: TeachersList) => this.list = ref} title="Teacher computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadTeachers" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
                     <TeachersBox ref={(ref: TeachersBox) => this.box = ref} title="Teacher computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
+                    <TeachersImportBox ref={(ref: TeachersImportBox) => this.boxImport = ref} title="Import Teacher computers" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></TeachersImportBox>
                 </div>
             );
         }
@@ -184,7 +189,7 @@ namespace VC.Admin.Lists {
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
              });
         }
@@ -240,7 +245,7 @@ namespace VC.Admin.Lists {
                 data: JSON.stringify({ id: idVal, name: nameVal } as ITeachersListItem),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<ITeachersListItem>): void => {
-                    this.hide();
+                    this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // add to list
                         let d: Array<ITeachersListItem> = this.props.getListItems();
@@ -254,7 +259,7 @@ namespace VC.Admin.Lists {
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
              });
         }
@@ -270,7 +275,7 @@ namespace VC.Admin.Lists {
                 data: JSON.stringify({ id: idVal, name: nameVal } as ITeachersListItem),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<ITeachersListItem>): void => {
-                    this.hide();
+                    this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // update list
                         let d: Array<ITeachersListItem> = this.props.getListItems();
@@ -288,7 +293,7 @@ namespace VC.Admin.Lists {
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
              });
         }
@@ -300,7 +305,7 @@ namespace VC.Admin.Lists {
                 data: JSON.stringify(this.state.item.id),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<string>): void => {
-                    this.hide();
+                    this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // remove from list
                         let d: Array<ITeachersListItem> = this.props.getListItems();
@@ -319,7 +324,7 @@ namespace VC.Admin.Lists {
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
              });
         }
@@ -343,6 +348,72 @@ namespace VC.Admin.Lists {
                     </div>
                 </form>
             );
+        }
+    }
+
+    interface ITeachersImportBoxProps extends IImportBoxProps<ITeachersListItem> { }
+    interface ITeachersImportBoxState extends IImportBoxState<ITeachersListItem> { }
+
+    class TeachersImportBox extends ImportBox<string, ITeachersListItem, ITeachersImportBoxProps, ITeachersImportBoxState> {
+        constructor(props: ITeachersImportBoxProps) {
+            super(props);
+        }
+
+        renderHelp(): JSX.Element {
+            return (
+                <div className="text-muted">
+                    EXAMPLE: <br />
+                    ID1, "Teacher Name"<br />
+                    ID2, "Teacher Name"<br />
+                    ID3, "Teacher Name"<br />
+                </div>
+            );
+        }
+
+        placeholder(): string {
+            return "ID1, \"Teacher Name\"\nID2, \"Teacher Name\"\nID3, \"Teacher Name\"";
+        }
+
+        import(): void {
+            this.hideError();
+            this.setProcessing(true);
+
+            let data: string = this.tb.value;
+
+            if (data.length === 0) {
+                // nothing to import
+                this.showError("ERROR: Nothing to import", 2000);
+                this.setProcessing(false);
+            } else {
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "/api/Classroom/" + this.props.classroomId + "/ImportTeachers",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: (r: Global.Data.IDataResponse<Array<ITeachersListItem>>): void => {
+                        if (r.status === Global.Data.RESPONSE_SUCCESS) {
+                            this.tb.value = "";
+                            this.close();
+                            // add to list
+                            let d: Array<ITeachersListItem> = this.props.getListItems();
+                            r.data.forEach((item: ITeachersListItem) => {
+                                d.push(item);
+                            });
+                            this.props.setListItems(d);
+                        } else {
+                            // error
+                            this.showError("ERROR: " + r.message);
+                            this.setProcessing(false);
+                        }
+                    },
+                    error: (xhr: JQueryXHR, status: string, error: string): void => {
+                        // error
+                        alert("ERROR: " + error);
+                        this.close();
+                    }
+                });
+            }
         }
     }
 }

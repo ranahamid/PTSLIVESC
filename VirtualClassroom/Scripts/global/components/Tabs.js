@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Global;

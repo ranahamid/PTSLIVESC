@@ -13,7 +13,7 @@ namespace VC.Admin.Lists {
         declinedCount: number;
     }
 
-    export class Surveys extends Base<string, IFormsListItem, FormsList, FormsBox> {
+    export class Surveys extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
         private list: FormsList;
         private box: FormsBox;
 
@@ -22,6 +22,9 @@ namespace VC.Admin.Lists {
         }
         public getBox(): FormsBox {
             return this.box;
+        }
+        public getImportBox(): any {
+            return null;
         }
 
         render(): JSX.Element {
@@ -34,7 +37,7 @@ namespace VC.Admin.Lists {
         }
     }
 
-    export class Polls extends Base<string, IFormsListItem, FormsList, FormsBox> {
+    export class Polls extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
         private list: FormsList;
         private box: FormsBox;
 
@@ -43,6 +46,9 @@ namespace VC.Admin.Lists {
         }
         public getBox(): FormsBox {
             return this.box;
+        }
+        public getImportBox(): any {
+            return null;
         }
 
         render(): JSX.Element {
@@ -187,7 +193,7 @@ namespace VC.Admin.Lists {
             VC.Forms.FormApi.Insert({ classroomId: this.props.classroomId, type: this.props.formType, title: titleVal, formData: formData } as Forms.IFormData,
                 (id: string) => {
                     // success
-                    this.hide();
+                    this.close();
                     // add to list
                     let d: Array<IFormsListItem> = this.props.getListItems();
                     d.push({ id: id, title: titleVal } as IFormsListItem);
@@ -196,7 +202,7 @@ namespace VC.Admin.Lists {
                 (error: string) => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
             );
         }
@@ -208,7 +214,7 @@ namespace VC.Admin.Lists {
             VC.Forms.FormApi.Update({ uid: this.state.item.id, classroomId: this.props.classroomId, type: this.props.formType, title: titleVal, formData: formData } as Forms.IFormData,
                 () => {
                     // success
-                    this.hide();
+                    this.close();
                     // update list
                     let d: Array<IFormsListItem> = this.props.getListItems();
                     for (let i: number = 0; i < d.length; i++) {
@@ -221,7 +227,7 @@ namespace VC.Admin.Lists {
                 (error: string) => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
             );
         }
@@ -230,7 +236,7 @@ namespace VC.Admin.Lists {
             VC.Forms.FormApi.Delete(this.state.item.id,
                 () => {
                     // success
-                    this.hide();
+                    this.close();
                     // remove from list
                     let d: Array<IFormsListItem> = this.props.getListItems();
                     let _d: Array<IFormsListItem> = [];
@@ -244,7 +250,7 @@ namespace VC.Admin.Lists {
                 (error: string) => {
                     // error
                     alert("ERROR: " + error);
-                    this.hide();
+                    this.close();
                 }
             );
         }

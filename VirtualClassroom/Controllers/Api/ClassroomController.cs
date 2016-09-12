@@ -16,6 +16,26 @@ namespace VirtualClassroom.Controllers
             db = new VirtualClassroomDataContext();
         }
 
+        private bool isValidId(string id)
+        {
+            bool valid = id.Length > 0;
+            string allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+            // check allowed chars
+            if (valid)
+            {
+                for (var i = 0; i < id.Length && valid; i++)
+                {
+                    if (allowedChars.IndexOf(id[i].ToString().ToLower()) == -1)
+                    {
+                        valid = false;
+                    }
+                }
+            }
+
+            return valid;
+        }
+
         [HttpGet]
         public DataResponse<List<Computer>> GetAvailableSeatStudents(string classroomId)
         {
@@ -161,6 +181,16 @@ namespace VirtualClassroom.Controllers
             return responseSuccess(data);
         }
 
+        private bool isIdExists(string classroomId)
+        {
+            var q = from x in db.TblClassrooms
+                    where x.Id.ToLower() == classroomId.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
         [HttpPost]
         public DataResponse<bool> IsExists(string classroomId, [FromBody] string excludeId)
         {
@@ -245,6 +275,12 @@ namespace VirtualClassroom.Controllers
                                               select x);
 
 
+                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                            where x.TblFC.ClassroomId.ToLower() == loweredId
+                                            select x);
+                db.TblFCs.DeleteAllOnSubmit(from x in db.TblFCs
+                                            where x.ClassroomId.ToLower() == loweredId
+                                            select x);
                 db.TblPCs.DeleteAllOnSubmit(from x in db.TblPCs
                                             where x.ClassroomId.ToLower() == loweredId
                                             select x);
@@ -272,7 +308,123 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Classroom Id not found.");
             }
         }
+        [HttpPost]
+        public DataResponse<List<Classroom>> Import([FromBody] string data)
+        {
+            List<Classroom> importedClassrooms = new List<Classroom>();
+            string error = String.Empty;
 
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isIdExists(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedClassrooms.Add(new Classroom()
+                            {
+                                id = id,
+                                name = name,
+                                url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = id })
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedClassrooms.Count == 0)
+                {
+                    return responseError<List<Classroom>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblClassroom> classrooms = new List<TblClassroom>();
+                    foreach (Classroom classroom in importedClassrooms)
+                    {
+                        classrooms.Add(new TblClassroom
+                        {
+                            Id = classroom.id,
+                            Name = classroom.name,
+                            SessionId = String.Empty
+                        });
+                    }
+
+                    db.TblClassrooms.InsertAllOnSubmit(classrooms);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedClassrooms);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Classroom>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Classroom>>(error);
+            }
+        }
+
+        private bool isSeatIdExists(string classroomId, string id)
+        {
+            var q = from x in db.TblSCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
         private void updateStudentPositionSc(string classroomId, Student student, Guid scUid, int position)
         {
             if (student != null)
@@ -420,7 +572,134 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Seat Id not found.");
             }
         }
+        [HttpPost]
+        public DataResponse<List<Seat>> ImportSeats(string classroomId, [FromBody] string data)
+        {
+            List<Seat> importedSeats = new List<Seat>();
+            string error = String.Empty;
 
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isSeatIdExists(classroomId, id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedSeats.Add(new Seat()
+                            {
+                                id = id,
+                                name = name,
+                                students = new List<Student>()
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedSeats.Count == 0)
+                {
+                    return responseError<List<Seat>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblSC> scs = new List<TblSC>();
+                    foreach (Seat seat in importedSeats)
+                    {
+                        scs.Add(new TblSC
+                        {
+                            Uid = Guid.NewGuid(),
+                            Id = seat.id,
+                            ClassroomId = classroomId,
+                            Name = seat.name,
+                            Audio = true,
+                            Video = true,
+                            Volume1 = 80,
+                            Volume2 = 80,
+                            Volume3 = 80,
+                            Volume4 = 80,
+                            Volume5 = 80,
+                            Volume6 = 80,
+                            Volume7 = 80,
+                            Volume8 = 80
+                        });
+                    }
+
+                    db.TblSCs.InsertAllOnSubmit(scs);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedSeats);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Seat>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Seat>>(error);
+            }
+        }
+
+        private bool isFeaturedIdExists(string classroomId, string id)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
         private TblFCPC createStudentFcPc(string classroomId, Student student, Guid fcUid, int position)
         {
             if (student != null)
@@ -596,7 +875,124 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Featured Id not found.");
             }
         }
+        [HttpPost]
+        public DataResponse<List<Featured>> ImportFeatureds(string classroomId, [FromBody] string data)
+        {
+            List<Featured> importedFeatureds = new List<Featured>();
+            string error = String.Empty;
 
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isFeaturedIdExists(classroomId, id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedFeatureds.Add(new Featured()
+                            {
+                                id = id,
+                                name = name,
+                                students = new List<Student>()
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedFeatureds.Count == 0)
+                {
+                    return responseError<List<Featured>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblFC> fcs = new List<TblFC>();
+                    foreach (Featured featured in importedFeatureds)
+                    {
+                        fcs.Add(new TblFC
+                        {
+                            Uid = Guid.NewGuid(),
+                            Id = featured.id,
+                            ClassroomId = classroomId,
+                            Name = featured.name
+                        });
+                    }
+
+                    db.TblFCs.InsertAllOnSubmit(fcs);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedFeatureds);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Featured>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Featured>>(error);
+            }
+        }
+
+        private bool isStudentIdExists(string classroomId, string id)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
         [HttpPost]
         public DataResponse<bool> IsStudentExists(string classroomId, string id, [FromBody] string excludeId)
         {
@@ -736,7 +1132,132 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Student Id not found.");
             }
         }
+        [HttpPost]
+        public DataResponse<List<Student>> ImportStudents(string classroomId, [FromBody] string data)
+        {
+            List<Student> importedStudents = new List<Student>();
+            string error = String.Empty;
 
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+                    
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isStudentIdExists(classroomId, id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedStudents.Add(new Student()
+                            {
+                                id = id,
+                                name = name,
+                                position = 0,
+                                teacher = null
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedStudents.Count == 0)
+                {
+                    return responseError<List<Student>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblPC> pcs = new List<TblPC>();
+                    foreach (Student student in importedStudents)
+                    {
+                        pcs.Add(new TblPC
+                        {
+                            Uid = Guid.NewGuid(),
+                            Id = student.id,
+                            ClassroomId = classroomId,
+                            Name = student.name,
+                            ScUid = null,
+                            TcUid = null,
+                            Position = 0,
+                            Audio = true,
+                            Video = true,
+                            Volume1 = 80,
+                            Volume2 = 80
+                        });
+                    }
+
+                    db.TblPCs.InsertAllOnSubmit(pcs);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedStudents);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Student>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Student>>(error);
+            }
+        }
+
+        private bool isTeacherIdExists(string classroomId, string id)
+        {
+            var q = from x in db.TblTCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
         [HttpPost]
         public DataResponse<bool> IsTeacherExists(string classroomId, string id, [FromBody] string excludeId)
         {
@@ -835,6 +1356,114 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError<string>("Teacher Id not found.");
+            }
+        }
+        [HttpPost]
+        public DataResponse<List<Teacher>> ImportTeachers(string classroomId, [FromBody] string data)
+        {
+            List<Teacher> importedTeachers = new List<Teacher>();
+            string error = String.Empty;
+
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isTeacherIdExists(classroomId, id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedTeachers.Add(new Teacher()
+                            {
+                                id = id,
+                                name = name
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedTeachers.Count == 0)
+                {
+                    return responseError<List<Teacher>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblTC> tcs = new List<TblTC>();
+                    foreach (Teacher teacher in importedTeachers)
+                    {
+                        tcs.Add(new TblTC
+                        {
+                            Uid = Guid.NewGuid(),
+                            Id = teacher.id,
+                            ClassroomId = classroomId,
+                            Name = teacher.name,
+                            Audio = true,
+                            Video = true
+                        });
+                    }
+
+                    db.TblTCs.InsertAllOnSubmit(tcs);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedTeachers);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Teacher>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Teacher>>(error);
             }
         }
 

@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -17,6 +18,7 @@ var VC;
                     }
                 }
                 resetVolume(volume) {
+                    // same as set Volume, just without callback
                     if (this.state.volume !== volume) {
                         this.setState({ volume: volume });
                     }

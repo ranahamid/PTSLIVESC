@@ -387,7 +387,7 @@
     <Content Include="Views\PC\Index.cshtml" />
     <Content Include="Views\SC\Index.cshtml" />
     <Content Include="Views\TC\Index.cshtml" />
-    <None Include="tsconfig.json.bak" />
+    <Content Include="tsconfig.json" />
     <Content Include="Views\FC\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -451,9 +451,7 @@
     </Content>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\admin\components\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

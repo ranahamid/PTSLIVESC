@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Forms;
@@ -83,6 +84,7 @@ var VC;
                         let rData = JSON.parse(resultData);
                         currentResultData = this.updateResultData(currentResultData, rData);
                     }
+                    // save to state
                     this.state.resultData = JSON.stringify(currentResultData);
                 }
                 saveConfig(config, propagate) {
@@ -103,18 +105,23 @@ var VC;
                 }
                 render() {
                     if (this.props.view === Forms.FormViews.Edit) {
+                        // edit
                         return this.renderEdit();
                     }
                     else if (this.props.view === Forms.FormViews.Preview) {
+                        // preview
                         return this.renderPreview();
                     }
                     else if (this.props.view === Forms.FormViews.View) {
+                        // view
                         return this.renderView();
                     }
                     else if (this.props.view === Forms.FormViews.Answer) {
+                        // answer
                         return this.renderAnswer();
                     }
                     else {
+                        // result
                         return this.renderResult();
                     }
                 }

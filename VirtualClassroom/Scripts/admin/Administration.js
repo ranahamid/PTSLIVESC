@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var Admin;
@@ -26,10 +27,16 @@ var VC;
             }
             tabOnClick(id) {
                 this.tabs.selectItem(id);
-                if (id === -1) {
+                if (id === -2) {
+                    // back to Home
+                    top.location = "/";
+                }
+                else if (id === -1) {
+                    // back to Classrooms
                     top.location = "/Admin/";
                 }
                 else {
+                    // tabs
                     this.divSeats.style.display = "none";
                     this.divStudents.style.display = "none";
                     this.divTeachers.style.display = "none";
@@ -65,10 +72,12 @@ var VC;
                 }
             }
             componentDidMount() {
+                // init active tab
                 this.seats.init();
             }
             render() {
                 let tabItems = [
+                    { id: -2, title: "Home", onClick: this.tabOnClick.bind(this), active: false },
                     { id: -1, title: "Classrooms", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Seats, title: "Seat computers", onClick: this.tabOnClick.bind(this), active: true },
                     { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },

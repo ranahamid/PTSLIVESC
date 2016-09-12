@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -37,6 +38,7 @@ var VC;
                     $(this.divBox).on("hidden.bs.modal", () => this.boxDidHide());
                 }
                 show() {
+                    // show
                     this.boxWillShow();
                     $(this.divBox).modal("show");
                     this.divButtons.style.display = "block";
@@ -67,15 +69,18 @@ var VC;
                         contentType: "application/json",
                         success: (r) => {
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
+                                // loaded
                                 this.setState({ item: r.data, status: BoxStatus.View }, () => {
                                     this.loaded();
                                 });
                             }
                             else {
+                                // error
                                 alert(r.message);
                             }
                         },
                         error: (xhr, status, error) => {
+                            // xhr error
                             alert("XHR Error - " + xhr.statusText);
                         }
                     });
@@ -292,6 +297,7 @@ var VC;
                     let isFormValid = this.validateForm(true);
                     if (isFormValid) {
                         this.setState({ status: BoxStatus.Processing });
+                        // update
                         this.doUpdate();
                     }
                 }
@@ -364,13 +370,16 @@ var VC;
                         success: (r) => {
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
+                                // update list
                                 this.props.onFeaturedUpdated(this.state.uid, layout);
                             }
                             else {
+                                // error
                                 alert("ERROR: " + r.message);
                             }
                         },
                         error: (xhr, status, error) => {
+                            // error
                             alert("ERROR: " + error);
                             this.hide();
                         }

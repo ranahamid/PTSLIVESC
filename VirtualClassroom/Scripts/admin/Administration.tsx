@@ -55,7 +55,10 @@ namespace VC.Admin {
         private tabOnClick(id: number): void {
             this.tabs.selectItem(id);
 
-            if (id === -1) {
+            if (id === -2) {
+                // back to Home
+                top.location = "/" as any;
+            } else if (id === -1) {
                 // back to Classrooms
                 top.location = "/Admin/" as any;
             } else {
@@ -103,6 +106,7 @@ namespace VC.Admin {
 
         render(): JSX.Element {
             let tabItems: Array<Global.Components.ITabItemProps> = [
+                { id: -2, title: "Home", onClick: this.tabOnClick.bind(this), active: false },
                 { id: -1, title: "Classrooms", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Seats, title: "Seat computers", onClick: this.tabOnClick.bind(this), active: true },
                 { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },

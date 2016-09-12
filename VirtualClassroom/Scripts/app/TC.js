@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -9,6 +10,7 @@ var VC;
                 this.isWebcamPublishing = false;
                 this.isScreenSharing = false;
             }
+            // abstract methods
             setStatusText(text, style) {
                 this.setStatusVisibility(true);
                 this.status.setText(text, style);
@@ -19,16 +21,21 @@ var VC;
             connected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
+                    // me
                     this.setStatusVisibility(false);
                     this.setUiVisibility(true);
+                    // show share screen button
                     this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Start);
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
                     if (tokenData.Role === App.Roles.PC) {
+                        // student
                         this.connectedPCsChanged();
                     }
                 }
                 else if (tokenData.Role === App.Roles.AC) {
+                    // admin computer
                     App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
@@ -39,16 +46,20 @@ var VC;
             disconnected(connection) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
+                    // me
                     this.setStatusText("Disconnected from the session.", App.Components.StatusStyle.Error);
+                    // hide share screen button
                     this.switchButtonScreensharing.setStatus(App.Components.SwitchButtonStatus.Hidden);
                 }
                 else {
                     if (tokenData.Role === App.Roles.PC) {
+                        // student
                         this.connectedPCsChanged();
                     }
                 }
             }
             sessionConnected(event) {
+                // nothing to do
             }
             sessionDisconnected(event) {
                 this.setUiVisibility(false);
@@ -65,6 +76,7 @@ var VC;
                 }
             }
             streamPropertyChanged(event) {
+                // nothing to do
             }
             signalReceived(event) {
                 let signalType = App.Global.Signaling.getSignalType(event.type);
@@ -159,18 +171,21 @@ var VC;
                 this.polls.connectedPCsChanged(connectedPCs);
             }
             onFormSent() {
+                // send signal to all connected students for refresh
                 let connections = this.getConnectionsOfMyGroup(App.Roles.PC);
                 connections.forEach((c) => {
                     App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Forms, {});
                 });
             }
             onAnswerDeleted(pcUid) {
+                // send signal to selected student for refresh
                 let connection = this.getConnectionByUid(pcUid);
                 if (connection !== null) {
                     App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.Forms, {});
                 }
             }
             onAllAnswersDeleted(formId) {
+                // send signal to all connected students to delete form answers
                 let connections = this.getConnectionsOfMyGroup(App.Roles.PC);
                 connections.forEach((c) => {
                     App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.Forms, {});
@@ -222,7 +237,7 @@ var VC;
                 var statusClasses = [
                     "alert alert-warning",
                     "alert alert-success",
-                    "alert alert-danger"
+                    "alert alert-danger" // error
                 ];
                 return (React.createElement("div", {className: "_cContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement("div", {ref: (ref) => this.divUIwebcam = ref, style: { display: "block" }}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonWebcam = ref, status: App.Components.SwitchButtonStatus.Start, textOn: "Start webcam publishing", textOff: "Stop webcam publishing", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-blackboard", iconOff: "glyphicon glyphicon-blackboard", onOn: this.webcamPublishingOn.bind(this), onOff: this.webcamPublishingOff.bind(this), className: "publishingButton"}), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisherWebcam = ref, id: this.props.targetId + "_PublisherWebcam", streamProps: this.publishProps, className: "cBox", visible: true})), React.createElement("div", {ref: (ref) => this.divUIscreensharing = ref, style: { display: "none" }}, React.createElement("div", {style: { display: (this.state.extensionError === "" ? "none" : "block") }}, React.createElement("div", {className: "alert alert-danger"}, React.createElement("span", {className: "glyphicon glyphicon-warning-sign"}), " ", this.state.extensionError)), React.createElement("div", {style: { display: (this.state.extensionError !== "" ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonScreensharing = ref, status: App.Components.SwitchButtonStatus.Hidden, textOn: "Start screen sharing", textOff: "Stop screen sharing", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-blackboard", iconOff: "glyphicon glyphicon-blackboard", onOn: this.screenSharingOn.bind(this), onOff: this.screenSharingOff.bind(this), className: "publishingButton"}), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisherScreen = ref, id: this.props.targetId + "_PublisherScreen", streamProps: this.publishProps, className: "cBox", visible: true}))), React.createElement("div", {ref: (ref) => this.divUIsurveys = ref, style: { display: "none" }}, React.createElement(App.TC.SurveysTc, {ref: (ref) => this.surveys = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})), React.createElement("div", {ref: (ref) => this.divUIpolls = ref, style: { display: "none" }}, React.createElement(App.TC.PollsTc, {ref: (ref) => this.polls = ref, onFormSent: () => this.onFormSent(), onAnswerDeleted: (pcUid) => this.onAnswerDeleted(pcUid), onAllAnswersDeleted: (formId) => this.onAllAnswersDeleted(formId), actionUrl: this.props.actionUrl})))));
             }

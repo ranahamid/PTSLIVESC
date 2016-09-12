@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 var VC;
 (function (VC) {
     var App;
@@ -17,9 +18,11 @@ var VC;
                     let c = this.state.computers;
                     c.push(item);
                     if (item.role === this.state.selectedRole) {
+                        // update state and render
                         this.setState({ selectedRole: this.state.selectedRole, computers: c });
                     }
                     else {
+                        // just update state
                         this.state.computers = c;
                     }
                 }
@@ -37,9 +40,11 @@ var VC;
                         }
                     });
                     if (role === this.state.selectedRole) {
+                        // update state and render
                         this.setState({ selectedRole: this.state.selectedRole, computers: c });
                     }
                     else {
+                        // just update state
                         this.state.computers = c;
                     }
                     return removed;
@@ -47,9 +52,11 @@ var VC;
                 updateComputerVolume(uid, volume) {
                     this.state.computers.forEach((item) => {
                         if (item.uid === uid) {
+                            // update existing volume bars to default volume
                             for (let i = 0; i < item.volume.length; i++) {
-                                this.refs["RefVolumeBar_" + item.uid + "_" + i].resetVolume(80);
+                                this.refs["RefVolumeBar_" + item.uid + "_" + i].resetVolume(80); // default volume
                             }
+                            // set new volume
                             item.volume = volume;
                         }
                     });
@@ -68,6 +75,7 @@ var VC;
                         }
                         c.push(item);
                     });
+                    // just update state
                     this.state.computers = c;
                 }
                 updateComputerVolumeState(uid, volume) {
@@ -82,6 +90,7 @@ var VC;
                         }
                         c.push(item);
                     });
+                    // just update state
                     this.state.computers = c;
                 }
                 getButtonStatus(on) {

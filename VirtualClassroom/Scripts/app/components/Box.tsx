@@ -8,8 +8,11 @@ namespace VC.App.Components {
         streamProps: any;
         className: string;
         visible: boolean;
+        fitMode?: string;
+        mirror?: boolean;
     }
     interface IBoxState {
+        mirror?: boolean;
     }
 
     export class Box extends React.Component<IBoxProps, IBoxState> {
@@ -30,6 +33,13 @@ namespace VC.App.Components {
         public subscribe(session: any, stream: any, volume: number): void {
             let subscribeProps: any = this.props.streamProps;
             subscribeProps.audioVolume = volume;
+
+            if (this.props.mirror !== undefined) {
+                subscribeProps.mirror = this.props.mirror;
+            }
+            if (this.props.fitMode !== undefined) {
+                subscribeProps.fitMode = this.props.fitMode;
+            }
 
             this.clearBox();
             this.streamHandler = session.subscribe(
@@ -53,6 +63,10 @@ namespace VC.App.Components {
             this.clearBox();
         }
 
+        public setMirror(mirror) {
+            this.state = { mirror: mirror };
+        }
+
         public publish(session: any, source: PublishSources, audio: boolean, video: boolean, startedHandler: (event: any) => void, stoppedHandler: (event: any) => void): void {
             var publishProps: any = this.props.streamProps;
 
@@ -72,6 +86,16 @@ namespace VC.App.Components {
 
             publishProps.publishAudio = audio ? "true" : "false";
             publishProps.publishVideo = video ? "true" : "false";
+
+            if (this.state.mirror !== undefined) {
+                publishProps.mirror = this.state.mirror;
+            } else if (this.props.mirror !== undefined) {
+                publishProps.mirror = this.props.mirror;
+            }
+
+            if (this.props.fitMode !== undefined) {
+                publishProps.fitMode = this.props.fitMode;
+            }
 
             this.clearBox();
             this.streamHandler = OT.initPublisher(this.props.id,

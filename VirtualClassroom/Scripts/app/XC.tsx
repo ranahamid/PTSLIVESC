@@ -36,7 +36,7 @@ namespace VC.App {
 
         public streams: Array<any> = [];
 
-        // maxResolution — { width: 1920, height: 1920 }, mirror — false, fitMode — "contain"
+        // maxResolution — { width: 1920, height: 1920 }, mirror — false, fitMode — "contain" / "cover"
         public publishProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "off" } };
         public subscribeProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "on" } };
 

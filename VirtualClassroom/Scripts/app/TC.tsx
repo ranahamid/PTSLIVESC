@@ -20,6 +20,8 @@ namespace VC.App {
         private polls: TC.PollsTc;
         private isWebcamPublishing: boolean = false;
         private isScreenSharing: boolean = false;
+        private chMirror: HTMLInputElement;
+        private divMirror: HTMLDivElement;
 
         constructor(props: IProps) {
             super(props, Roles.TC);
@@ -152,6 +154,7 @@ namespace VC.App {
                 this.switchButtonWebcam.setStatus(Components.SwitchButtonStatus.Start);
                 this.isWebcamPublishing = false;
                 this.tabs.showTab(1);
+                this.divMirror.style.display = "block";
             }
         }
 
@@ -170,6 +173,8 @@ namespace VC.App {
             this.isWebcamPublishing = true;
             this.tabs.hideTab(1);
             this.switchButtonWebcam.setStatus(Components.SwitchButtonStatus.Hidden);
+            this.divMirror.style.display = "none";
+            this.boxPublisherWebcam.setMirror(this.chMirror.checked);
             this.boxPublisherWebcam.publish(this.session, PublishSources.Camera, this.dataResponse.ComputerSetting.Audio, this.dataResponse.ComputerSetting.Video, this.publishStarted.bind(this), this.publishStopped.bind(this));
         }
         private webcamPublishingOff(): void {
@@ -273,7 +278,8 @@ namespace VC.App {
 
                         <div ref={(ref: HTMLDivElement) => this.divUIwebcam = ref} style={{ display: "block" }}>
                             <Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonWebcam = ref} status={Components.SwitchButtonStatus.Start} textOn="Start webcam publishing" textOff="Stop webcam publishing" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-blackboard" iconOff="glyphicon glyphicon-blackboard" onOn={this.webcamPublishingOn.bind(this) } onOff={this.webcamPublishingOff.bind(this) } className="publishingButton" />
-                            <Components.Box ref={(ref: Components.Box) => this.boxPublisherWebcam = ref} id={this.props.targetId + "_PublisherWebcam"} streamProps={this.publishProps} className="cBox" visible={true} />
+                            <div style={{ float: "right", paddingTop: "10px", paddingRight: "15px" }} ref={(ref: HTMLDivElement) => this.divMirror = ref}><label><input ref={(ref: HTMLInputElement) => this.chMirror = ref} type="checkbox" /> Mirror video source</label></div>
+                            <Components.Box ref={(ref: Components.Box) => this.boxPublisherWebcam = ref} fitMode="contain" id={this.props.targetId + "_PublisherWebcam"} streamProps={this.publishProps} className="cBox" visible={true} />
                         </div>
 
                         <div ref={(ref: HTMLDivElement) => this.divUIscreensharing = ref} style={{ display: "none" }}>

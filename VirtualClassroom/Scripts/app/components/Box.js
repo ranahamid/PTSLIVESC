@@ -21,6 +21,12 @@ var VC;
                 subscribe(session, stream, volume) {
                     let subscribeProps = this.props.streamProps;
                     subscribeProps.audioVolume = volume;
+                    if (this.props.mirror !== undefined) {
+                        subscribeProps.mirror = this.props.mirror;
+                    }
+                    if (this.props.fitMode !== undefined) {
+                        subscribeProps.fitMode = this.props.fitMode;
+                    }
                     this.clearBox();
                     this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
                         if (error) {
@@ -37,6 +43,9 @@ var VC;
                     session.unsubscribe(this.streamHandler);
                     this.streamHandler = null;
                     this.clearBox();
+                }
+                setMirror(mirror) {
+                    this.state = { mirror: mirror };
                 }
                 publish(session, source, audio, video, startedHandler, stoppedHandler) {
                     var publishProps = this.props.streamProps;
@@ -55,6 +64,15 @@ var VC;
                     }
                     publishProps.publishAudio = audio ? "true" : "false";
                     publishProps.publishVideo = video ? "true" : "false";
+                    if (this.state.mirror !== undefined) {
+                        publishProps.mirror = this.state.mirror;
+                    }
+                    else if (this.props.mirror !== undefined) {
+                        publishProps.mirror = this.props.mirror;
+                    }
+                    if (this.props.fitMode !== undefined) {
+                        publishProps.fitMode = this.props.fitMode;
+                    }
                     this.clearBox();
                     this.streamHandler = OT.initPublisher(this.props.id, publishProps, (error) => {
                         if (error) {

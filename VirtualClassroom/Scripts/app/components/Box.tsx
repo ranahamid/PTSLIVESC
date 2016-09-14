@@ -3,12 +3,17 @@
 namespace VC.App.Components {
     "use strict";
 
+    export enum BoxFitMode {
+        Contain,
+        Cover
+    }
+
     interface IBoxProps {
         id: string;
         streamProps: any;
         className: string;
         visible: boolean;
-        fitMode?: string;
+        fitMode?: BoxFitMode;
         mirror?: boolean;
     }
     interface IBoxState {
@@ -21,6 +26,7 @@ namespace VC.App.Components {
 
         constructor(props: IBoxProps) {
             super(props);
+            this.state = { mirror: this.props.mirror } as IBoxState;
         }
 
         public getBox(): HTMLDivElement {
@@ -34,11 +40,17 @@ namespace VC.App.Components {
             let subscribeProps: any = this.props.streamProps;
             subscribeProps.audioVolume = volume;
 
-            if (this.props.mirror !== undefined) {
+            if (this.props.mirror) {
                 subscribeProps.mirror = this.props.mirror;
             }
-            if (this.props.fitMode !== undefined) {
-                subscribeProps.fitMode = this.props.fitMode;
+
+            switch (this.props.fitMode) {
+                case BoxFitMode.Contain:
+                    subscribeProps.fitMode = "contain";
+                    break;
+                case BoxFitMode.Cover:
+                    subscribeProps.fitMode = "cover";
+                    break;
             }
 
             this.clearBox();
@@ -87,14 +99,19 @@ namespace VC.App.Components {
             publishProps.publishAudio = audio ? "true" : "false";
             publishProps.publishVideo = video ? "true" : "false";
 
-            if (this.state.mirror !== undefined) {
+            if (this.state.mirror) {
                 publishProps.mirror = this.state.mirror;
-            } else if (this.props.mirror !== undefined) {
+            } else if (this.props.mirror) {
                 publishProps.mirror = this.props.mirror;
             }
 
-            if (this.props.fitMode !== undefined) {
-                publishProps.fitMode = this.props.fitMode;
+            switch (this.props.fitMode) {
+                case BoxFitMode.Contain:
+                    publishProps.fitMode = "contain";
+                    break;
+                case BoxFitMode.Cover:
+                    publishProps.fitMode = "cover";
+                    break;
             }
 
             this.clearBox();

@@ -18,11 +18,12 @@ else
     @Scripts.Render("~/bundles/react")
     @Scripts.Render("~/vc/global")
     @Scripts.Render("~/vc/app")
-    @Scripts.Render("~/vc/app/PC")
+    @Scripts.Render("~/vc/forms")
+    @Scripts.Render("~/vc/app/PC2")
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var _c = new VC.App.InitPC('targetDiv', '@Model.ClassroomId', '@Model.ActionUrl');
+            var _c = new VC.App.InitPC2('targetDiv', '@Model.ClassroomId', '@Model.ActionUrl');
         });
     </script>
 }

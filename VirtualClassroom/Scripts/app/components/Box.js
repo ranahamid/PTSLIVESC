@@ -6,10 +6,16 @@ var VC;
         var Components;
         (function (Components) {
             "use strict";
+            (function (BoxFitMode) {
+                BoxFitMode[BoxFitMode["Contain"] = 0] = "Contain";
+                BoxFitMode[BoxFitMode["Cover"] = 1] = "Cover";
+            })(Components.BoxFitMode || (Components.BoxFitMode = {}));
+            var BoxFitMode = Components.BoxFitMode;
             class Box extends React.Component {
                 constructor(props) {
                     super(props);
                     this.streamHandler = null;
+                    this.state = { mirror: this.props.mirror };
                 }
                 getBox() {
                     return this.divBox;
@@ -21,11 +27,16 @@ var VC;
                 subscribe(session, stream, volume) {
                     let subscribeProps = this.props.streamProps;
                     subscribeProps.audioVolume = volume;
-                    if (this.props.mirror !== undefined) {
+                    if (this.props.mirror) {
                         subscribeProps.mirror = this.props.mirror;
                     }
-                    if (this.props.fitMode !== undefined) {
-                        subscribeProps.fitMode = this.props.fitMode;
+                    switch (this.props.fitMode) {
+                        case BoxFitMode.Contain:
+                            subscribeProps.fitMode = "contain";
+                            break;
+                        case BoxFitMode.Cover:
+                            subscribeProps.fitMode = "cover";
+                            break;
                     }
                     this.clearBox();
                     this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
@@ -64,14 +75,19 @@ var VC;
                     }
                     publishProps.publishAudio = audio ? "true" : "false";
                     publishProps.publishVideo = video ? "true" : "false";
-                    if (this.state.mirror !== undefined) {
+                    if (this.state.mirror) {
                         publishProps.mirror = this.state.mirror;
                     }
-                    else if (this.props.mirror !== undefined) {
+                    else if (this.props.mirror) {
                         publishProps.mirror = this.props.mirror;
                     }
-                    if (this.props.fitMode !== undefined) {
-                        publishProps.fitMode = this.props.fitMode;
+                    switch (this.props.fitMode) {
+                        case BoxFitMode.Contain:
+                            publishProps.fitMode = "contain";
+                            break;
+                        case BoxFitMode.Cover:
+                            publishProps.fitMode = "cover";
+                            break;
                     }
                     this.clearBox();
                     this.streamHandler = OT.initPublisher(this.props.id, publishProps, (error) => {

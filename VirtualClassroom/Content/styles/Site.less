@@ -103,6 +103,25 @@ body {
     }
 }
 
+// PC CONTAINER - FULL SCREEN
+.pcContainer {
+    .scContainer;
+    .divHandButton {
+        width:100%;
+        text-align:right;
+        position:absolute;
+        .handButton {
+            opacity: 0.6;
+            filter: alpha(opacity=60);
+            padding-right:2px;
+            &:hover {
+                opacity: 1.0;
+                filter: alpha(opacity=100);
+            }
+        }
+    }
+}
+
 // SC CONTAINER - FULL SCREEN
 .scContainer {
     width:100%;

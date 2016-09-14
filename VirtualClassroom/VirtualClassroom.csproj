@@ -232,6 +232,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Interfaces\ApiControllerR.cs" />
     <Compile Include="Controllers\Interfaces\ControllerR.cs" />
+    <Compile Include="Controllers\PC2Controller.cs" />
     <Compile Include="Controllers\PCController.cs" />
     <Compile Include="Controllers\FCController.cs" />
     <Compile Include="Controllers\SCController.cs" />
@@ -389,9 +390,11 @@
     <Content Include="Views\TC\Index.cshtml" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\FC\Index.cshtml" />
+    <Content Include="Views\PC2\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
+    <TypeScriptCompile Include="Scripts\app\PC.tsx" />
     <TypeScriptCompile Include="Scripts\global\components\Selector.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
     <TypeScriptCompile Include="Scripts\app\ac\FeaturedBox.tsx" />
@@ -417,7 +420,7 @@
     <TypeScriptCompile Include="Scripts\app\global\Fce.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Interfaces.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Signaling.ts" />
-    <TypeScriptCompile Include="Scripts\app\PC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\PC2.tsx" />
     <TypeScriptCompile Include="Scripts\app\SC.tsx" />
     <TypeScriptCompile Include="Scripts\forms\components\Component.Checkboxes.tsx" />
     <TypeScriptCompile Include="Scripts\forms\components\Component.Label.tsx" />

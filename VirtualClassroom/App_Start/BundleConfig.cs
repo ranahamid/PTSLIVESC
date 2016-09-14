@@ -87,8 +87,12 @@ namespace VirtualClassroom
 
             bundles.Add(new BabelBundle("~/vc/app/SC").Include("~/Scripts/app/SC.js"));
             bundles.Add(new BabelBundle("~/vc/app/PC").Include(
-                "~/Scripts/app/pc/FormsPc.js",
+                // "~/Scripts/app/pc/FormsPc.js",
                 "~/Scripts/app/PC.js"
+                ));
+            bundles.Add(new BabelBundle("~/vc/app/PC2").Include(
+                "~/Scripts/app/pc/FormsPc.js",
+                "~/Scripts/app/PC2.js"
                 ));
             bundles.Add(new BabelBundle("~/vc/app/TC").Include(
                 "~/Scripts/app/tc/FormsTc.js",

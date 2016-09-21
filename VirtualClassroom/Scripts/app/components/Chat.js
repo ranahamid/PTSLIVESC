@@ -42,6 +42,9 @@ var VC;
                     });
                     return elements;
                 }
+                setHeight(height) {
+                    $(this.list).height(height);
+                }
                 updateTimeOfItems() {
                     for (let i = 0; i < this.state.items.length; i++) {
                         let item = this.refs["Item_" + (i + 1)];
@@ -136,11 +139,20 @@ var VC;
             class Chat extends React.Component {
                 constructor(props) {
                     super(props);
-                    this.state = { uid: "", name: "", role: null };
+                    this.state = { uid: "", name: "", role: null, height: null };
                 }
                 setChatUser(state) {
                     this.state = state;
                     this.chatBox.fitTbHeight();
+                }
+                setHeight(height) {
+                    let headerHeight = $(this.divHeader).height();
+                    let footerHeight = $(this.divFooter).height();
+                    let listHeight = height - (headerHeight + footerHeight + 72); // 72 .. padding
+                    if (listHeight < 0) {
+                        listHeight = 0;
+                    }
+                    this.chatList.setHeight(listHeight);
                 }
                 onSubmit(message) {
                     let item = {
@@ -167,15 +179,15 @@ var VC;
                     this.chatBox.fitTbHeight();
                 }
                 renderHeading() {
-                    if (this.props.onChatClosed === null) {
-                        return (React.createElement("div", {className: "panel-heading"}, React.createElement("h4", null, this.props.title)));
+                    if (this.props.onChatClosed === undefined) {
+                        return (React.createElement("div", {className: "panel-heading", ref: (ref) => this.divHeader = ref}, React.createElement("h4", null, this.props.title)));
                     }
                     else {
-                        return (React.createElement("div", {className: "panel-heading"}, React.createElement("button", {type: "button", className: "close", onClick: () => this.props.onChatClosed()}, "× "), React.createElement("h4", null, this.props.title)));
+                        return (React.createElement("div", {className: "panel-heading", ref: (ref) => this.divHeader = ref}, React.createElement("button", {type: "button", className: "close", onClick: () => this.props.onChatClosed()}, "× "), React.createElement("h4", null, this.props.title)));
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer"}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})))));
+                    return (React.createElement("div", {className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})))));
                 }
             }
             Components.Chat = Chat;

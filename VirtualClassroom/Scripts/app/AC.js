@@ -59,6 +59,9 @@ var VC;
                     case App.Global.SignalTypes.Connected:
                         this.connectedSignalReceived(event);
                         break;
+                    case App.Global.SignalTypes.RaiseHand:
+                        this.raiseHandSignalReceived(event);
+                        break;
                 }
             }
             connectedSignalReceived(event) {
@@ -70,9 +73,15 @@ var VC;
                     role: tokenData.Role,
                     audio: data.audio,
                     video: data.video,
-                    volume: data.volume
+                    volume: data.volume,
+                    handRaised: data.handRaised
                 });
                 this.tabs.increaseBadge(tokenData.Role);
+            }
+            raiseHandSignalReceived(event) {
+                let tokenData = App.Global.Fce.toTokenData(event.from.data);
+                let data = JSON.parse(event.data);
+                this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
             }
             setStatusVisibility(visible) {
                 this.divStatus.style.display = visible ? "block" : "none";

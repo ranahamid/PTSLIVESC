@@ -204,6 +204,9 @@ var VC;
                 this.divStatus.style.display = visible ? "block" : "none";
             }
             setLayoutVisibility(visible) {
+                // Body1 style
+                let body1 = document.getElementById("Body1");
+                body1.className = visible ? "lightBody" : "darkBody";
                 // divBody1 class
                 let divBody1 = document.getElementById("DivBody1");
                 divBody1.className = visible ? "divBody" : "";

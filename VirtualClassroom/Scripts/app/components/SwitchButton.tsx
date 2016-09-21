@@ -77,6 +77,9 @@ namespace VC.App.Components {
         public setStatus(status: SwitchButtonStatus): void {
             this.setState({ status: status } as ISwitchButtonState);
         }
+        public getStatus(): SwitchButtonStatus {
+            return this.state.status;
+        }
 
         render(): JSX.Element {
             let btnValue: string = this.getButtonValue(this.state.status);

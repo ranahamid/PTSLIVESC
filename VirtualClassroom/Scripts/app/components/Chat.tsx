@@ -87,6 +87,10 @@ namespace VC.App.Components {
             return elements;
         }
 
+        public setHeight(height: number): void {
+            $(this.list).height(height);
+        }
+
         updateTimeOfItems(): void {
             for (let i: number = 0; i < this.state.items.length; i++) {
                 let item: ChatItem = this.refs["Item_" + (i + 1)] as ChatItem;
@@ -215,20 +219,35 @@ namespace VC.App.Components {
         uid: string;
         name: string;
         role: Roles;
+        height: number;
     }
 
     export class Chat extends React.Component<IChatProps, IChatState> {
         private chatList: ChatList;
         private chatBox: ChatBox;
+        private divFooter: HTMLDivElement;
+        private divHeader: HTMLDivElement;
 
         constructor(props: IChatProps) {
             super(props);
-            this.state = { uid: "", name: "", role: null } as IChatState;
+            this.state = { uid: "", name: "", role: null, height: null } as IChatState;
         }
 
         public setChatUser(state: IChatState): void {
             this.state = state;
             this.chatBox.fitTbHeight();
+        }
+
+        public setHeight(height: number): void {
+            let headerHeight: number = $(this.divHeader).height();
+            let footerHeight: number = $(this.divFooter).height();
+
+            let listHeight: number = height - (headerHeight + footerHeight + 72); // 72 .. padding
+            if (listHeight < 0) {
+                listHeight = 0;
+            }
+
+            this.chatList.setHeight(listHeight);
         }
 
         private onSubmit(message: string): void {
@@ -261,15 +280,15 @@ namespace VC.App.Components {
         }
 
         renderHeading(): JSX.Element {
-            if (this.props.onChatClosed === null) {
+            if (this.props.onChatClosed === undefined) {
                 return (
-                    <div className="panel-heading">
+                    <div className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <h4>{this.props.title}</h4>
                     </div>
                 );
             } else {
                 return (
-                    <div className="panel-heading">
+                    <div className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <button type="button" className="close" onClick={() => this.props.onChatClosed() }>&times; </button>
                         <h4>{this.props.title}</h4>
                     </div>
@@ -285,7 +304,7 @@ namespace VC.App.Components {
                         <div className="panel-body">
                             <ChatList ref={(ref: ChatList) => this.chatList = ref} fadingOut={false} />
                         </div>
-                        <div className="panel-footer">
+                        <div className="panel-footer" ref={(ref: HTMLDivElement) => this.divFooter = ref}>
                             <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
                         </div>
                     </div>

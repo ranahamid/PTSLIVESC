@@ -22,6 +22,7 @@ namespace VC.App.Global {
         audio: boolean;
         video: boolean;
         volume: Array<number>;
+        handRaised: boolean;
     }
     export interface ISignalTurnAvData {
         audio?: boolean;

@@ -12,6 +12,9 @@ namespace VC.App {
         private divStatus: HTMLDivElement;
         private divUI: HTMLDivElement;
         private divHandButton: HTMLDivElement;
+        private chatPublic: Components.Chat;
+        private divMain: HTMLDivElement;
+        private divFrame: HTMLDivElement;
 
         public singleBoxVisible: boolean = false;
 
@@ -45,11 +48,14 @@ namespace VC.App {
                         // nothing to do
                     }
                 );
+                // set chat name
+                this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
                 if (tokenData.Role === Roles.SC) {
                     // show raise hand button
                     this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
+                    this.fitLayout();
                 } else if (tokenData.Role === Roles.TC) {
                     // seat computer
                     this.label.setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
@@ -62,7 +68,8 @@ namespace VC.App {
                     {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
-                        volume: this.dataResponse.ComputerSetting.Volume
+                        volume: this.dataResponse.ComputerSetting.Volume,
+                        handRaised: (this.switchButton.getStatus() === Components.SwitchButtonStatus.Stop)
                     } as Global.ISignalConnectedData);
             }
         }
@@ -78,6 +85,7 @@ namespace VC.App {
                 if (tokenData.Role === Roles.SC) {
                     // hide raise hand button
                     this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
+                    this.fitLayout();
                 } else if (tokenData.Role === Roles.TC) {
                     // seat computer
                     this.label.setText("Teacher computer not connected.", Components.BoxLabelStyle.NotConnected);
@@ -132,6 +140,9 @@ namespace VC.App {
                 case Global.SignalTypes.TurnOff:
                     this.turnOffSignalReceived(event);
                     break;
+                case Global.SignalTypes.Chat:
+                    this.chatSignalReceived(event);
+                    break;
             }
         }
         private turnAvSignalReceived(event: any): void {
@@ -155,27 +166,58 @@ namespace VC.App {
         private turnOffSignalReceived(event: any): void {
             this.disconnect();
         }
+        private chatSignalReceived(event: any): void {
+            let data: Global.ISignalChatData = JSON.parse(event.data) as Global.ISignalChatData;
+                if (data.type === Global.ChatType.Public) {
+                // public chat
+                this.chatPublic.addItem({
+                    userUid: data.userUid,
+                    userName: data.userName,
+                    userRole: data.userRole,
+                    message: data.message,
+                    timestamp: new Date(),
+                    me: false
+                } as Components.IChatListItem);
+            }
+        }
 
         private raiseHand(): void {
-            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session,
-                this.getScConnection(), Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getScConnection(), Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getAcConnection(), Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
 
             this.switchButton.setStatus(Components.SwitchButtonStatus.Stop);
         }
         private lowerHand(): void {
-            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session,
-                this.getScConnection(),
-                Global.SignalTypes.RaiseHand,
-                { raised: false } as Global.ISignalRaiseHandData
-            );
+            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getScConnection(), Global.SignalTypes.RaiseHand, { raised: false } as Global.ISignalRaiseHandData);
+            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getAcConnection(), Global.SignalTypes.RaiseHand, { raised: false } as Global.ISignalRaiseHandData);
 
             this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
         }
+
+        private setChatUser(uid: string, name: string, role: Roles): void {
+            this.chatPublic.setChatUser({ uid: uid, name: name, role: role } as Components.IChatState);
+        }
+
+        private onChatPublicItemSubmitted(item: Components.IChatListItem): void {
+            Global.Signaling.sendSignalAll<Global.ISignalChatData>(this.session, Global.SignalTypes.Chat, {
+                userUid: item.userUid,
+                userName: item.userName,
+                userRole: item.userRole,
+                message: item.message,
+                type: Global.ChatType.Public
+            } as Global.ISignalChatData);
+        }
+
 
         private setStatusVisibility(visible: boolean): void {
             this.divStatus.style.display = visible ? "block" : "none";
         }
         private setLayoutVisibility(visible: boolean): void {
+            // body1 style
+            let body1: HTMLBodyElement = document.getElementById("Body1") as HTMLBodyElement;
+            body1.className = visible ? "lightBody" : "darkBody";
+
+            /*
             // divBody1 class
             let divBody1: HTMLElement = document.getElementById("DivBody1");
             divBody1.className = visible ? "divBody" : "";
@@ -187,32 +229,57 @@ namespace VC.App {
             // footer1
             let footer1: HTMLElement = document.getElementById("Footer1");
             footer1.style.display = visible ? "block" : "none";
+            */
         }
 
         private setUiVisibility(visible: boolean): void {
             this.setLayoutVisibility(!visible);
             this.divUI.style.display = visible ? "block" : "none";
             if (visible) {
-                this.fitLayout();
+                window.setTimeout(() =>
+                    this.fitLayout(), 0);
             }
         }
 
         private fitLayout(): void {
+            let header1: HTMLElement = document.getElementById("Header1");
+            let footer1: HTMLElement = document.getElementById("Footer1");
+
             let windowHeight: number = $(window).innerHeight();
 
-            // box
+            let headerHeight: number = $(header1).outerHeight();
+            let footerHeight: number = $(footer1).outerHeight();
+
+            let innerHeight: number = windowHeight - (headerHeight + footerHeight + 90); // 90 = padding
+
+            if (innerHeight < 400) {
+                innerHeight = 400;
+            }
+
             $(this.boxSubscriber.getBox())
                 .css("width", "100%")
-                .css("height", windowHeight + "px");
+                .css("height", innerHeight + "px");
 
-            // label
             $(this.label.getParentDiv())
-                .css("width", "100%")
+                .css("width", $(this.boxSubscriber.getBox()).width() + "px")
                 .css("left", $(this.boxSubscriber.getBox()).position().left + "px")
                 .css("top", ($(this.boxSubscriber.getBox()).position().top + $(this.boxSubscriber.getBox()).height() - $(this.label.getParentDiv()).height()) + "px");
 
-            $(this.divHandButton)
-                .css("top", ($(this.label.getParentDiv()).position().top - $(this.divHandButton).height()) + "px");
+            // frame
+            let frameWidth: number = $(this.divFrame).width();
+
+            let publisherHeight: number = Math.round(frameWidth / 16 * 9);
+
+            $(this.boxPublisher.getBox())
+                .css("width", "100%")
+                .css("height", publisherHeight + "px");
+
+            let handButtonHeight: number = $(this.divHandButton).height();
+
+            let chatHeight: number = innerHeight - (publisherHeight + handButtonHeight);
+
+            this.chatPublic.setHeight(chatHeight);
+
         }
 
         render(): JSX.Element {
@@ -225,7 +292,7 @@ namespace VC.App {
             let labelClasses: Array<string> = [
                 "notConnected", // notConnected
                 "connected",    // connected
-                ""                          // handRaised (no need for PC)
+                ""              // handRaised (no need for PC)
             ];
 
             return (
@@ -233,15 +300,22 @@ namespace VC.App {
                     <div ref={(ref: HTMLDivElement) => this.divStatus = ref}>
                         <Components.Status ref={(ref: Components.Status) => this.status = ref} text="Connecting ..." style={Components.StatusStyle.Connecting} className="cStatus" statusClasses={statusClasses} />
                     </div>
-                    <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }}>
-                        <div style={{ display: "none" }}>
-                            <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
-                        </div>
-                        <div>
-                            <Components.Box ref={(ref: Components.Box) => this.boxSubscriber = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={true} />
-                            <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} />
-                            <div ref={(ref: HTMLDivElement) => this.divHandButton = ref} className="divHandButton"><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButton = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Hidden} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" /></div>
-                        </div>
+                    <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }} className="layout">
+                        <table width="100%" frameBorder="0">
+                            <tr>
+                                <td>
+                                    <div ref={(ref: HTMLDivElement) => this.divMain = ref} className="main">
+                                        <Components.Box ref={(ref: Components.Box) => this.boxSubscriber = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={true} />
+                                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} />
+                                    </div>
+                                    <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">
+                                        <div ref={(ref: HTMLDivElement) => this.divHandButton = ref} className="divHandButton"><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButton = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Hidden} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" /></div>
+                                        <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
+                                        <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             );

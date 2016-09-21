@@ -68,6 +68,9 @@ namespace VC.App {
                 case Global.SignalTypes.Connected:
                     this.connectedSignalReceived(event);
                     break;
+                case Global.SignalTypes.RaiseHand:
+                    this.raiseHandSignalReceived(event);
+                    break;
             }
         }
         private connectedSignalReceived(event: any): void {
@@ -80,9 +83,15 @@ namespace VC.App {
                 role: tokenData.Role,
                 audio: data.audio,
                 video: data.video,
-                volume: data.volume
+                volume: data.volume,
+                handRaised: data.handRaised
             } as VC.App.AC.IComputersListItem);
             this.tabs.increaseBadge(tokenData.Role);
+        }
+        private raiseHandSignalReceived(event: any): void {
+            let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
+            let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
+            this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
         }
 
         private setStatusVisibility(visible: boolean): void {

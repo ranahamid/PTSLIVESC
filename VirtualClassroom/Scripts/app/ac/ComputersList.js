@@ -93,6 +93,15 @@ var VC;
                     // just update state
                     this.state.computers = c;
                 }
+                updateComputerRaiseHandState(uid, handRaised) {
+                    this.state.computers.forEach((item) => {
+                        if (item.uid === uid) {
+                            // set raise hand
+                            item.handRaised = handRaised;
+                        }
+                    });
+                    this.setState(this.state);
+                }
                 getButtonStatus(on) {
                     let switchButtonStatus = App.Components.SwitchButtonStatus.Hidden;
                     if (on != null) {
@@ -143,7 +152,7 @@ var VC;
                     return name;
                 }
                 renderComputer(item) {
-                    return (React.createElement("tr", {key: "tr_" + item.uid}, React.createElement("td", null, React.createElement("div", null, React.createElement("span", {className: "glyphicon glyphicon-link", style: { color: "green" }}), " ", item.name)), React.createElement("td", null, item.volume.map((v, index) => {
+                    return (React.createElement("tr", {key: "tr_" + item.uid}, React.createElement("td", null, React.createElement("div", null, React.createElement("span", {className: "glyphicon glyphicon-link", style: { color: "green" }}), " ", React.createElement("span", {className: (item.handRaised ? "glyphicon glyphicon-hand-up" : "glyphicon glyphicon-hand-down"), style: { color: (item.handRaised ? "red" : "gray"), display: (this.state.selectedRole === App.Roles.PC ? "inline-block" : "none") }}), " ", item.name)), React.createElement("td", null, item.volume.map((v, index) => {
                         return (React.createElement(App.Components.Volume, {ref: "RefVolumeBar_" + item.uid + "_" + index, title: this.computerTitle(index), volume: v != null ? v : 0, display: v != null, onVolumeChanged: (vol) => this.changeVolume(item.uid, item.volume, index, vol)}));
                     })), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("div", {className: "cListButton"}, React.createElement("button", {type: "button", className: "btn btn-xs btn-warning", onClick: () => this.props.turnOff(item.uid)}, React.createElement("span", {className: "glyphicon glyphicon-off"}))), React.createElement("div", {className: "cListButton", style: { display: "none" }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-default", disabled: "true"}, React.createElement("span", {className: "glyphicon glyphicon-record"}))), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: this.getButtonStatus(item.video), onOn: () => this.props.turnAv(item.uid, null, true), onOff: () => this.props.turnAv(item.uid, null, false), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: this.getButtonStatus(item.audio), onOn: () => this.props.turnAv(item.uid, true, null), onOff: () => this.props.turnAv(item.uid, false, null), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "block" : "none") }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-info", onClick: () => this.props.featuredComputerClick(item.uid, item.name)}, React.createElement("span", {className: "glyphicon glyphicon-th"}))))));
                 }

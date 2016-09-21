@@ -10,6 +10,7 @@ namespace VC.App.AC {
         audio?: boolean;
         video?: boolean;
         volume: Array<number>;
+        handRaised: boolean;
     }
 
     interface IComputersListProps {
@@ -115,6 +116,17 @@ namespace VC.App.AC {
             this.state.computers = c;
         }
 
+        public updateComputerRaiseHandState(uid: string, handRaised: boolean): void {
+            this.state.computers.forEach((item: IComputersListItem) => {
+                if (item.uid === uid) {
+                    // set raise hand
+                    item.handRaised = handRaised;
+                }
+            });
+            this.setState(this.state);
+        }
+
+
         private getButtonStatus(on?: boolean): Components.SwitchButtonStatus {
             let switchButtonStatus: Components.SwitchButtonStatus = Components.SwitchButtonStatus.Hidden;
             if (on != null) {
@@ -166,7 +178,13 @@ namespace VC.App.AC {
         renderComputer(item: IComputersListItem): JSX.Element {
             return (
                 <tr key={"tr_" + item.uid}>
-                    <td><div><span className="glyphicon glyphicon-link" style={{ color: "green" }}></span> {item.name}</div></td>
+                    <td>
+                        <div>
+                            <span className="glyphicon glyphicon-link" style={{ color: "green" }}></span>&nbsp;
+                            <span className={(item.handRaised ? "glyphicon glyphicon-hand-up" : "glyphicon glyphicon-hand-down")} style={{ color: (item.handRaised ? "red" : "gray"), display: (this.state.selectedRole === Roles.PC ? "inline-block" : "none") }}></span>&nbsp;
+                            {item.name}
+                        </div>
+                    </td>
                     <td>
                         {
                             item.volume.map((v: number, index: number) => {

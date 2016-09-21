@@ -218,6 +218,10 @@ namespace VC.App {
             this.divStatus.style.display = visible ? "block" : "none";
         }
         private setLayoutVisibility(visible: boolean): void {
+            // Body1 style
+            let body1: HTMLBodyElement = document.getElementById("Body1") as HTMLBodyElement;
+            body1.className = visible ? "lightBody" : "darkBody";
+
             // divBody1 class
             let divBody1: HTMLElement = document.getElementById("DivBody1");
             divBody1.className = visible ? "divBody" : "";

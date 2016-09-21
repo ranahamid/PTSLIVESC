@@ -64,6 +64,9 @@ var VC;
                 setStatus(status) {
                     this.setState({ status: status });
                 }
+                getStatus() {
+                    return this.state.status;
+                }
                 render() {
                     let btnValue = this.getButtonValue(this.state.status);
                     let btnClassName = this.getButtonClassName(this.state.status);

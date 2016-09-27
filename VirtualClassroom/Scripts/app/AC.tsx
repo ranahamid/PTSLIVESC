@@ -71,6 +71,9 @@ namespace VC.App {
                 case Global.SignalTypes.RaiseHand:
                     this.raiseHandSignalReceived(event);
                     break;
+                case Global.SignalTypes.TurnAv:
+                    this.turnAvSignalReceived(event);
+                    break;
             }
         }
         private connectedSignalReceived(event: any): void {
@@ -79,6 +82,7 @@ namespace VC.App {
 
             this.computersList.addComputer({
                 uid: tokenData.Uid,
+                id: tokenData.Id,
                 name: tokenData.Name,
                 role: tokenData.Role,
                 audio: data.audio,
@@ -92,6 +96,11 @@ namespace VC.App {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
             let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
             this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
+        }
+        private turnAvSignalReceived(event: any): void {
+            let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
+            let data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
+            this.computersList.updateComputerAvState(tokenData.Uid, data.audio, data.video);
         }
 
         private setStatusVisibility(visible: boolean): void {
@@ -127,11 +136,32 @@ namespace VC.App {
                 }
             });
         }
+        private turnAvAll(role: Roles, audio?: boolean, video?: boolean): void {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: this.props.actionUrl + "/TurnAvAll" + Global.Fce.roleAsString(role),
+                data: JSON.stringify({ audio: audio, video: video }),
+                contentType: "application/json",
+                success: (r: any): void => {
+                    // send signal
+                    Global.Signaling.sendSignalAll<Global.ISignalTurnAvData>(this.session, Global.SignalTypes.TurnAv, { role: role, audio: audio, video: video } as Global.ISignalTurnAvData);
+                    this.computersList.updateComputerAvAllState(audio, video);
+                },
+                error: (xhr: JQueryXHR, status: string, error: string): void => {
+                    // error
+                    alert("ERROR: " + error);
+                }
+            });
+        }
         private turnOff(uid: string): void {
             let connection: any = this.getConnectionByUid(uid);
             // send signal
-            Global.Signaling.sendSignal<Global.ISignalTurnOffData>(this.session, connection,
-                Global.SignalTypes.TurnOff, {} as Global.ISignalTurnOffData);
+            Global.Signaling.sendSignal<Global.ISignalTurnOffData>(this.session, connection, Global.SignalTypes.TurnOff, {} as Global.ISignalTurnOffData);
+        }
+        private turnOffAll(role: Roles): void {
+            // send signal
+            Global.Signaling.sendSignalAll<Global.ISignalTurnOffData>(this.session, Global.SignalTypes.TurnOff, { role: role } as Global.ISignalTurnOffData);
         }
         private changeVolume(uid: string, volume: Array<number>): void {
             let connection: any = this.getConnectionByUid(uid);
@@ -157,7 +187,7 @@ namespace VC.App {
         private featuredComputerClick(uid: string, name: string): void {
             this.featuredBox.open(uid, name);
         }
-        private onFeaturedUpdated(uid: string, layout: number): void {
+        private onFeaturedUpdated(uid: string, layout: number, students: Array<VC.App.AC.IStudentItem>): void {
             // update volume bars of students in the list
             let volume: Array<number> = [];
             for (let i: number = 0; i < layout; i++) {
@@ -167,10 +197,7 @@ namespace VC.App {
 
             // send signal to FC to update group & layout
             let connection: any = this.getConnectionByUid(uid);
-            Global.Signaling.sendSignal<Global.ISignalFeaturedChangedData>(this.session, connection, Global.SignalTypes.FeaturedChanged, {} as Global.ISignalFeaturedChangedData);
-
-            // todo: send signal to PCs to update group
-            // **** we do not need it now, but if PC is going to start using FC group, then we need to implement it somehow ****
+            Global.Signaling.sendSignal<Global.ISignalFeaturedChangedData>(this.session, connection, Global.SignalTypes.FeaturedChanged, { } as Global.ISignalFeaturedChangedData);
         }
 
         render(): JSX.Element {
@@ -216,10 +243,12 @@ namespace VC.App {
                         <VC.Global.Components.Tabs ref={(ref: VC.Global.Components.Tabs) => this.tabs = ref} items={tabItems} className="cTabs" />
                         <VC.App.AC.ComputersList ref={(ref: VC.App.AC.ComputersList) => this.computersList = ref} selectedRole={Roles.SC} computers={computers}
                             turnAv={(uid: string, audio?: boolean, video?: boolean) => this.turnAv(uid, audio, video) }
+                            turnAvAll={(role: Roles, audio?: boolean, video?: boolean) => this.turnAvAll(role, audio, video) }
                             turnOff={(uid: string) => this.turnOff(uid) }
+                            turnOffAll={(role: Roles) => this.turnOffAll(role) }
                             changeVolume={(uid: string, volume: Array<number>) => this.changeVolume(uid, volume) }
                             featuredComputerClick={(uid: string, name: string) => this.featuredComputerClick(uid, name) } />
-                        <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, layout: number) => this.onFeaturedUpdated(uid, layout) } />
+                        <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, layout: number, students: Array<VC.App.AC.IStudentItem>) => this.onFeaturedUpdated(uid, layout, students) } />
                     </div>
                 </div>
             );

@@ -17,6 +17,8 @@ var VC;
                 addComputer(item) {
                     let c = this.state.computers;
                     c.push(item);
+                    // sort alphabeticaly
+                    c = c.sort(function (a, b) { return (a.name > b.name) ? 1 : -1; });
                     if (item.role === this.state.selectedRole) {
                         // update state and render
                         this.setState({ selectedRole: this.state.selectedRole, computers: c });
@@ -66,17 +68,36 @@ var VC;
                     let c = [];
                     this.state.computers.forEach((item) => {
                         if (item.uid === uid) {
-                            if (audio != null) {
+                            if (audio !== null) {
                                 item.audio = audio;
                             }
-                            if (video != null) {
+                            if (video !== null) {
                                 item.video = video;
                             }
                         }
                         c.push(item);
                     });
                     // just update state
-                    this.state.computers = c;
+                    // this.state.computers = c;
+                    // refresh
+                    this.setState({ computers: [] }, () => {
+                        this.setState({ computers: c });
+                    });
+                }
+                updateComputerAvAllState(audio, video) {
+                    let c = this.state.computers;
+                    c.forEach((item) => {
+                        if (audio !== null) {
+                            item.audio = audio;
+                        }
+                        if (video !== null) {
+                            item.video = video;
+                        }
+                    });
+                    // refresh
+                    this.setState({ computers: [] }, () => {
+                        this.setState({ computers: c });
+                    });
                 }
                 updateComputerVolumeState(uid, volume) {
                     let c = [];
@@ -102,9 +123,20 @@ var VC;
                     });
                     this.setState(this.state);
                 }
+                hasRaisedHand(id) {
+                    let handRaised = false;
+                    this.state.computers.forEach((item) => {
+                        if (item.role === App.Roles.PC && item.id === id) {
+                            if (item.handRaised !== undefined && item.handRaised) {
+                                handRaised = true;
+                            }
+                        }
+                    });
+                    return handRaised;
+                }
                 getButtonStatus(on) {
                     let switchButtonStatus = App.Components.SwitchButtonStatus.Hidden;
-                    if (on != null) {
+                    if (on !== null) {
                         if (on) {
                             switchButtonStatus = App.Components.SwitchButtonStatus.Stop;
                         }
@@ -153,8 +185,25 @@ var VC;
                 }
                 renderComputer(item) {
                     return (React.createElement("tr", {key: "tr_" + item.uid}, React.createElement("td", null, React.createElement("div", null, React.createElement("span", {className: "glyphicon glyphicon-link", style: { color: "green" }}), " ", React.createElement("span", {className: (item.handRaised ? "glyphicon glyphicon-hand-up" : "glyphicon glyphicon-hand-down"), style: { color: (item.handRaised ? "red" : "gray"), display: (this.state.selectedRole === App.Roles.PC ? "inline-block" : "none") }}), " ", item.name)), React.createElement("td", null, item.volume.map((v, index) => {
-                        return (React.createElement(App.Components.Volume, {ref: "RefVolumeBar_" + item.uid + "_" + index, title: this.computerTitle(index), volume: v != null ? v : 0, display: v != null, onVolumeChanged: (vol) => this.changeVolume(item.uid, item.volume, index, vol)}));
+                        return (React.createElement(App.Components.Volume, {ref: "RefVolumeBar_" + item.uid + "_" + index, title: this.computerTitle(index), volume: v !== null ? v : 0, display: v != null, onVolumeChanged: (vol) => this.changeVolume(item.uid, item.volume, index, vol)}));
                     })), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("div", {className: "cListButton"}, React.createElement("button", {type: "button", className: "btn btn-xs btn-warning", onClick: () => this.props.turnOff(item.uid)}, React.createElement("span", {className: "glyphicon glyphicon-off"}))), React.createElement("div", {className: "cListButton", style: { display: "none" }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-default", disabled: "true"}, React.createElement("span", {className: "glyphicon glyphicon-record"}))), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: this.getButtonStatus(item.video), onOn: () => this.props.turnAv(item.uid, null, true), onOff: () => this.props.turnAv(item.uid, null, false), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "", textOff: "", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: this.getButtonStatus(item.audio), onOn: () => this.props.turnAv(item.uid, true, null), onOff: () => this.props.turnAv(item.uid, false, null), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.selectedRole === App.Roles.FC ? "block" : "none") }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-info", onClick: () => this.props.featuredComputerClick(item.uid, item.name)}, React.createElement("span", {className: "glyphicon glyphicon-th"}))))));
+                }
+                renderComputerAllButtons(role) {
+                    let audioOn = false;
+                    for (let i = 0; i < this.state.computers.length; i++) {
+                        if (this.state.computers[i].audio) {
+                            audioOn = true;
+                            i = this.state.computers.length;
+                        }
+                    }
+                    let videoOn = false;
+                    for (let i = 0; i < this.state.computers.length; i++) {
+                        if (this.state.computers[i].video) {
+                            videoOn = true;
+                            i = this.state.computers.length;
+                        }
+                    }
+                    return (React.createElement("div", null, React.createElement("div", {className: "cListButton", style: { display: (this.state.computers.length === 0 ? "none" : "block") }}, React.createElement("button", {type: "button", className: "btn btn-xs btn-warning", onClick: () => this.props.turnOffAll(role)}, React.createElement("span", {className: "glyphicon glyphicon-off"}), " ALL")), React.createElement("div", {className: "cListButton", style: { display: (this.state.computers.length === 0 || role === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "ALL", textOff: "ALL", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: (videoOn ? App.Components.SwitchButtonStatus.Stop : App.Components.SwitchButtonStatus.Start), onOn: () => this.props.turnAvAll(role, null, true), onOff: () => this.props.turnAvAll(role, null, false), className: ""})), React.createElement("div", {className: "cListButton", style: { display: (this.state.computers.length === 0 || role === App.Roles.FC ? "none" : "block") }}, React.createElement(App.Components.SwitchButton, {textOn: "ALL", textOff: "ALL", classOn: "btn btn-xs btn-danger", classOff: "btn btn-xs btn-success", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: (audioOn ? App.Components.SwitchButtonStatus.Stop : App.Components.SwitchButtonStatus.Start), onOn: () => this.props.turnAvAll(role, true, null), onOff: () => this.props.turnAvAll(role, false, null), className: ""}))));
                 }
                 renderComputers() {
                     let items = [];
@@ -165,16 +214,16 @@ var VC;
                     });
                     if (items.length > 0) {
                         if (this.state.selectedRole === App.Roles.PC) {
-                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Student computer"), React.createElement("th", null, "Volume"), React.createElement("th", null))), React.createElement("tbody", null, items)));
+                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Student computer"), React.createElement("th", null, "Volume"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
                         }
                         else if (this.state.selectedRole === App.Roles.SC) {
-                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Seat computer"), React.createElement("th", null, "Volume"), React.createElement("th", null))), React.createElement("tbody", null, items)));
+                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Seat computer"), React.createElement("th", null, "Volume"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
                         }
                         else if (this.state.selectedRole === App.Roles.FC) {
-                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Featured computer"), React.createElement("th", null, "Volume"), React.createElement("th", null))), React.createElement("tbody", null, items)));
+                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Featured computer"), React.createElement("th", null, "Volume"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
                         }
                         else {
-                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Teacher computer"), React.createElement("th", null))), React.createElement("tbody", null, items)));
+                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Teacher computer"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
                         }
                     }
                     else {

@@ -158,6 +158,16 @@ var VC;
                 }
                 return c;
             }
+            getFcConnections() {
+                let c = [];
+                for (let i = 0; i < this.connections.length; i++) {
+                    let tokenData = App.Global.Fce.toTokenData(this.connections[i].data);
+                    if (tokenData.Role === Roles.FC && this.isInMyGroup(tokenData.Uid)) {
+                        c.push(this.connections[i]);
+                    }
+                }
+                return c;
+            }
             getTcConnection() {
                 let c = null;
                 for (let i = 0; i < this.connections.length && c == null; i++) {
@@ -217,6 +227,41 @@ var VC;
                     }
                 }
                 return connections;
+            }
+            addGroupComputer(uid) {
+                let added = false;
+                let connection = this.getConnectionByUid(uid);
+                if (connection !== null) {
+                    let tokenData = App.Global.Fce.toTokenData(connection.data);
+                    // we don't know the position, so it is always 0, but it doesn't matter because we are using it only to assign new FCs
+                    this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role });
+                    added = true;
+                }
+                return added;
+            }
+            removeGroupComputer(uid) {
+                let removed = false;
+                let group = [];
+                this.dataResponse.Group.forEach((g) => {
+                    if (g.Uid !== uid) {
+                        group.push(g);
+                    }
+                    else {
+                        removed = true;
+                    }
+                });
+                this.dataResponse.Group = group;
+                return removed;
+            }
+            compareGroupComputers(c1, c2) {
+                let isEqual = false;
+                if (c1 === null && c2 === null) {
+                    isEqual = true;
+                }
+                else if (c1 !== null && c2 !== null) {
+                    isEqual = (c1.Uid === c2.Uid);
+                }
+                return isEqual;
             }
             sessionConnect() {
                 let s = this.dataResponse.Session;

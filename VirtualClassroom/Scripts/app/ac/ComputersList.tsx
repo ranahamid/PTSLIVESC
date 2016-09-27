@@ -5,6 +5,7 @@ namespace VC.App.AC {
 
     export interface IComputersListItem {
         uid: string;
+        id: string;
         name: string;
         role: Roles;
         audio?: boolean;
@@ -17,7 +18,9 @@ namespace VC.App.AC {
         selectedRole: Roles;
         computers: Array<IComputersListItem>;
         turnAv: (uid: string, audio?: boolean, video?: boolean) => void;
+        turnAvAll: (role: Roles, audio?: boolean, video?: boolean) => void;
         turnOff: (uid: string) => void;
+        turnOffAll: (role: Roles) => void;
         changeVolume: (uid: string, volume: Array<number>) => void;
         featuredComputerClick: (uid: string, name: string) => void;
     }
@@ -39,6 +42,9 @@ namespace VC.App.AC {
         public addComputer(item: IComputersListItem): void {
             let c: Array<IComputersListItem> = this.state.computers;
             c.push(item);
+            // sort alphabeticaly
+            c = c.sort(function (a: IComputersListItem, b: IComputersListItem) { return (a.name > b.name) ? 1 : -1; });
+
             if (item.role === this.state.selectedRole) {
                 // update state and render
                 this.setState({ selectedRole: this.state.selectedRole, computers: c } as IComputersListState);
@@ -87,17 +93,38 @@ namespace VC.App.AC {
             let c: Array<IComputersListItem> = [];
             this.state.computers.forEach((item: IComputersListItem) => {
                 if (item.uid === uid) {
-                    if (audio != null) {
+                    if (audio !== null) {
                         item.audio = audio;
                     }
-                    if (video != null) {
+                    if (video !== null) {
                         item.video = video;
                     }
                 }
                 c.push(item);
             });
+
             // just update state
-            this.state.computers = c;
+            // this.state.computers = c;
+
+            // refresh
+            this.setState({ computers: [] } as IComputersListState, () => {
+                this.setState({ computers: c } as IComputersListState);
+            });
+        }
+        public updateComputerAvAllState(audio?: boolean, video?: boolean) {
+            let c: Array<IComputersListItem> = this.state.computers;
+            c.forEach((item: IComputersListItem) => {
+                if (audio !== null) {
+                    item.audio = audio;
+                }
+                if (video !== null) {
+                    item.video = video;
+                }
+            });
+            // refresh
+            this.setState({ computers: [] } as IComputersListState, () => {
+                this.setState({ computers: c } as IComputersListState);
+            });
         }
 
         public updateComputerVolumeState(uid: string, volume: Array<number>): void {
@@ -126,10 +153,21 @@ namespace VC.App.AC {
             this.setState(this.state);
         }
 
+        public hasRaisedHand(id: string): boolean {
+            let handRaised: boolean = false;
+            this.state.computers.forEach((item: IComputersListItem) => {
+                if (item.role === Roles.PC && item.id === id) {
+                    if (item.handRaised !== undefined && item.handRaised) {
+                        handRaised = true;
+                    }
+                }
+            });
+            return handRaised;
+        }
 
         private getButtonStatus(on?: boolean): Components.SwitchButtonStatus {
             let switchButtonStatus: Components.SwitchButtonStatus = Components.SwitchButtonStatus.Hidden;
-            if (on != null) {
+            if (on !== null) {
                 if (on) {
                     switchButtonStatus = Components.SwitchButtonStatus.Stop;
                 } else {
@@ -189,7 +227,7 @@ namespace VC.App.AC {
                         {
                             item.volume.map((v: number, index: number) => {
                                 return (
-                                    <Components.Volume ref={"RefVolumeBar_" + item.uid + "_" + index} title={this.computerTitle(index) } volume={v != null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
+                                    <Components.Volume ref={"RefVolumeBar_" + item.uid + "_" + index} title={this.computerTitle(index) } volume={v !== null ? v : 0} display={v != null} onVolumeChanged={(vol: number) => this.changeVolume(item.uid, item.volume, index, vol) } />);
                             })
                         }
                     </td>
@@ -201,6 +239,31 @@ namespace VC.App.AC {
                         <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC ? "block" : "none") }}><button type="button" className="btn btn-xs btn-info" onClick={() => this.props.featuredComputerClick(item.uid, item.name) }><span className="glyphicon glyphicon-th"></span></button></div>
                     </td>
                 </tr>
+            );
+        }
+        renderComputerAllButtons(role: Roles): JSX.Element {
+            let audioOn: boolean = false;
+            for (let i: number = 0; i < this.state.computers.length; i++) {
+                if (this.state.computers[i].audio) {
+                    audioOn = true;
+                    i = this.state.computers.length;
+                }
+            }
+
+            let videoOn: boolean = false;
+            for (let i: number = 0; i < this.state.computers.length; i++) {
+                if (this.state.computers[i].video) {
+                    videoOn = true;
+                    i = this.state.computers.length;
+                }
+            }
+
+            return (
+                <div>
+                    <div className="cListButton" style={{ display: (this.state.computers.length === 0 ? "none" : "block") }}><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOffAll(role) }><span className="glyphicon glyphicon-off"></span> ALL</button></div>
+                    <div className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC ? "none" : "block") }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={(videoOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, null, true) } onOff={() => this.props.turnAvAll(role, null, false) } className="" /></div>
+                    <div className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC ? "none" : "block") }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={(audioOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, true, null) } onOff={() => this.props.turnAvAll(role, false, null) } className="" /></div>
+                </div>
             );
         }
         renderComputers(): JSX.Element {
@@ -218,7 +281,7 @@ namespace VC.App.AC {
                                 <tr>
                                     <th style={{ width: "50%" }}>Student computer</th>
                                     <th>Volume</th>
-                                    <th></th>
+                                    <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -233,7 +296,7 @@ namespace VC.App.AC {
                                 <tr>
                                     <th style={{ width: "50%" }}>Seat computer</th>
                                     <th>Volume</th>
-                                    <th></th>
+                                    <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -248,7 +311,7 @@ namespace VC.App.AC {
                                 <tr>
                                     <th style={{ width: "50%" }}>Featured computer</th>
                                     <th>Volume</th>
-                                    <th></th>
+                                    <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -262,7 +325,7 @@ namespace VC.App.AC {
                             <thead>
                                 <tr>
                                     <th style={{ width: "50%" }}>Teacher computer</th>
-                                    <th></th>
+                                    <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>

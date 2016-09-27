@@ -5,13 +5,15 @@ namespace VC.App {
 
     class PC extends XC {
         private status: Components.Status;
-        private switchButton: Components.SwitchButton;
+        private switchButtonHand: Components.SwitchButton;
+        private switchButtonAudio: Components.SwitchButton;
+        private switchButtonVideo: Components.SwitchButton;
         private boxPublisher: Components.Box;
         private boxSubscriber: Components.Box;
         private label: Components.BoxLabel;
         private divStatus: HTMLDivElement;
         private divUI: HTMLDivElement;
-        private divHandButton: HTMLDivElement;
+        private divButtons: HTMLDivElement;
         private chatPublic: Components.Chat;
         private divMain: HTMLDivElement;
         private divFrame: HTMLDivElement;
@@ -48,28 +50,38 @@ namespace VC.App {
                         // nothing to do
                     }
                 );
+                // av buttons
+                this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+                this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
                 // set chat name
                 this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
                 if (tokenData.Role === Roles.SC) {
-                    // show raise hand button
-                    this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
-                    this.fitLayout();
-                } else if (tokenData.Role === Roles.TC) {
                     // seat computer
+                    // show raise hand button
+                    // this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
+                    if (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop) {
+                        Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+                    }
+                } else if (tokenData.Role === Roles.FC) {
+                    if (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop) {
+                        Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+                    }
+                } else if (tokenData.Role === Roles.TC) {
+                    // teacher computer
                     this.label.setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
                 }
             } else if (tokenData.Role === Roles.AC) {
                 // admin computer
                 Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session,
-                    this.getAcConnection(),
+                    connection,
                     Global.SignalTypes.Connected,
                     {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
                         volume: this.dataResponse.ComputerSetting.Volume,
-                        handRaised: (this.switchButton.getStatus() === Components.SwitchButtonStatus.Stop)
+                        handRaised: (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop)
                     } as Global.ISignalConnectedData);
             }
         }
@@ -84,7 +96,7 @@ namespace VC.App {
                 // my group
                 if (tokenData.Role === Roles.SC) {
                     // hide raise hand button
-                    this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
+                    // this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
                     this.fitLayout();
                 } else if (tokenData.Role === Roles.TC) {
                     // seat computer
@@ -143,28 +155,38 @@ namespace VC.App {
                 case Global.SignalTypes.Chat:
                     this.chatSignalReceived(event);
                     break;
+                case Global.SignalTypes.GroupChanged:
+                    this.groupChangedSignalReceived(event);
+                    break;
             }
         }
         private turnAvSignalReceived(event: any): void {
             let data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.audio != null) {
-                this.dataResponse.ComputerSetting.Audio = data.audio;
-                this.boxPublisher.audio(data.audio);
-            }
-            if (data.video != null) {
-                this.dataResponse.ComputerSetting.Video = data.video;
-                this.boxPublisher.video(data.video);
+            if (data.role === undefined || data.role === Roles.PC) {
+                if (data.audio !== null) {
+                    this.dataResponse.ComputerSetting.Audio = data.audio;
+                    this.boxPublisher.audio(data.audio);
+                    this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+                }
+                if (data.video !== null) {
+                    this.dataResponse.ComputerSetting.Video = data.video;
+                    this.boxPublisher.video(data.video);
+                    this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+                }
             }
         }
         private volumeSignalReceived(event: any): void {
             let data: Global.ISignalVolumeData = JSON.parse(event.data) as Global.ISignalVolumeData;
-            if (data.volume[1] != null) {
+            if (data.volume[1] !== null) {
                 this.dataResponse.ComputerSetting.Volume[1] = data.volume[1];
                 this.boxSubscriber.audioVolume(data.volume[1]);
             }
         }
         private turnOffSignalReceived(event: any): void {
-            this.disconnect();
+            let data: Global.ISignalTurnOffData = JSON.parse(event.data) as Global.ISignalTurnOffData;
+            if (data.role === undefined || data.role === Roles.PC) {
+                this.disconnect();
+            }
         }
         private chatSignalReceived(event: any): void {
             let data: Global.ISignalChatData = JSON.parse(event.data) as Global.ISignalChatData;
@@ -180,18 +202,41 @@ namespace VC.App {
                 } as Components.IChatListItem);
             }
         }
+        private groupChangedSignalReceived(event: any): void {
+            let data: Global.ISignalGroupChanged = JSON.parse(event.data) as Global.ISignalGroupChanged;
+            data.addUids.forEach((uid: string) => {
+                let added: boolean = this.addGroupComputer(uid);
+                if (added) {
+                    if (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop) {
+                        let connection: any = this.getConnectionByUid(uid);
+                        Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+                    }
+                }
+            });
+            data.removeUids.forEach((uid: string) => {
+                this.removeGroupComputer(uid);
+            });
+        }
 
         private raiseHand(): void {
             Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getScConnection(), Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
             Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getAcConnection(), Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
 
-            this.switchButton.setStatus(Components.SwitchButtonStatus.Stop);
+            this.getFcConnections().forEach((c: any) => {
+                Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, c, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
+            });
+
+            this.switchButtonHand.setStatus(Components.SwitchButtonStatus.Stop);
         }
         private lowerHand(): void {
             Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getScConnection(), Global.SignalTypes.RaiseHand, { raised: false } as Global.ISignalRaiseHandData);
             Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, this.getAcConnection(), Global.SignalTypes.RaiseHand, { raised: false } as Global.ISignalRaiseHandData);
 
-            this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
+            this.getFcConnections().forEach((c: any) => {
+                Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, c, Global.SignalTypes.RaiseHand, { raised: false } as Global.ISignalRaiseHandData);
+            });
+
+            this.switchButtonHand.setStatus(Components.SwitchButtonStatus.Start);
         }
 
         private setChatUser(uid: string, name: string, role: Roles): void {
@@ -206,6 +251,35 @@ namespace VC.App {
                 message: item.message,
                 type: Global.ChatType.Public
             } as Global.ISignalChatData);
+        }
+        private turnAv(audio?: boolean, video?: boolean): void {
+            // set
+            if (audio !== null) {
+                this.dataResponse.ComputerSetting.Audio = audio;
+                this.boxPublisher.audio(audio);
+                this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+            }
+            if (video !== null) {
+                this.dataResponse.ComputerSetting.Video = video;
+                this.boxPublisher.video(video);
+                this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+            }
+            // update db
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: this.props.actionUrl + "/TurnAv",
+                data: JSON.stringify({ audio: audio, video: video }),
+                contentType: "application/json",
+                success: (r: any): void => {
+                    // send signal
+                    Global.Signaling.sendSignal<Global.ISignalTurnAvData>(this.session, this.getAcConnection(), Global.SignalTypes.TurnAv, { audio: audio, video: video } as Global.ISignalTurnAvData);
+                },
+                error: (xhr: JQueryXHR, status: string, error: string): void => {
+                    // error
+                    alert("ERROR: " + error);
+                }
+            });
         }
 
 
@@ -274,9 +348,9 @@ namespace VC.App {
                 .css("width", "100%")
                 .css("height", publisherHeight + "px");
 
-            let handButtonHeight: number = $(this.divHandButton).height();
+            let divButtonsHeight: number = $(this.divButtons).height();
 
-            let chatHeight: number = innerHeight - (publisherHeight + handButtonHeight);
+            let chatHeight: number = innerHeight - (publisherHeight + divButtonsHeight);
 
             this.chatPublic.setHeight(chatHeight);
 
@@ -309,7 +383,11 @@ namespace VC.App {
                                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} />
                                     </div>
                                     <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">
-                                        <div ref={(ref: HTMLDivElement) => this.divHandButton = ref} className="divHandButton"><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButton = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Hidden} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" /></div>
+                                        <div ref={(ref: HTMLDivElement) => this.divButtons = ref} className="divButtons">
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" /></div>
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" /></div>
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" /></div>
+                                        </div>
                                         <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
                                         <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
                                     </div>

@@ -12,7 +12,13 @@ namespace VC.App.Global {
         TurnOff = 5,    // used for AC => PC, SC, TC
         Chat = 6,
         Forms = 7,
-        FeaturedChanged = 8 // used for AC => FC
+        FeaturedChanged = 8, // used for AC => FC
+        GroupChanged = 9 // used for FC => PC
+    }
+
+    export enum ChatType {
+        Private = 0,
+        Public = 1
     }
 
     export interface ISignalRaiseHandData {
@@ -25,6 +31,7 @@ namespace VC.App.Global {
         handRaised: boolean;
     }
     export interface ISignalTurnAvData {
+        role?: Roles;
         audio?: boolean;
         video?: boolean;
     }
@@ -32,11 +39,7 @@ namespace VC.App.Global {
         volume: Array<number>;
     }
     export interface ISignalTurnOffData {
-    }
-
-    export enum ChatType {
-        Private = 0,
-        Public = 1
+        role?: Roles;
     }
     export interface ISignalChatData {
         type: ChatType;
@@ -54,6 +57,10 @@ namespace VC.App.Global {
     }
     export interface ISignalFeaturedChangedData {
     }
+    export interface ISignalGroupChanged {
+        addUids: Array<string>;
+        removeUids: Array<string>;
+    }
 
     export class Signaling {
 
@@ -64,25 +71,29 @@ namespace VC.App.Global {
         }
 
         public static sendSignal<T>(session: any, to: any, type: SignalTypes, data: T): void {
-            session.signal({
-                to: to,
-                type: this.signalTypeAsString(type),
-                data: JSON.stringify(data)
-            }, (error: any): void => {
-                if (error) {
-                    console.log("Signal Error: " + error.message);
-                }
-            });
+            if (session && to) {
+                session.signal({
+                    to: to,
+                    type: this.signalTypeAsString(type),
+                    data: JSON.stringify(data)
+                }, (error: any): void => {
+                    if (error) {
+                        console.log("Signal Error: " + error.message);
+                    }
+                });
+            }
         }
         public static sendSignalAll<T>(session: any, type: SignalTypes, data: T): void {
-            session.signal({
-                type: this.signalTypeAsString(type),
-                data: JSON.stringify(data)
-            }, (error: any): void => {
-                if (error) {
-                    console.log("Signal Error: " + error.message);
-                }
-            });
+            if (session) {
+                session.signal({
+                    type: this.signalTypeAsString(type),
+                    data: JSON.stringify(data)
+                }, (error: any): void => {
+                    if (error) {
+                        console.log("Signal Error: " + error.message);
+                    }
+                });
+            }
         }
 
         public static getSignalType(type: string): SignalTypes {
@@ -112,6 +123,9 @@ namespace VC.App.Global {
                     break;
                 case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
                     signalType = SignalTypes.FeaturedChanged;
+                    break;
+                case signalPrefix + this.signalTypeAsString(SignalTypes.GroupChanged).toLowerCase():
+                    signalType = SignalTypes.GroupChanged;
                     break;
             }
             return signalType;

@@ -47,7 +47,7 @@ namespace VirtualClassroom.Controllers
                     select x;
 
             List<Computer> data = q.Select(x =>
-                new Computer() { id = x.Id, name = x.Name }
+                new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
                 ).ToList();
 
             return responseSuccess(data);
@@ -75,7 +75,7 @@ namespace VirtualClassroom.Controllers
                     select x;
 
             List<Computer> data = q.Select(x =>
-                new Computer() { id = x.Id, name = x.Name }
+                new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
                 ).ToList();
 
             return responseSuccess(data);
@@ -88,7 +88,7 @@ namespace VirtualClassroom.Controllers
                     select x;
 
             List<Computer> data = q.Select(x =>
-                new Computer() { id = x.Id, name = x.Name }
+                new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
                 ).ToList();
 
             return responseSuccess(data);
@@ -101,7 +101,7 @@ namespace VirtualClassroom.Controllers
                     select x;
 
             List<Computer> data = q.Select(x =>
-                new Computer() { id = x.Id, name = x.Name }
+                new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
                 ).ToList();
 
             return responseSuccess(data);
@@ -124,9 +124,10 @@ namespace VirtualClassroom.Controllers
         {
             List<Seat> data = db.TblSCs.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Seat()
             {
+                uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                students = x.TblPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.Id, name = z.Name, position = z.Position, teacher = null }).ToList()
+                students = x.TblPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.Id, name = z.Name, position = z.Position, teacher = null }).ToList()
             }).ToList();
 
             return responseSuccess(data);
@@ -136,9 +137,10 @@ namespace VirtualClassroom.Controllers
         {
             List<Featured> data = db.TblFCs.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Featured()
             {
+                uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
             }).ToList();
 
             return responseSuccess(data);
@@ -148,6 +150,7 @@ namespace VirtualClassroom.Controllers
         {
             List<Student> data = db.TblPCs.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Student()
             {
+                uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
                 teacher = x.TcUid.HasValue ? new Teacher() { id = x.TblTC.Id, name = x.TblTC.Name } : null
@@ -160,6 +163,7 @@ namespace VirtualClassroom.Controllers
         {
             List<Teacher> data = db.TblTCs.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Teacher()
             {
+                uid = x.Uid,
                 id = x.Id,
                 name = x.Name
             }).ToList();
@@ -483,6 +487,8 @@ namespace VirtualClassroom.Controllers
             {
                 db.SubmitChanges();
 
+                item.uid = scUid;
+
                 return responseSuccess(item);
             }
             catch (ChangeConflictException ex)
@@ -651,9 +657,11 @@ namespace VirtualClassroom.Controllers
                     List<TblSC> scs = new List<TblSC>();
                     foreach (Seat seat in importedSeats)
                     {
+                        Guid newScUid = Guid.NewGuid();
+
                         scs.Add(new TblSC
                         {
-                            Uid = Guid.NewGuid(),
+                            Uid = newScUid,
                             Id = seat.id,
                             ClassroomId = classroomId,
                             Name = seat.name,
@@ -668,6 +676,8 @@ namespace VirtualClassroom.Controllers
                             Volume7 = 80,
                             Volume8 = 80
                         });
+
+                        seat.uid = newScUid;
                     }
 
                     db.TblSCs.InsertAllOnSubmit(scs);
@@ -742,9 +752,10 @@ namespace VirtualClassroom.Controllers
 
             Featured data = db.TblFCs.Where(x => x.Uid == uid && x.ClassroomId.ToLower() == classroomId.ToLower()).Select(x => new Featured()
             {
+                uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
             }).SingleOrDefault();
 
             return responseSuccess(data);
@@ -762,24 +773,29 @@ namespace VirtualClassroom.Controllers
             });
 
             // assign students and positions
-            List<TblFCPC> fcPcs = new List<TblFCPC>();
-            for (int i = 0; i < 8; i++)
+            if (item.students != null)
             {
-                TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], fcUid, i + 1);
-
-                if (tblFCPC != null)
+                List<TblFCPC> fcPcs = new List<TblFCPC>();
+                for (int i = 0; i < 8; i++)
                 {
-                    fcPcs.Add(tblFCPC);
+                    TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], fcUid, i + 1);
+
+                    if (tblFCPC != null)
+                    {
+                        fcPcs.Add(tblFCPC);
+                    }
                 }
-            }
-            if (fcPcs.Count > 0)
-            {
-                db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+                if (fcPcs.Count > 0)
+                {
+                    db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+                }
             }
 
             try
             {
                 db.SubmitChanges();
+
+                item.uid = fcUid;
 
                 return responseSuccess(item);
             }
@@ -801,24 +817,27 @@ namespace VirtualClassroom.Controllers
                 tblFC.Name = item.name;
 
                 // remove assigned students
-                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
-                                              where x.FcUid == tblFC.Uid
-                                              select x);
-
-                // assign student position 1
-                List<TblFCPC> fcPcs = new List<TblFCPC>();
-                for (int i = 0; i < 8; i++)
+                if (item.students != null)
                 {
-                    TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], tblFC.Uid, i + 1);
+                    db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                  where x.FcUid == tblFC.Uid
+                                                  select x);
 
-                    if (tblFCPC != null)
+                    // assign students
+                    List<TblFCPC> fcPcs = new List<TblFCPC>();
+                    for (int i = 0; i < 8; i++)
                     {
-                        fcPcs.Add(tblFCPC);
+                        TblFCPC tblFCPC = createStudentFcPc(classroomId, item.students[i], tblFC.Uid, i + 1);
+
+                        if (tblFCPC != null)
+                        {
+                            fcPcs.Add(tblFCPC);
+                        }
                     }
-                }
-                if (fcPcs.Count > 0)
-                {
-                    db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+                    if (fcPcs.Count > 0)
+                    {
+                        db.TblFCPCs.InsertAllOnSubmit(fcPcs);
+                    }
                 }
 
                 try
@@ -954,13 +973,17 @@ namespace VirtualClassroom.Controllers
                     List<TblFC> fcs = new List<TblFC>();
                     foreach (Featured featured in importedFeatureds)
                     {
+                        Guid newFcUid = Guid.NewGuid();
+
                         fcs.Add(new TblFC
                         {
-                            Uid = Guid.NewGuid(),
+                            Uid = newFcUid,
                             Id = featured.id,
                             ClassroomId = classroomId,
                             Name = featured.name
                         });
+
+                        featured.uid = newFcUid;
                     }
 
                     db.TblFCs.InsertAllOnSubmit(fcs);
@@ -1021,9 +1044,11 @@ namespace VirtualClassroom.Controllers
                 }
             }
 
+            Guid pcUid = Guid.NewGuid();
+
             db.TblPCs.InsertOnSubmit(new TblPC
             {
-                Uid = Guid.NewGuid(),
+                Uid = pcUid,
                 Id = item.id,
                 ClassroomId = classroomId,
                 Name = item.name,
@@ -1039,6 +1064,8 @@ namespace VirtualClassroom.Controllers
             try
             {
                 db.SubmitChanges();
+
+                item.uid = pcUid;
 
                 return responseSuccess(item);
             }
@@ -1212,9 +1239,11 @@ namespace VirtualClassroom.Controllers
                     List<TblPC> pcs = new List<TblPC>();
                     foreach (Student student in importedStudents)
                     {
+                        Guid newPcUid = Guid.NewGuid();
+
                         pcs.Add(new TblPC
                         {
-                            Uid = Guid.NewGuid(),
+                            Uid = newPcUid,
                             Id = student.id,
                             ClassroomId = classroomId,
                             Name = student.name,
@@ -1226,6 +1255,8 @@ namespace VirtualClassroom.Controllers
                             Volume1 = 80,
                             Volume2 = 80
                         });
+
+                        student.uid = newPcUid;
                     }
 
                     db.TblPCs.InsertAllOnSubmit(pcs);
@@ -1272,9 +1303,11 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public DataResponse<Teacher> CreateTeacher(string classroomId, [FromBody] Teacher item)
         {
+            Guid tcUid = Guid.NewGuid();
+
             db.TblTCs.InsertOnSubmit(new TblTC
             {
-                Uid = Guid.NewGuid(),
+                Uid = tcUid,
                 Id = item.id,
                 ClassroomId = classroomId,
                 Name = item.name,
@@ -1285,6 +1318,8 @@ namespace VirtualClassroom.Controllers
             try
             {
                 db.SubmitChanges();
+
+                item.uid = tcUid;
 
                 return responseSuccess(item);
             }
@@ -1436,15 +1471,19 @@ namespace VirtualClassroom.Controllers
                     List<TblTC> tcs = new List<TblTC>();
                     foreach (Teacher teacher in importedTeachers)
                     {
+                        Guid newTcUid = Guid.NewGuid();
+
                         tcs.Add(new TblTC
                         {
-                            Uid = Guid.NewGuid(),
+                            Uid = newTcUid,
                             Id = teacher.id,
                             ClassroomId = classroomId,
                             Name = teacher.name,
                             Audio = true,
                             Video = true
                         });
+
+                        teacher.uid = newTcUid;
                     }
 
                     db.TblTCs.InsertAllOnSubmit(tcs);

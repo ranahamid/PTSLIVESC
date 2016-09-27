@@ -57,7 +57,7 @@ var VC;
                     }
                 }
                 componentWillUnmount() {
-                    if (this.timeoutHdr != null) {
+                    if (this.timeoutHdr !== null) {
                         window.clearInterval(this.timeoutHdr);
                         this.timeoutHdr = null;
                     }
@@ -66,9 +66,21 @@ var VC;
                     if (this.props.fadingOut && this.state.items.length > 0) {
                         let lastListItem = "ListItem_" + this.state.items.length;
                         let listItem = this.refs[lastListItem];
-                        window.setTimeout(() => $(listItem).fadeOut(3000), 10000);
+                        let id = this.state.items.length - 1;
+                        this.state.items[id].handler = window.setTimeout(() => $(listItem).fadeOut(3000, () => {
+                            this.state.items[id].handler = null;
+                        }), 10000);
                     }
                     this.scrollToBottom();
+                }
+                clearChat() {
+                    this.state.items.forEach((item) => {
+                        if (item.handler !== null) {
+                            window.clearTimeout(item.handler);
+                            item.handler = null;
+                        }
+                    });
+                    this.setState({ items: [] });
                 }
                 scrollToBottom() {
                     $(this.list).scrollTop(this.list.scrollHeight);
@@ -146,11 +158,22 @@ var VC;
                     this.chatBox.fitTbHeight();
                 }
                 setHeight(height) {
-                    let headerHeight = $(this.divHeader).height();
-                    let footerHeight = $(this.divFooter).height();
-                    let listHeight = height - (headerHeight + footerHeight + 72); // 72 .. padding
+                    // solution with fixed padding
+                    /*
+                    let headerHeight: number = $(this.divHeader).height();
+                    let footerHeight: number = $(this.divFooter).height();
+        
+                    let listHeight: number = height - (headerHeight + footerHeight + 72); // 72 .. padding
                     if (listHeight < 0) {
                         listHeight = 0;
+                    }
+                    */
+                    // solution with setting height on fly
+                    let listHeight = 0;
+                    this.chatList.setHeight(listHeight);
+                    let chatHeight = $(this.divChat).height();
+                    if (chatHeight < height) {
+                        listHeight = height - chatHeight;
                     }
                     this.chatList.setHeight(listHeight);
                 }
@@ -175,6 +198,9 @@ var VC;
                         this.chatList.addItem(item);
                     }
                 }
+                clearChat() {
+                    this.chatList.clearChat();
+                }
                 fitTbHeight() {
                     this.chatBox.fitTbHeight();
                 }
@@ -187,7 +213,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})))));
+                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})))));
                 }
             }
             Components.Chat = Chat;

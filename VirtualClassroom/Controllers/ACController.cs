@@ -55,6 +55,7 @@ namespace VirtualClassroom.Controllers
                 TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
                 cData.Uid = Guid.Empty;
+                cData.Id = classroom.Id;
                 cData.Key = TokBoxHelper.Key;
                 cData.ComputerSetting = new TokBoxHelper.ComputerConfig() { Audio = false, Video = false };
                 cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(classroom);
@@ -62,6 +63,7 @@ namespace VirtualClassroom.Controllers
                         new TokBoxHelper.TokenData
                         {
                             Uid = Guid.Empty,
+                            Id = classroom.Id,
                             Name = "Admin",
                             Role = (int)VC.VcRoles.AC
                         });
@@ -164,6 +166,82 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult TurnAvAllPC(string classroomId, bool? audio, bool? video)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    select x;
+
+            foreach (TblPC tblPC in q.Select(x => x))
+            {
+                if (audio.HasValue)
+                    tblPC.Audio = audio.Value;
+                if (video.HasValue)
+                    tblPC.Video = video.Value;
+            }
+
+            try
+            {
+                db.SubmitChanges();
+                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError(ex.Message);
+            }
+        }
+        [HttpPost]
+        public ActionResult TurnAvAllSC(string classroomId, bool? audio, bool? video)
+        {
+            var q = from x in db.TblSCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    select x;
+
+            foreach (TblSC tblSC in q.Select(x => x))
+            {
+                if (audio.HasValue)
+                    tblSC.Audio = audio.Value;
+                if (video.HasValue)
+                    tblSC.Video = video.Value;
+            }
+
+            try
+            {
+                db.SubmitChanges();
+                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError(ex.Message);
+            }
+        }
+        [HttpPost]
+        public ActionResult TurnAvAllTC(string classroomId, bool? audio, bool? video)
+        {
+            var q = from x in db.TblTCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    select x;
+
+            foreach (TblTC tblTC in q.Select(x => x))
+            {
+                if (audio.HasValue)
+                    tblTC.Audio = audio.Value;
+                if (video.HasValue)
+                    tblTC.Video = video.Value;
+            }
+
+            try
+            {
+                db.SubmitChanges();
+                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError(ex.Message);
             }
         }
 

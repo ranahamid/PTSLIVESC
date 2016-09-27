@@ -28,7 +28,7 @@ namespace VirtualClassroom.Code
                       where x.ScUid == scUid
                       select x;
 
-            int scLayout = 2;
+            int scLayout = 1;
             if (qPC.Count() > 0)
             {
                 int maxPosition = qPC.Max(x => x.Position);
@@ -38,6 +38,8 @@ namespace VirtualClassroom.Code
                     scLayout = 6;
                 else if (maxPosition > 2)
                     scLayout = 4;
+                else if (maxPosition > 1)
+                    scLayout = 2;
             }
 
             return scLayout;
@@ -51,7 +53,7 @@ namespace VirtualClassroom.Code
                       where x.FcUid == fcUid
                       select x;
 
-            int fcLayout = 2;
+            int fcLayout = 1;
             if (qPC.Count() > 0)
             {
                 int maxPosition = qPC.Max(x => x.Position);
@@ -61,6 +63,8 @@ namespace VirtualClassroom.Code
                     fcLayout = 6;
                 else if (maxPosition > 2)
                     fcLayout = 4;
+                else if (maxPosition > 1)
+                    fcLayout = 2;
             }
 
             return fcLayout;

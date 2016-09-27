@@ -52,6 +52,7 @@ namespace VirtualClassroom.Controllers
                 TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
                 cData.Uid = sc.Uid;
+                cData.Id = sc.Id;
                 cData.Key = TokBoxHelper.Key;
                 cData.ComputerSetting = new TokBoxHelper.ComputerConfig(sc);
                 cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(sc.TblClassroom);
@@ -59,6 +60,7 @@ namespace VirtualClassroom.Controllers
                     new TokBoxHelper.TokenData
                     {
                         Uid = sc.Uid,
+                        Id = sc.Id,
                         Name = sc.Name,
                         Role = (int)VC.VcRoles.SC
                     });

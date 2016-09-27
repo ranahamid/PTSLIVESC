@@ -459,7 +459,7 @@ namespace VC.Admin.Lists {
                         <div className="panel-heading"><h4>{this.props.title}s</h4></div>
                         {this.renderBody() }
                     </div>
-                    <div style={{ display: (this.state.data != null ? "block" : "none") }}>
+                    <div style={{ display: (this.state.data !== null ? "block" : "none") }}>
                         <div style={{ display: "inline", paddingRight: "5px" }}><button type="button" className="btn btn-sm btn-success" onClick={() => this.props.showBoxNew() }><span className="glyphicon glyphicon-plus"></span> Add New {this.props.title}</button></div>
                         <div style={{ display: (this.props.showBoxImport !== undefined ? "inline" : "none") }}><button type="button" className="btn btn-sm btn-info" onClick={() => this.props.showBoxImport() }><span className="glyphicon glyphicon-import"></span> Import {this.props.title}s</button></div>
                     </div>
@@ -487,14 +487,14 @@ namespace VC.Admin.Lists {
         }
         public showBoxEdit(id: R): void {
             let item: D = this.getItem(id);
-            if (item != null) {
+            if (item !== null) {
                 let Box1: B = this.getBox();
                 Box1.open(BoxTypes.Edit, item);
             }
         }
         public showBoxDelete(id: R): void {
             let item: D = this.getItem(id);
-            if (item != null) {
+            if (item !== null) {
                 let Box1: B = this.getBox();
                 Box1.open(BoxTypes.Delete, item);
             }

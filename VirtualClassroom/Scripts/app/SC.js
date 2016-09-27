@@ -125,26 +125,31 @@ var VC;
             }
             turnAvSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.audio != null) {
-                    this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisher.audio(data.audio);
-                }
-                if (data.video != null) {
-                    this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisher.video(data.video);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    if (data.audio !== null) {
+                        this.dataResponse.ComputerSetting.Audio = data.audio;
+                        this.boxPublisher.audio(data.audio);
+                    }
+                    if (data.video !== null) {
+                        this.dataResponse.ComputerSetting.Video = data.video;
+                        this.boxPublisher.video(data.video);
+                    }
                 }
             }
             volumeSignalReceived(event) {
                 let data = JSON.parse(event.data);
                 for (let i = 0; i < data.volume.length; i++) {
-                    if (data.volume[i] != null) {
+                    if (data.volume[i] !== null) {
                         this.dataResponse.ComputerSetting.Volume[i] = data.volume[i];
                         this.boxSubscribers[i].audioVolume(data.volume[i]);
                     }
                 }
             }
             turnOffSignalReceived(event) {
-                this.disconnect();
+                let data = JSON.parse(event.data);
+                if (data.role === undefined || data.role === App.Roles.SC) {
+                    this.disconnect();
+                }
             }
             raiseHandSignalReceived(event) {
                 let tokenData = App.Global.Fce.toTokenData(event.from.data);
@@ -166,31 +171,30 @@ var VC;
                     });
                     // students
                     if (data.userRole === App.Roles.PC) {
-                        let connection = this.getConnectionByUid(data.userUid);
-                        if (connection != null) {
-                            let tokenData = App.Global.Fce.toTokenData(connection.data);
-                            let groupComputer = this.getGroupComputer(tokenData.Uid);
-                            this.floatingChat[groupComputer.Position - 1].addItem({
-                                userUid: data.userUid,
-                                userRole: data.userRole,
-                                userName: data.userName,
-                                message: data.message,
-                                timestamp: new Date(),
-                                me: false
-                            });
-                        }
+                        let groupComputer = this.getGroupComputer(data.userUid);
+                        this.floatingChat[groupComputer.Position - 1].addItem({
+                            userUid: data.userUid,
+                            userRole: data.userRole,
+                            userName: data.userName,
+                            message: data.message,
+                            timestamp: new Date(),
+                            me: false
+                        });
                     }
                 }
                 else if (data.type === App.Global.ChatType.Public) {
-                    // public chat
-                    this.chatPublic.addItem({
-                        userUid: data.userUid,
-                        userName: data.userName,
-                        userRole: data.userRole,
-                        message: data.message,
-                        timestamp: new Date(),
-                        me: false
-                    });
+                    // try to find this student
+                    let groupComputer = this.getGroupComputer(data.userUid);
+                    if (groupComputer !== null) {
+                        this.floatingChat[groupComputer.Position - 1].addItem({
+                            userUid: data.userUid,
+                            userRole: data.userRole,
+                            userName: data.userName,
+                            message: data.message,
+                            timestamp: new Date(),
+                            me: false
+                        });
+                    }
                 }
             }
             setStatusVisibility(visible) {
@@ -253,13 +257,22 @@ var VC;
                         $(this.divFloatingChat[i]).css("width", "50%");
                     }
                 }
-                else {
+                else if (this.state.layout > 1) {
                     for (let i = 0; i < this.state.layout; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "50%")
                             .css("height", windowHeight + "px"); // 2
                         $(this.label[i].getParentDiv()).css("width", "50%");
                         $(this.divFloatingChat[i]).css("width", "50%");
+                    }
+                }
+                else {
+                    for (let i = 0; i < this.state.layout; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "100%")
+                            .css("height", windowHeight + "px"); // 1
+                        $(this.label[i].getParentDiv()).css("width", "100%");
+                        $(this.divFloatingChat[i]).css("width", "100%");
                     }
                 }
                 // labels
@@ -388,7 +401,7 @@ var VC;
                     "connected",
                     "handRaised" // handRaised
                 ];
-                return (React.createElement("div", {className: "scContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "", visible: false}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[0] = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 0}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[1] = ref, id: this.props.targetId + "_Subscriber2", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 0}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[2] = ref, id: this.props.targetId + "_Subscriber3", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 2}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[3] = ref, id: this.props.targetId + "_Subscriber4", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 2}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[4] = ref, id: this.props.targetId + "_Subscriber5", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 4}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[5] = ref, id: this.props.targetId + "_Subscriber6", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 4}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[6] = ref, id: this.props.targetId + "_Subscriber7", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 6}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[7] = ref, id: this.props.targetId + "_Subscriber8", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 6}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[0] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 0}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[1] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 0}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[2] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 2}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[3] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 2}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[4] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 4}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[5] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 4}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[6] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 6}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[7] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 6}), React.createElement("div", {ref: (ref) => this.divFloatingChat[0] = ref, className: "floatingChat", style: { display: (this.state.layout > 0 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[0] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[1] = ref, className: "floatingChat", style: { display: (this.state.layout > 0 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[1] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[2] = ref, className: "floatingChat", style: { display: (this.state.layout > 2 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[2] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[3] = ref, className: "floatingChat", style: { display: (this.state.layout > 2 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[3] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[4] = ref, className: "floatingChat", style: { display: (this.state.layout > 4 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[4] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[5] = ref, className: "floatingChat", style: { display: (this.state.layout > 4 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[5] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[6] = ref, className: "floatingChat", style: { display: (this.state.layout > 6 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[6] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[7] = ref, className: "floatingChat", style: { display: (this.state.layout > 6 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[7] = ref, fadingOut: true})), React.createElement("div", {style: { display: "none" }}, React.createElement("div", {ref: (ref) => this.divButtonChatPrivate = ref, className: "floatingButton", style: { display: "block" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.showPrivateChat()}, "Seat chat (Private) ")), React.createElement("div", {ref: (ref) => this.divButtonChatPublic = ref, className: "floatingButton", style: { display: "block" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.showPublicChat()}, "Classroom chat (Public) ")), React.createElement("div", {ref: (ref) => this.divChatPrivate = ref, style: { display: "none" }, className: "scChat"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPrivate = ref, title: "Seat chat (Private)", fixedHeight: true, onChatClosed: () => this.hidePrivateChat(), onItemSubmitted: (item) => this.onChatPrivateItemSubmitted(item)})), React.createElement("div", {ref: (ref) => this.divChatPublic = ref, style: { display: "none" }, className: "scChat"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onChatClosed: () => this.hidePublicChat(), onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))));
+                return (React.createElement("div", {className: "scContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "", visible: false}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[0] = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 0}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[1] = ref, id: this.props.targetId + "_Subscriber2", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 1}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[2] = ref, id: this.props.targetId + "_Subscriber3", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 2}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[3] = ref, id: this.props.targetId + "_Subscriber4", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 2}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[4] = ref, id: this.props.targetId + "_Subscriber5", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 4}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[5] = ref, id: this.props.targetId + "_Subscriber6", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 4}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[6] = ref, id: this.props.targetId + "_Subscriber7", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 6}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[7] = ref, id: this.props.targetId + "_Subscriber8", streamProps: this.subscribeProps, className: "cBox", visible: this.state.layout > 6}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[0] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 0}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[1] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 1}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[2] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 2}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[3] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 2}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[4] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 4}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[5] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 4}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[6] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 6}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[7] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: this.state.layout > 6}), React.createElement("div", {ref: (ref) => this.divFloatingChat[0] = ref, className: "floatingChat", style: { display: (this.state.layout > 0 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[0] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[1] = ref, className: "floatingChat", style: { display: (this.state.layout > 1 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[1] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[2] = ref, className: "floatingChat", style: { display: (this.state.layout > 2 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[2] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[3] = ref, className: "floatingChat", style: { display: (this.state.layout > 2 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[3] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[4] = ref, className: "floatingChat", style: { display: (this.state.layout > 4 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[4] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[5] = ref, className: "floatingChat", style: { display: (this.state.layout > 4 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[5] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[6] = ref, className: "floatingChat", style: { display: (this.state.layout > 6 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[6] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[7] = ref, className: "floatingChat", style: { display: (this.state.layout > 6 ? "block" : "none") }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[7] = ref, fadingOut: true})), React.createElement("div", {style: { display: "none" }}, React.createElement("div", {ref: (ref) => this.divButtonChatPrivate = ref, className: "floatingButton", style: { display: "block" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.showPrivateChat()}, "Seat chat (Private) ")), React.createElement("div", {ref: (ref) => this.divButtonChatPublic = ref, className: "floatingButton", style: { display: "block" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-default", onClick: () => this.showPublicChat()}, "Classroom chat (Public) ")), React.createElement("div", {ref: (ref) => this.divChatPrivate = ref, style: { display: "none" }, className: "scChat"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPrivate = ref, title: "Seat chat (Private)", fixedHeight: true, onChatClosed: () => this.hidePrivateChat(), onItemSubmitted: (item) => this.onChatPrivateItemSubmitted(item)})), React.createElement("div", {ref: (ref) => this.divChatPublic = ref, style: { display: "none" }, className: "scChat"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onChatClosed: () => this.hidePublicChat(), onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))));
             }
         }
         class InitSC {

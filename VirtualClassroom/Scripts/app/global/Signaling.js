@@ -15,7 +15,8 @@ var VC;
                 SignalTypes[SignalTypes["TurnOff"] = 5] = "TurnOff";
                 SignalTypes[SignalTypes["Chat"] = 6] = "Chat";
                 SignalTypes[SignalTypes["Forms"] = 7] = "Forms";
-                SignalTypes[SignalTypes["FeaturedChanged"] = 8] = "FeaturedChanged"; // used for AC => FC
+                SignalTypes[SignalTypes["FeaturedChanged"] = 8] = "FeaturedChanged";
+                SignalTypes[SignalTypes["GroupChanged"] = 9] = "GroupChanged"; // used for FC => PC
             })(Global.SignalTypes || (Global.SignalTypes = {}));
             var SignalTypes = Global.SignalTypes;
             (function (ChatType) {
@@ -34,25 +35,29 @@ var VC;
                     return null;
                 }
                 static sendSignal(session, to, type, data) {
-                    session.signal({
-                        to: to,
-                        type: this.signalTypeAsString(type),
-                        data: JSON.stringify(data)
-                    }, (error) => {
-                        if (error) {
-                            console.log("Signal Error: " + error.message);
-                        }
-                    });
+                    if (session && to) {
+                        session.signal({
+                            to: to,
+                            type: this.signalTypeAsString(type),
+                            data: JSON.stringify(data)
+                        }, (error) => {
+                            if (error) {
+                                console.log("Signal Error: " + error.message);
+                            }
+                        });
+                    }
                 }
                 static sendSignalAll(session, type, data) {
-                    session.signal({
-                        type: this.signalTypeAsString(type),
-                        data: JSON.stringify(data)
-                    }, (error) => {
-                        if (error) {
-                            console.log("Signal Error: " + error.message);
-                        }
-                    });
+                    if (session) {
+                        session.signal({
+                            type: this.signalTypeAsString(type),
+                            data: JSON.stringify(data)
+                        }, (error) => {
+                            if (error) {
+                                console.log("Signal Error: " + error.message);
+                            }
+                        });
+                    }
                 }
                 static getSignalType(type) {
                     let signalType = SignalTypes.Unknown;
@@ -81,6 +86,9 @@ var VC;
                             break;
                         case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
                             signalType = SignalTypes.FeaturedChanged;
+                            break;
+                        case signalPrefix + this.signalTypeAsString(SignalTypes.GroupChanged).toLowerCase():
+                            signalType = SignalTypes.GroupChanged;
                             break;
                     }
                     return signalType;

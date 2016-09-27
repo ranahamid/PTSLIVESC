@@ -15,6 +15,7 @@ namespace VC.Admin.Lists {
     const FORM_STUDENT8: string = "Student8";
 
     interface ISeatsListItem extends IDataItem<string> {
+        uid: string;
         name: string;
         students: Array<IStudentsListItem>;
     }
@@ -114,8 +115,6 @@ namespace VC.Admin.Lists {
 
             this.setValidationStatus(FORM_ID, BoxValidationStatus.None, "");
             this.setValidationStatus(FORM_NAME, BoxValidationStatus.None, "");
-
-            console.log(this.state.item.students);
 
             let tbStudent1: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT1] as Global.Components.Selector;
             let tbStudent2: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT2] as Global.Components.Selector;

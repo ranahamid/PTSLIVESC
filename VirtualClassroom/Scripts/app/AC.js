@@ -62,6 +62,9 @@ var VC;
                     case App.Global.SignalTypes.RaiseHand:
                         this.raiseHandSignalReceived(event);
                         break;
+                    case App.Global.SignalTypes.TurnAv:
+                        this.turnAvSignalReceived(event);
+                        break;
                 }
             }
             connectedSignalReceived(event) {
@@ -69,6 +72,7 @@ var VC;
                 let data = JSON.parse(event.data);
                 this.computersList.addComputer({
                     uid: tokenData.Uid,
+                    id: tokenData.Id,
                     name: tokenData.Name,
                     role: tokenData.Role,
                     audio: data.audio,
@@ -82,6 +86,11 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(event.from.data);
                 let data = JSON.parse(event.data);
                 this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
+            }
+            turnAvSignalReceived(event) {
+                let tokenData = App.Global.Fce.toTokenData(event.from.data);
+                let data = JSON.parse(event.data);
+                this.computersList.updateComputerAvState(tokenData.Uid, data.audio, data.video);
             }
             setStatusVisibility(visible) {
                 this.divStatus.style.display = visible ? "block" : "none";
@@ -114,10 +123,32 @@ var VC;
                     }
                 });
             }
+            turnAvAll(role, audio, video) {
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: this.props.actionUrl + "/TurnAvAll" + App.Global.Fce.roleAsString(role),
+                    data: JSON.stringify({ audio: audio, video: video }),
+                    contentType: "application/json",
+                    success: (r) => {
+                        // send signal
+                        App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.TurnAv, { role: role, audio: audio, video: video });
+                        this.computersList.updateComputerAvAllState(audio, video);
+                    },
+                    error: (xhr, status, error) => {
+                        // error
+                        alert("ERROR: " + error);
+                    }
+                });
+            }
             turnOff(uid) {
                 let connection = this.getConnectionByUid(uid);
                 // send signal
                 App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.TurnOff, {});
+            }
+            turnOffAll(role) {
+                // send signal
+                App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.TurnOff, { role: role });
             }
             changeVolume(uid, volume) {
                 let connection = this.getConnectionByUid(uid);
@@ -142,7 +173,7 @@ var VC;
             featuredComputerClick(uid, name) {
                 this.featuredBox.open(uid, name);
             }
-            onFeaturedUpdated(uid, layout) {
+            onFeaturedUpdated(uid, layout, students) {
                 // update volume bars of students in the list
                 let volume = [];
                 for (let i = 0; i < layout; i++) {
@@ -152,8 +183,6 @@ var VC;
                 // send signal to FC to update group & layout
                 let connection = this.getConnectionByUid(uid);
                 App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.FeaturedChanged, {});
-                // todo: send signal to PCs to update group
-                // **** we do not need it now, but if PC is going to start using FC group, then we need to implement it somehow ****
             }
             render() {
                 let computers = [];
@@ -190,7 +219,7 @@ var VC;
                     "alert alert-success",
                     "alert alert-danger" // error
                 ];
-                return (React.createElement("div", {className: "acContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement("div", {className: "labelContainer"}, React.createElement("h3", null, "Connected computers: ")), React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement(VC.App.AC.ComputersList, {ref: (ref) => this.computersList = ref, selectedRole: App.Roles.SC, computers: computers, turnAv: (uid, audio, video) => this.turnAv(uid, audio, video), turnOff: (uid) => this.turnOff(uid), changeVolume: (uid, volume) => this.changeVolume(uid, volume), featuredComputerClick: (uid, name) => this.featuredComputerClick(uid, name)}), React.createElement(VC.App.AC.FeaturedBox, {ref: (ref) => this.featuredBox = ref, classroomId: this.props.classroomId, onFeaturedUpdated: (uid, layout) => this.onFeaturedUpdated(uid, layout)}))));
+                return (React.createElement("div", {className: "acContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement("div", {className: "labelContainer"}, React.createElement("h3", null, "Connected computers: ")), React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement(VC.App.AC.ComputersList, {ref: (ref) => this.computersList = ref, selectedRole: App.Roles.SC, computers: computers, turnAv: (uid, audio, video) => this.turnAv(uid, audio, video), turnAvAll: (role, audio, video) => this.turnAvAll(role, audio, video), turnOff: (uid) => this.turnOff(uid), turnOffAll: (role) => this.turnOffAll(role), changeVolume: (uid, volume) => this.changeVolume(uid, volume), featuredComputerClick: (uid, name) => this.featuredComputerClick(uid, name)}), React.createElement(VC.App.AC.FeaturedBox, {ref: (ref) => this.featuredBox = ref, classroomId: this.props.classroomId, onFeaturedUpdated: (uid, layout, students) => this.onFeaturedUpdated(uid, layout, students)}))));
             }
         }
         class InitAC {

@@ -15,6 +15,7 @@ var VC;
                 constructor(props) {
                     super(props);
                     this.streamHandler = null;
+                    this.isConnected = false;
                     this.state = { mirror: this.props.mirror };
                 }
                 getBox() {
@@ -25,6 +26,7 @@ var VC;
                     box.innerHTML = "<div id=" + this.props.id + "></div>";
                 }
                 subscribe(session, stream, volume) {
+                    this.isConnected = true;
                     let subscribeProps = this.props.streamProps;
                     subscribeProps.audioVolume = volume;
                     if (this.props.mirror) {
@@ -54,11 +56,13 @@ var VC;
                     session.unsubscribe(this.streamHandler);
                     this.streamHandler = null;
                     this.clearBox();
+                    this.isConnected = false;
                 }
                 setMirror(mirror) {
                     this.state = { mirror: mirror };
                 }
                 publish(session, source, audio, video, startedHandler, stoppedHandler) {
+                    this.isConnected = true;
                     var publishProps = this.props.streamProps;
                     switch (source) {
                         case App.PublishSources.Camera:
@@ -122,29 +126,27 @@ var VC;
                     session.unpublish(this.streamHandler);
                     this.streamHandler = null;
                     this.clearBox();
+                    this.isConnected = false;
                 }
                 audio(on) {
-                    if (this.streamHandler != null) {
+                    if (this.streamHandler !== null) {
                         this.streamHandler.publishAudio(on);
                     }
                 }
                 video(on) {
-                    if (this.streamHandler != null) {
+                    if (this.streamHandler !== null) {
                         this.streamHandler.publishVideo(on);
                     }
                 }
                 audioVolume(volume) {
-                    if (this.streamHandler != null) {
+                    if (this.streamHandler !== null) {
                         this.streamHandler.setAudioVolume(volume);
                     }
                 }
                 getStats(completionHandler) {
-                    if (this.streamHandler != null) {
+                    if (this.streamHandler !== null) {
                         this.streamHandler.getStats(completionHandler);
                     }
-                }
-                isConnected() {
-                    return this.streamHandler !== null;
                 }
                 render() {
                     return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: this.props.className, style: { display: (this.props.visible ? "block" : "none") }}));

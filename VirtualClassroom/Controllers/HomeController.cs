@@ -23,20 +23,23 @@ namespace VirtualClassroom.Controllers
                         name = x.Name,
                         seats = x.TblSCs.OrderBy(y => y.Id).Select(y => new Seat()
                         {
+                            uid = y.Uid,
                             id = y.Id,
                             name = y.Name,
-                            students = y.TblPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.Id, name = z.Name, position = z.Position, teacher = null }).ToList()
+                            students = y.TblPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.Id, name = z.Name, position = z.Position, teacher = null }).ToList()
                         }).ToList(),
                         teachers = x.TblTCs.OrderBy(y => y.Id).Select(y => new Teacher()
                         {
+                            uid = y.Uid,
                             id = y.Id,
                             name = y.Name
                         }).ToList(),
                         featureds = x.TblFCs.OrderBy(y => y.Id).Select(y => new Featured()
                         {
+                            uid = y.Uid,
                             id = y.Id,
                             name = y.Name,
-                            students = y.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+                            students = y.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.TblPC.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
                         }).ToList()
                     };
 

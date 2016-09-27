@@ -7,6 +7,7 @@ namespace VC.Admin.Lists {
     const FORM_NAME: string = "Name";
 
     export interface ITeachersListItem extends IDataItem<string> {
+        uid: string;
         name: string;
     }
 

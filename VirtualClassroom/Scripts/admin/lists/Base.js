@@ -261,7 +261,7 @@ var VC;
                     return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, this.renderTableHeaderCols(), React.createElement("th", null))), React.createElement("tbody", null, items)));
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement("div", {className: "panel panel-default"}, React.createElement("div", {className: "panel-heading"}, React.createElement("h4", null, this.props.title, "s")), this.renderBody()), React.createElement("div", {style: { display: (this.state.data != null ? "block" : "none") }}, React.createElement("div", {style: { display: "inline", paddingRight: "5px" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-success", onClick: () => this.props.showBoxNew()}, React.createElement("span", {className: "glyphicon glyphicon-plus"}), " Add New ", this.props.title)), React.createElement("div", {style: { display: (this.props.showBoxImport !== undefined ? "inline" : "none") }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxImport()}, React.createElement("span", {className: "glyphicon glyphicon-import"}), " Import ", this.props.title, "s")))));
+                    return (React.createElement("div", null, React.createElement("div", {className: "panel panel-default"}, React.createElement("div", {className: "panel-heading"}, React.createElement("h4", null, this.props.title, "s")), this.renderBody()), React.createElement("div", {style: { display: (this.state.data !== null ? "block" : "none") }}, React.createElement("div", {style: { display: "inline", paddingRight: "5px" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-success", onClick: () => this.props.showBoxNew()}, React.createElement("span", {className: "glyphicon glyphicon-plus"}), " Add New ", this.props.title)), React.createElement("div", {style: { display: (this.props.showBoxImport !== undefined ? "inline" : "none") }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxImport()}, React.createElement("span", {className: "glyphicon glyphicon-import"}), " Import ", this.props.title, "s")))));
                 }
             }
             Lists.List = List;
@@ -281,14 +281,14 @@ var VC;
                 }
                 showBoxEdit(id) {
                     let item = this.getItem(id);
-                    if (item != null) {
+                    if (item !== null) {
                         let Box1 = this.getBox();
                         Box1.open(BoxTypes.Edit, item);
                     }
                 }
                 showBoxDelete(id) {
                     let item = this.getItem(id);
-                    if (item != null) {
+                    if (item !== null) {
                         let Box1 = this.getBox();
                         Box1.open(BoxTypes.Delete, item);
                     }

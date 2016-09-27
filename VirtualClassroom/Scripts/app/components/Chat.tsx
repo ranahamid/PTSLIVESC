@@ -12,6 +12,7 @@ namespace VC.App.Components {
         userRole: Roles;
         message: string;
         me: boolean;
+        handler: number;
     }
 
     interface IChatItemProps {
@@ -65,16 +66,16 @@ namespace VC.App.Components {
 
         constructor(props: IChatListProps) {
             super(props);
-            this.state = { items: [] };
+            this.state = { items: [] } as IChatListState;
         }
 
-        addItem(item: IChatListItem): void {
+        public addItem(item: IChatListItem): void {
             let items: Array<IChatListItem> = this.state.items;
             items.push(item);
             this.setState({ items: items } as IChatListState);
         }
 
-        renderItems(): Array<JSX.Element> {
+        private renderItems(): Array<JSX.Element> {
             let elements: Array<JSX.Element> = [];
             let i: number = 0;
             this.state.items.forEach((item: IChatListItem) => {
@@ -91,7 +92,7 @@ namespace VC.App.Components {
             $(this.list).height(height);
         }
 
-        updateTimeOfItems(): void {
+        private updateTimeOfItems(): void {
             for (let i: number = 0; i < this.state.items.length; i++) {
                 let item: ChatItem = this.refs["Item_" + (i + 1)] as ChatItem;
                 item.updateTime();
@@ -104,7 +105,7 @@ namespace VC.App.Components {
             }
         }
         componentWillUnmount(): void {
-            if (this.timeoutHdr != null) {
+            if (this.timeoutHdr !== null) {
                 window.clearInterval(this.timeoutHdr);
                 this.timeoutHdr = null;
             }
@@ -114,13 +115,27 @@ namespace VC.App.Components {
             if (this.props.fadingOut && this.state.items.length > 0) {
                 let lastListItem: string = "ListItem_" + this.state.items.length;
                 let listItem: HTMLDivElement = this.refs[lastListItem] as HTMLDivElement;
-                window.setTimeout(() => $(listItem).fadeOut(3000), 10000);
+                let id: number = this.state.items.length - 1;
+                this.state.items[id].handler = window.setTimeout(() =>
+                    $(listItem).fadeOut(3000, () => {
+                        this.state.items[id].handler = null;
+                    }), 10000);
             }
 
             this.scrollToBottom();
         }
 
-        scrollToBottom(): void {
+        public clearChat(): void {
+            this.state.items.forEach((item: IChatListItem) => {
+                if (item.handler !== null) {
+                    window.clearTimeout(item.handler);
+                    item.handler = null;
+                }
+            });
+            this.setState({ items: [] } as IChatListState);
+        }
+
+        private scrollToBottom(): void {
             $(this.list).scrollTop(this.list.scrollHeight);
 
         }
@@ -225,6 +240,7 @@ namespace VC.App.Components {
     export class Chat extends React.Component<IChatProps, IChatState> {
         private chatList: ChatList;
         private chatBox: ChatBox;
+        private divChat: HTMLDivElement;
         private divFooter: HTMLDivElement;
         private divHeader: HTMLDivElement;
 
@@ -239,12 +255,23 @@ namespace VC.App.Components {
         }
 
         public setHeight(height: number): void {
+            // solution with fixed padding
+            /*
             let headerHeight: number = $(this.divHeader).height();
             let footerHeight: number = $(this.divFooter).height();
 
             let listHeight: number = height - (headerHeight + footerHeight + 72); // 72 .. padding
             if (listHeight < 0) {
                 listHeight = 0;
+            }
+            */
+
+            // solution with setting height on fly
+            let listHeight: number = 0;
+            this.chatList.setHeight(listHeight);
+            let chatHeight: number = $(this.divChat).height();
+            if (chatHeight < height) {
+                listHeight = height - chatHeight;
             }
 
             this.chatList.setHeight(listHeight);
@@ -275,6 +302,10 @@ namespace VC.App.Components {
             }
         }
 
+        public clearChat(): void {
+            this.chatList.clearChat();
+        }
+
         public fitTbHeight(): void {
             this.chatBox.fitTbHeight();
         }
@@ -298,7 +329,7 @@ namespace VC.App.Components {
 
         render(): JSX.Element {
             return (
-                <div className="panel-group chat">
+                <div ref={(ref: HTMLDivElement) => this.divChat = ref} className="panel-group chat">
                     <div className="panel panel-default" onMouseEnter={() => this.setFocus() }>
                         {this.renderHeading() }
                         <div className="panel-body">

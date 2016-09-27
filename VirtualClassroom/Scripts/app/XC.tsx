@@ -174,6 +174,16 @@ namespace VC.App {
             }
             return c;
         }
+        public getFcConnections(): any {
+            let c: Array<any> = [];
+            for (let i: number = 0; i < this.connections.length; i++) {
+                let tokenData: Global.TokenData = Global.Fce.toTokenData(this.connections[i].data);
+                if (tokenData.Role === Roles.FC && this.isInMyGroup(tokenData.Uid)) {
+                    c.push(this.connections[i]);
+                }
+            }
+            return c;
+        }
         public getTcConnection(): any {
             let c: any = null;
             for (let i: number = 0; i < this.connections.length && c == null; i++) {
@@ -186,7 +196,7 @@ namespace VC.App {
         }
 
         // streams
-        private addStream(stream: any) {
+        private addStream(stream: any): void {
             this.streams.push(stream);
         }
         private removeStream(stream: any): boolean {
@@ -240,6 +250,42 @@ namespace VC.App {
 
             return connections;
         }
+        public addGroupComputer(uid: string): boolean {
+            let added: boolean = false;
+            let connection: any = this.getConnectionByUid(uid);
+            if (connection !== null) {
+                let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
+                // we don't know the position, so it is always 0, but it doesn't matter because we are using it only to assign new FCs
+                this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role } as Global.GroupComputer);
+                added = true;
+            }
+            return added;
+        }
+        public removeGroupComputer(uid: string): boolean {
+            let removed: boolean = false;
+            let group: Array<Global.GroupComputer> = [];
+            this.dataResponse.Group.forEach((g: Global.GroupComputer) => {
+                if (g.Uid !== uid) {
+                    group.push(g);
+                } else {
+                    removed = true;
+                }
+            });
+            this.dataResponse.Group = group;
+            return removed;
+        }
+        public compareGroupComputers(c1: Global.GroupComputer, c2: Global.GroupComputer): boolean {
+            let isEqual: boolean = false;
+
+            if (c1 === null && c2 === null) {
+                isEqual = true;
+            } else if (c1 !== null && c2 !== null) {
+                isEqual = (c1.Uid === c2.Uid);
+            }
+
+            return isEqual;
+        }
+
 
         private sessionConnect(): void {
             let s: Global.TokBoxSession = this.dataResponse.Session;

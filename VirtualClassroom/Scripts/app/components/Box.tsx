@@ -22,6 +22,7 @@ namespace VC.App.Components {
 
     export class Box extends React.Component<IBoxProps, IBoxState> {
         public streamHandler: any = null;
+        public isConnected: boolean = false;
         private divBox: HTMLDivElement;
 
         constructor(props: IBoxProps) {
@@ -37,6 +38,8 @@ namespace VC.App.Components {
             box.innerHTML = "<div id=" + this.props.id + "></div>";
         }
         public subscribe(session: any, stream: any, volume: number): void {
+            this.isConnected = true;
+
             let subscribeProps: any = this.props.streamProps;
             subscribeProps.audioVolume = volume;
 
@@ -73,6 +76,8 @@ namespace VC.App.Components {
             session.unsubscribe(this.streamHandler);
             this.streamHandler = null;
             this.clearBox();
+
+            this.isConnected = false;
         }
 
         public setMirror(mirror) {
@@ -80,6 +85,8 @@ namespace VC.App.Components {
         }
 
         public publish(session: any, source: PublishSources, audio: boolean, video: boolean, startedHandler: (event: any) => void, stoppedHandler: (event: any) => void): void {
+            this.isConnected = true;
+
             var publishProps: any = this.props.streamProps;
 
             switch (source) {
@@ -148,31 +155,29 @@ namespace VC.App.Components {
             session.unpublish(this.streamHandler);
             this.streamHandler = null;
             this.clearBox();
+
+            this.isConnected = false;
         }
         public audio(on: boolean): void {
-            if (this.streamHandler != null) {
+            if (this.streamHandler !== null) {
                 this.streamHandler.publishAudio(on);
             }
         }
         public video(on: boolean): void {
-            if (this.streamHandler != null) {
+            if (this.streamHandler !== null) {
                 this.streamHandler.publishVideo(on);
             }
         }
         public audioVolume(volume: number): void {
-            if (this.streamHandler != null) {
+            if (this.streamHandler !== null) {
                 this.streamHandler.setAudioVolume(volume);
             }
         }
 
         public getStats(completionHandler: (error: any, stats: any) => void): void {
-            if (this.streamHandler != null) {
+            if (this.streamHandler !== null) {
                 this.streamHandler.getStats(completionHandler);
             }
-        }
-
-        public isConnected(): boolean {
-            return this.streamHandler !== null;
         }
 
         render(): JSX.Element {

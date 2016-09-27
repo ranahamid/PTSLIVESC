@@ -9,11 +9,13 @@ namespace VC.App.Global {
     }
     export class TokenData {
         Uid: string;
+        Id: string;
         Name: string;
         Role: number;
     }
     export interface IComputerData {
         Uid: string;
+        Id: string;
         Key: string;
         ClassroomSetting: IClassroomConfig;
         ComputerSetting: IComputerConfig;
@@ -30,6 +32,7 @@ namespace VC.App.Global {
     }
     export interface GroupComputer {
         Uid: string;
+        Id: string;
         Role: number;
         Position: number;
     }

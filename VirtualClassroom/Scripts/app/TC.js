@@ -94,17 +94,22 @@ var VC;
             }
             turnAvSignalReceived(event) {
                 var data = JSON.parse(event.data);
-                if (data.audio != null) {
-                    this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisherScreen.audio(data.audio);
-                }
-                if (data.video != null) {
-                    this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisherScreen.video(data.video);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    if (data.audio !== null) {
+                        this.dataResponse.ComputerSetting.Audio = data.audio;
+                        this.boxPublisherScreen.audio(data.audio);
+                    }
+                    if (data.video !== null) {
+                        this.dataResponse.ComputerSetting.Video = data.video;
+                        this.boxPublisherScreen.video(data.video);
+                    }
                 }
             }
             turnOffSignalReceived(event) {
-                this.disconnect();
+                let data = JSON.parse(event.data);
+                if (data.role === undefined || data.role === App.Roles.TC) {
+                    this.disconnect();
+                }
             }
             formsSignalReceived(event) {
                 let data = JSON.parse(event.data);

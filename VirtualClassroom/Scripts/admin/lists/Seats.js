@@ -87,7 +87,6 @@ var VC;
                     $(tbName).val(this.state.item.name);
                     this.setValidationStatus(FORM_ID, Lists.BoxValidationStatus.None, "");
                     this.setValidationStatus(FORM_NAME, Lists.BoxValidationStatus.None, "");
-                    console.log(this.state.item.students);
                     let tbStudent1 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT1];
                     let tbStudent2 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT2];
                     let tbStudent3 = this.refs[Lists.REF_FORM_TB + FORM_STUDENT3];

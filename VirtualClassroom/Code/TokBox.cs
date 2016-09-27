@@ -15,6 +15,7 @@ namespace VirtualClassroom.Code
         public class ComputerData
         {
             public Guid Uid { get; set; }
+            public string Id { get; set; }
             public string Key { get; set; }
             public ComputerConfig ComputerSetting { get; set; }
             public ClassroomConfig ClassroomSetting { get; set; }
@@ -70,6 +71,9 @@ namespace VirtualClassroom.Code
                 if (this.Layout > 0)
                 {
                     this.Volume.Add(sc.Volume1);
+                }
+                if (this.Layout > 0)
+                {
                     this.Volume.Add(sc.Volume2);
                 }
                 if (this.Layout > 2)
@@ -120,6 +124,10 @@ namespace VirtualClassroom.Code
                     {
                         this.Volume.Add(80);
                     }
+                }
+
+                if (this.Layout > 1)
+                {
                     if (tbl.Where(x => x.Position == 2).Count() == 1)
                     {
                         this.Volume.Add(tbl.Where(x => x.Position == 2).Single().Volume);
@@ -197,6 +205,7 @@ namespace VirtualClassroom.Code
         public class GroupComputer
         {
             public Guid Uid { get; set; }
+            public string Id { get; set; }
             public int Role { get; set; }
             public int Position { get; set; }
         }
@@ -212,6 +221,7 @@ namespace VirtualClassroom.Code
         public class TokenData
         {
             public Guid Uid { get; set; }
+            public string Id { get; set; }
             public string Name { get; set; }
             public int Role { get; set; }
         }
@@ -329,7 +339,8 @@ namespace VirtualClassroom.Code
             {
                 group.Add(new GroupComputer
                 {
-                    Uid = pc.ScUid.Value,
+                    Uid = pc.TblSC.Uid,
+                    Id = pc.TblSC.Id,
                     Role = (int)VC.VcRoles.SC,
                     Position = 0
                 });
@@ -344,6 +355,7 @@ namespace VirtualClassroom.Code
                         .Select(x => new GroupComputer
                         {
                             Uid = x.Uid,
+                            Id = x.Id,
                             Role = (int)VC.VcRoles.PC,
                             Position = x.Position
                         }));
@@ -354,7 +366,8 @@ namespace VirtualClassroom.Code
             {
                 group.Add(new GroupComputer
                 {
-                    Uid = pc.TcUid.Value,
+                    Uid = pc.TblTC.Uid,
+                    Id = pc.TblTC.Id,
                     Role = (int)VC.VcRoles.TC,
                     Position = 0
                 });
@@ -366,6 +379,7 @@ namespace VirtualClassroom.Code
                     new GroupComputer
                     {
                         Uid = x.TblFC.Uid,
+                        Id = x.TblFC.Id,
                         Role = (int)VC.VcRoles.FC,
                         Position = 0
                     }));
@@ -381,6 +395,7 @@ namespace VirtualClassroom.Code
                 sc.TblPCs.Select(x => new GroupComputer
                 {
                     Uid = x.Uid,
+                    Id = x.Id,
                     Role = (int)VC.VcRoles.PC,
                     Position = x.Position
                 }));
@@ -396,6 +411,7 @@ namespace VirtualClassroom.Code
                 tc.TblPCs.Select(x => new GroupComputer
                 {
                     Uid = x.Uid,
+                    Id = x.Id,
                     Role = (int)VC.VcRoles.PC,
                     Position = 0
                 }));
@@ -411,6 +427,7 @@ namespace VirtualClassroom.Code
                 fc.TblFCPCs.Select(x => new GroupComputer
                 {
                     Uid = x.TblPC.Uid,
+                    Id = x.TblPC.Id,
                     Role = (int)VC.VcRoles.PC,
                     Position = x.Position
                 }));

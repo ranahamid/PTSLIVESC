@@ -146,26 +146,31 @@ namespace VC.App {
         }
         private turnAvSignalReceived(event: any): void {
             let data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.audio != null) {
-                this.dataResponse.ComputerSetting.Audio = data.audio;
-                this.boxPublisher.audio(data.audio);
-            }
-            if (data.video != null) {
-                this.dataResponse.ComputerSetting.Video = data.video;
-                this.boxPublisher.video(data.video);
+            if (data.role === undefined || data.role === Roles.PC) {
+                if (data.audio !== null) {
+                    this.dataResponse.ComputerSetting.Audio = data.audio;
+                    this.boxPublisher.audio(data.audio);
+                }
+                if (data.video !== null) {
+                    this.dataResponse.ComputerSetting.Video = data.video;
+                    this.boxPublisher.video(data.video);
+                }
             }
         }
         private volumeSignalReceived(event: any): void {
             let data: Global.ISignalVolumeData = JSON.parse(event.data) as Global.ISignalVolumeData;
             for (let i: number = 0; i < data.volume.length; i++) {
-                if (data.volume[i] != null) {
+                if (data.volume[i] !== null) {
                     this.dataResponse.ComputerSetting.Volume[i] = data.volume[i];
                     this.boxSubscribers[i].audioVolume(data.volume[i]);
                 }
             }
         }
         private turnOffSignalReceived(event: any): void {
-            this.disconnect();
+            let data: Global.ISignalTurnOffData = JSON.parse(event.data) as Global.ISignalTurnOffData;
+            if (data.role === undefined || data.role === Roles.SC) {
+                this.disconnect();
+            }
         }
         private raiseHandSignalReceived(event: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
@@ -187,22 +192,32 @@ namespace VC.App {
                 } as Components.IChatListItem);
                 // students
                 if (data.userRole === Roles.PC) {
-                    let connection: any = this.getConnectionByUid(data.userUid);
-                    if (connection != null) {
-                        let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
-                        let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
-                        this.floatingChat[groupComputer.Position - 1].addItem({
-                            userUid: data.userUid,
-                            userRole: data.userRole,
-                            userName: data.userName,
-                            message: data.message,
-                            timestamp: new Date(),
-                            me: false
-                        } as Components.IChatListItem);
-                    }
+                    let groupComputer: Global.GroupComputer = this.getGroupComputer(data.userUid);
+                    this.floatingChat[groupComputer.Position - 1].addItem({
+                        userUid: data.userUid,
+                        userRole: data.userRole,
+                        userName: data.userName,
+                        message: data.message,
+                        timestamp: new Date(),
+                        me: false
+                    } as Components.IChatListItem);
                 }
             } else if (data.type === Global.ChatType.Public) {
+                // try to find this student
+                let groupComputer: Global.GroupComputer = this.getGroupComputer(data.userUid);
+                if (groupComputer !== null) {
+                    this.floatingChat[groupComputer.Position - 1].addItem({
+                        userUid: data.userUid,
+                        userRole: data.userRole,
+                        userName: data.userName,
+                        message: data.message,
+                        timestamp: new Date(),
+                        me: false
+                    } as Components.IChatListItem);
+                }
+
                 // public chat
+                /*
                 this.chatPublic.addItem({
                     userUid: data.userUid,
                     userName: data.userName,
@@ -211,6 +226,7 @@ namespace VC.App {
                     timestamp: new Date(),
                     me: false
                 } as Components.IChatListItem);
+                */
             }
         }
 
@@ -276,13 +292,21 @@ namespace VC.App {
                     $(this.label[i].getParentDiv()).css("width", "50%");
                     $(this.divFloatingChat[i]).css("width", "50%");
                 }
-            } else {
+            } else if (this.state.layout > 1) {
                 for (let i: number = 0; i < this.state.layout; i++) {
                     $(this.boxSubscribers[i].getBox())
                         .css("width", "50%")
                         .css("height", windowHeight + "px"); // 2
                     $(this.label[i].getParentDiv()).css("width", "50%");
                     $(this.divFloatingChat[i]).css("width", "50%");
+                }
+            } else {
+                for (let i: number = 0; i < this.state.layout; i++) {
+                    $(this.boxSubscribers[i].getBox())
+                        .css("width", "100%")
+                        .css("height", windowHeight + "px"); // 1
+                    $(this.label[i].getParentDiv()).css("width", "100%");
+                    $(this.divFloatingChat[i]).css("width", "100%");
                 }
             }
             // labels
@@ -431,7 +455,7 @@ namespace VC.App {
                         <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="" visible={false} />
 
                         <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 0} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 1} />
                         <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
                         <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 2} />
                         <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 4} />
@@ -440,7 +464,7 @@ namespace VC.App {
                         <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={this.state.layout > 6} />
 
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
-                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 0} />
+                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 1} />
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[2] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[3] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 2} />
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[4] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 4} />
@@ -449,7 +473,7 @@ namespace VC.App {
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[7] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={this.state.layout > 6} />
 
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[0] = ref} className="floatingChat" style={{ display: (this.state.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[0] = ref} fadingOut={true} /></div>
-                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[1] = ref} className="floatingChat" style={{ display: (this.state.layout > 0 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[1] = ref} fadingOut={true} /></div>
+                        <div ref={(ref: HTMLDivElement) => this.divFloatingChat[1] = ref} className="floatingChat" style={{ display: (this.state.layout > 1 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[1] = ref} fadingOut={true} /></div>
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[2] = ref} className="floatingChat" style={{ display: (this.state.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[2] = ref} fadingOut={true} /></div>
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[3] = ref} className="floatingChat" style={{ display: (this.state.layout > 2 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[3] = ref} fadingOut={true} /></div>
                         <div ref={(ref: HTMLDivElement) => this.divFloatingChat[4] = ref} className="floatingChat" style={{ display: (this.state.layout > 4 ? "block" : "none") }}><Components.ChatList ref={(ref: Components.ChatList) => this.floatingChat[4] = ref} fadingOut={true} /></div>

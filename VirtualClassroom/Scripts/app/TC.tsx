@@ -113,17 +113,22 @@ namespace VC.App {
         }
         private turnAvSignalReceived(event: any): void {
             var data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.audio != null) {
-                this.dataResponse.ComputerSetting.Audio = data.audio;
-                this.boxPublisherScreen.audio(data.audio);
-            }
-            if (data.video != null) {
-                this.dataResponse.ComputerSetting.Video = data.video;
-                this.boxPublisherScreen.video(data.video);
+            if (data.role === undefined || data.role === Roles.PC) {
+                if (data.audio !== null) {
+                    this.dataResponse.ComputerSetting.Audio = data.audio;
+                    this.boxPublisherScreen.audio(data.audio);
+                }
+                if (data.video !== null) {
+                    this.dataResponse.ComputerSetting.Video = data.video;
+                    this.boxPublisherScreen.video(data.video);
+                }
             }
         }
         private turnOffSignalReceived(event: any): void {
-            this.disconnect();
+            let data: Global.ISignalTurnOffData = JSON.parse(event.data) as Global.ISignalTurnOffData;
+            if (data.role === undefined || data.role === Roles.TC) {
+                this.disconnect();
+            }
         }
         private formsSignalReceived(event: any): void {
             let data: Global.ISignalFormsData = JSON.parse(event.data) as Global.ISignalFormsData;

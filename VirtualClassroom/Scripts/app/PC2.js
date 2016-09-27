@@ -37,7 +37,15 @@ var VC;
                         // seat computer
                         this.labelLeft.setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                         // show raise hand button
-                        this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
+                        // this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
+                        if (this.switchButton.getStatus() === App.Components.SwitchButtonStatus.Stop) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
+                        }
+                    }
+                    else if (tokenData.Role === App.Roles.FC) {
+                        if (this.switchButton.getStatus() === App.Components.SwitchButtonStatus.Stop) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
+                        }
                     }
                     else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
@@ -46,10 +54,11 @@ var VC;
                 }
                 else if (tokenData.Role === App.Roles.AC) {
                     // admin computer
-                    App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
+                    App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.Connected, {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
-                        volume: this.dataResponse.ComputerSetting.Volume
+                        volume: this.dataResponse.ComputerSetting.Volume,
+                        handRaised: (this.switchButton.getStatus() === App.Components.SwitchButtonStatus.Stop)
                     });
                 }
             }
@@ -66,8 +75,6 @@ var VC;
                     if (tokenData.Role === App.Roles.SC) {
                         // seat computer
                         this.labelLeft.setText("Seat computer not connected.", App.Components.BoxLabelStyle.NotConnected);
-                        // hide raise hand button
-                        this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
                     }
                     else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
@@ -136,32 +143,40 @@ var VC;
                     case App.Global.SignalTypes.Forms:
                         this.formsSignalReceived(event);
                         break;
+                    case App.Global.SignalTypes.GroupChanged:
+                        this.groupChangedSignalReceived(event);
+                        break;
                 }
             }
             turnAvSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.audio != null) {
-                    this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisher.audio(data.audio);
-                }
-                if (data.video != null) {
-                    this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisher.video(data.video);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    if (data.audio !== null) {
+                        this.dataResponse.ComputerSetting.Audio = data.audio;
+                        this.boxPublisher.audio(data.audio);
+                    }
+                    if (data.video !== null) {
+                        this.dataResponse.ComputerSetting.Video = data.video;
+                        this.boxPublisher.video(data.video);
+                    }
                 }
             }
             volumeSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.volume[0] != null) {
+                if (data.volume[0] !== null) {
                     this.dataResponse.ComputerSetting.Volume[0] = data.volume[0];
                     this.boxSubscriberLeft.audioVolume(data.volume[0]);
                 }
-                if (data.volume[1] != null) {
+                if (data.volume[1] !== null) {
                     this.dataResponse.ComputerSetting.Volume[1] = data.volume[1];
                     this.boxSubscriberRight.audioVolume(data.volume[1]);
                 }
             }
             turnOffSignalReceived(event) {
-                this.disconnect();
+                let data = JSON.parse(event.data);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    this.disconnect();
+                }
             }
             chatSignalReceived(event) {
                 let data = JSON.parse(event.data);
@@ -200,12 +215,29 @@ var VC;
                     this.forms.formAnswerRemoved(data.formId);
                 }
             }
+            groupChangedSignalReceived(event) {
+                let data = JSON.parse(event.data);
+                data.addUids.forEach((uid) => {
+                    this.addGroupComputer(uid);
+                });
+                data.removeUids.forEach((uid) => {
+                    this.removeGroupComputer(uid);
+                });
+            }
             raiseHand() {
                 App.Global.Signaling.sendSignal(this.session, this.getScConnection(), App.Global.SignalTypes.RaiseHand, { raised: true });
+                App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.RaiseHand, { raised: true });
+                this.getFcConnections().forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.RaiseHand, { raised: true });
+                });
                 this.switchButton.setStatus(App.Components.SwitchButtonStatus.Stop);
             }
             lowerHand() {
                 App.Global.Signaling.sendSignal(this.session, this.getScConnection(), App.Global.SignalTypes.RaiseHand, { raised: false });
+                App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.RaiseHand, { raised: false });
+                this.getFcConnections().forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.RaiseHand, { raised: false });
+                });
                 this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
             }
             setStatusVisibility(visible) {
@@ -350,7 +382,7 @@ var VC;
                     "alert alert-success",
                     "" // handRaised (no need for PC)
                 ];
-                return (React.createElement("div", {className: "_cContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-2"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true})), React.createElement("div", {className: "col-sm-10"}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButton = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Hidden, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton"}))), React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement("div", {className: "row"}, React.createElement("div", {ref: (ref) => this.divLeftScreen = ref, className: "col-sm-6"}, React.createElement(App.Components.BoxLabel, {ref: (ref) => this.labelLeft = ref, text: "Seat computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriberLeft = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true})), React.createElement("div", {ref: (ref) => this.divRightScreen = ref, className: "col-sm-6"}, React.createElement(App.Components.BoxLabel, {ref: (ref) => this.labelRight = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriberRight = ref, id: this.props.targetId + "_Subscriber2", streamProps: this.subscribeProps, className: "cBox", visible: true}))), React.createElement("div", {className: "row", ref: (ref) => this.divChat = ref}, React.createElement("div", {className: "col-sm-6"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPrivate = ref, title: "Seat chat (Private)", fixedHeight: false, onItemSubmitted: (item) => this.onChatPrivateItemSubmitted(item)})), React.createElement("div", {className: "col-sm-6"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: false, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))), React.createElement("div", {ref: (ref) => this.divForms = ref, style: { display: "none" }}, React.createElement(App.PC.FormsPc, {ref: (ref) => this.forms = ref, onPendingAnswersChanged: (count) => this.onPendingAnswersChanged(count), onAnswerStatusChanged: (formUid, answerUid, type, status, resultData) => this.onAnswerStatusChanged(formUid, answerUid, type, status, resultData), actionUrl: this.props.actionUrl})))));
+                return (React.createElement("div", {className: "_cContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-2"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true})), React.createElement("div", {className: "col-sm-10"}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButton = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Start, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton"}))), React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"}), React.createElement("div", {className: "row"}, React.createElement("div", {ref: (ref) => this.divLeftScreen = ref, className: "col-sm-6"}, React.createElement(App.Components.BoxLabel, {ref: (ref) => this.labelLeft = ref, text: "Seat computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriberLeft = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true})), React.createElement("div", {ref: (ref) => this.divRightScreen = ref, className: "col-sm-6"}, React.createElement(App.Components.BoxLabel, {ref: (ref) => this.labelRight = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriberRight = ref, id: this.props.targetId + "_Subscriber2", streamProps: this.subscribeProps, className: "cBox", visible: true}))), React.createElement("div", {className: "row", ref: (ref) => this.divChat = ref}, React.createElement("div", {className: "col-sm-6"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPrivate = ref, title: "Seat chat (Private)", fixedHeight: false, onItemSubmitted: (item) => this.onChatPrivateItemSubmitted(item)})), React.createElement("div", {className: "col-sm-6"}, React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: false, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))), React.createElement("div", {ref: (ref) => this.divForms = ref, style: { display: "none" }}, React.createElement(App.PC.FormsPc, {ref: (ref) => this.forms = ref, onPendingAnswersChanged: (count) => this.onPendingAnswersChanged(count), onAnswerStatusChanged: (formUid, answerUid, type, status, resultData) => this.onAnswerStatusChanged(formUid, answerUid, type, status, resultData), actionUrl: this.props.actionUrl})))));
             }
         }
         class InitPC2 {

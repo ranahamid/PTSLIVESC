@@ -7,6 +7,7 @@ namespace VirtualClassroom.Models
 {
     public class Computer
     {
+        public Guid uid { get; set; }
         public string id { get; set; }
         public string name { get; set; }
     }

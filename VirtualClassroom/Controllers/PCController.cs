@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Web.Mvc;
 using VirtualClassroom.Code;
@@ -63,6 +64,7 @@ namespace VirtualClassroom.Controllers
                     TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
                     cData.Uid = pc.Uid;
+                    cData.Id = pc.Id;
                     cData.Key = TokBoxHelper.Key;
                     cData.ComputerSetting = new TokBoxHelper.ComputerConfig(pc);
                     cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(pc.TblClassroom);
@@ -70,6 +72,7 @@ namespace VirtualClassroom.Controllers
                         new TokBoxHelper.TokenData
                         {
                             Uid = pc.Uid,
+                            Id = pc.Id,
                             Name = pc.Name,
                             Role = (int)VC.VcRoles.PC
                         });
@@ -113,6 +116,37 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Invalid Student ID.");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult TurnAv(string classroomId, string id, bool? audio, bool? video)
+        {
+            var q = from x in db.TblPCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            if (q.Count() == 1)
+            {
+                TblPC tblPC = q.Single();
+                if (audio.HasValue)
+                    tblPC.Audio = audio.Value;
+                if (video.HasValue)
+                    tblPC.Video = video.Value;
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError("Invalid Student Id.");
             }
         }
 

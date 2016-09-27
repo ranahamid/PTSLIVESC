@@ -28,28 +28,39 @@ var VC;
                     }, (event) => {
                         // nothing to do
                     });
+                    // av buttons
+                    this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                    this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
                     // set chat name
                     this.setChatUser(tokenData.Uid, tokenData.Name, tokenData.Role);
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
                     if (tokenData.Role === App.Roles.SC) {
+                        // seat computer
                         // show raise hand button
-                        this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
-                        this.fitLayout();
+                        // this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
+                        if (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
+                        }
+                    }
+                    else if (tokenData.Role === App.Roles.FC) {
+                        if (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
+                        }
                     }
                     else if (tokenData.Role === App.Roles.TC) {
-                        // seat computer
+                        // teacher computer
                         this.label.setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                     }
                 }
                 else if (tokenData.Role === App.Roles.AC) {
                     // admin computer
-                    App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.Connected, {
+                    App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.Connected, {
                         audio: this.dataResponse.ComputerSetting.Audio,
                         video: this.dataResponse.ComputerSetting.Video,
                         volume: this.dataResponse.ComputerSetting.Volume,
-                        handRaised: (this.switchButton.getStatus() === App.Components.SwitchButtonStatus.Stop)
+                        handRaised: (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop)
                     });
                 }
             }
@@ -65,7 +76,7 @@ var VC;
                     // my group
                     if (tokenData.Role === App.Roles.SC) {
                         // hide raise hand button
-                        this.switchButton.setStatus(App.Components.SwitchButtonStatus.Hidden);
+                        // this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
                         this.fitLayout();
                     }
                     else if (tokenData.Role === App.Roles.TC) {
@@ -124,28 +135,38 @@ var VC;
                     case App.Global.SignalTypes.Chat:
                         this.chatSignalReceived(event);
                         break;
+                    case App.Global.SignalTypes.GroupChanged:
+                        this.groupChangedSignalReceived(event);
+                        break;
                 }
             }
             turnAvSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.audio != null) {
-                    this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisher.audio(data.audio);
-                }
-                if (data.video != null) {
-                    this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisher.video(data.video);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    if (data.audio !== null) {
+                        this.dataResponse.ComputerSetting.Audio = data.audio;
+                        this.boxPublisher.audio(data.audio);
+                        this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                    }
+                    if (data.video !== null) {
+                        this.dataResponse.ComputerSetting.Video = data.video;
+                        this.boxPublisher.video(data.video);
+                        this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                    }
                 }
             }
             volumeSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.volume[1] != null) {
+                if (data.volume[1] !== null) {
                     this.dataResponse.ComputerSetting.Volume[1] = data.volume[1];
                     this.boxSubscriber.audioVolume(data.volume[1]);
                 }
             }
             turnOffSignalReceived(event) {
-                this.disconnect();
+                let data = JSON.parse(event.data);
+                if (data.role === undefined || data.role === App.Roles.PC) {
+                    this.disconnect();
+                }
             }
             chatSignalReceived(event) {
                 let data = JSON.parse(event.data);
@@ -161,15 +182,36 @@ var VC;
                     });
                 }
             }
+            groupChangedSignalReceived(event) {
+                let data = JSON.parse(event.data);
+                data.addUids.forEach((uid) => {
+                    let added = this.addGroupComputer(uid);
+                    if (added) {
+                        if (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop) {
+                            let connection = this.getConnectionByUid(uid);
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
+                        }
+                    }
+                });
+                data.removeUids.forEach((uid) => {
+                    this.removeGroupComputer(uid);
+                });
+            }
             raiseHand() {
                 App.Global.Signaling.sendSignal(this.session, this.getScConnection(), App.Global.SignalTypes.RaiseHand, { raised: true });
                 App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.RaiseHand, { raised: true });
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Stop);
+                this.getFcConnections().forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.RaiseHand, { raised: true });
+                });
+                this.switchButtonHand.setStatus(App.Components.SwitchButtonStatus.Stop);
             }
             lowerHand() {
                 App.Global.Signaling.sendSignal(this.session, this.getScConnection(), App.Global.SignalTypes.RaiseHand, { raised: false });
                 App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.RaiseHand, { raised: false });
-                this.switchButton.setStatus(App.Components.SwitchButtonStatus.Start);
+                this.getFcConnections().forEach((c) => {
+                    App.Global.Signaling.sendSignal(this.session, c, App.Global.SignalTypes.RaiseHand, { raised: false });
+                });
+                this.switchButtonHand.setStatus(App.Components.SwitchButtonStatus.Start);
             }
             setChatUser(uid, name, role) {
                 this.chatPublic.setChatUser({ uid: uid, name: name, role: role });
@@ -181,6 +223,35 @@ var VC;
                     userRole: item.userRole,
                     message: item.message,
                     type: App.Global.ChatType.Public
+                });
+            }
+            turnAv(audio, video) {
+                // set
+                if (audio !== null) {
+                    this.dataResponse.ComputerSetting.Audio = audio;
+                    this.boxPublisher.audio(audio);
+                    this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                }
+                if (video !== null) {
+                    this.dataResponse.ComputerSetting.Video = video;
+                    this.boxPublisher.video(video);
+                    this.switchButtonVideo.setStatus(this.dataResponse.ComputerSetting.Video ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                }
+                // update db
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: this.props.actionUrl + "/TurnAv",
+                    data: JSON.stringify({ audio: audio, video: video }),
+                    contentType: "application/json",
+                    success: (r) => {
+                        // send signal
+                        App.Global.Signaling.sendSignal(this.session, this.getAcConnection(), App.Global.SignalTypes.TurnAv, { audio: audio, video: video });
+                    },
+                    error: (xhr, status, error) => {
+                        // error
+                        alert("ERROR: " + error);
+                    }
                 });
             }
             setStatusVisibility(visible) {
@@ -234,8 +305,8 @@ var VC;
                 $(this.boxPublisher.getBox())
                     .css("width", "100%")
                     .css("height", publisherHeight + "px");
-                let handButtonHeight = $(this.divHandButton).height();
-                let chatHeight = innerHeight - (publisherHeight + handButtonHeight);
+                let divButtonsHeight = $(this.divButtons).height();
+                let chatHeight = innerHeight - (publisherHeight + divButtonsHeight);
                 this.chatPublic.setHeight(chatHeight);
             }
             render() {
@@ -249,7 +320,7 @@ var VC;
                     "connected",
                     "" // handRaised (no need for PC)
                 ];
-                return (React.createElement("div", {className: "pcContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }, className: "layout"}, React.createElement("table", {width: "100%", frameBorder: "0"}, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {ref: (ref) => this.divMain = ref, className: "main"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriber = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true})), React.createElement("div", {ref: (ref) => this.divFrame = ref, className: "frame"}, React.createElement("div", {ref: (ref) => this.divHandButton = ref, className: "divHandButton"}, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButton = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Hidden, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton"})), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true}), React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))))));
+                return (React.createElement("div", {className: "pcContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }, className: "layout"}, React.createElement("table", {width: "100%", frameBorder: "0"}, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {ref: (ref) => this.divMain = ref, className: "main"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriber = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true})), React.createElement("div", {ref: (ref) => this.divFrame = ref, className: "frame"}, React.createElement("div", {ref: (ref) => this.divButtons = ref, className: "divButtons"}, React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonHand = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Start, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton"})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonAudio = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(false, null); }, onOff: () => { this.turnAv(true, null); }, className: "avButton"})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonVideo = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(null, false); }, onOff: () => { this.turnAv(null, true); }, className: "avButton"}))), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true}), React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))))));
             }
         }
         class InitPC {

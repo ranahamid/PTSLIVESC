@@ -15,6 +15,7 @@ namespace VC.Admin.Lists {
     const FORM_STUDENT8: string = "Student8";
 
     interface IFeaturedsListItem extends IDataItem<string> {
+        uid: string;
         name: string;
         students: Array<IStudentsListItem>;
     }
@@ -51,6 +52,7 @@ namespace VC.Admin.Lists {
     class FeaturedsList extends List<string, IFeaturedsListItem, IFeaturedsListProps, IFeaturedsListState> {
 
         renderItemCols(d: IFeaturedsListItem): JSX.Element[] {
+            /*
             let names: string = "";
             if (d.students.length === 0) {
                 names = "-";
@@ -66,18 +68,19 @@ namespace VC.Admin.Lists {
                     }
                 }
             }
+            */
 
             var l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}>{d.name}</td>);
-            l.push(<td key={"tdStudents_" + d.id}>{names}</td>);
+            //l.push(<td key={"tdStudents_" + d.id}>{names}</td>);
             return l;
         }
         renderTableHeaderCols(): JSX.Element[] {
             var l: Array<JSX.Element> = [];
             l.push(<th key={"thId"}>ID</th>);
             l.push(<th key={"thFeatured"}>Featured computer</th>);
-            l.push(<th key={"thStudents"}>Students</th>);
+            //l.push(<th key={"thStudents"}>Students</th>);
             return l;
         }
     }
@@ -115,6 +118,7 @@ namespace VC.Admin.Lists {
             this.setValidationStatus(FORM_ID, BoxValidationStatus.None, "");
             this.setValidationStatus(FORM_NAME, BoxValidationStatus.None, "");
 
+            /*
             let tbStudent1: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT1] as Global.Components.Selector;
             let tbStudent2: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT2] as Global.Components.Selector;
             let tbStudent3: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT3] as Global.Components.Selector;
@@ -141,6 +145,7 @@ namespace VC.Admin.Lists {
             tbStudent6.init(student6 !== null ? student6.id : null);
             tbStudent7.init(student7 !== null ? student7.id : null);
             tbStudent8.init(student8 !== null ? student8.id : null);
+            */
         }
         boxDidShow(): void {
             if (this.state.type === BoxTypes.Create) {
@@ -209,6 +214,7 @@ namespace VC.Admin.Lists {
 
             return valid;
         }
+        /*
         validateStudents(focusOnError: boolean): boolean {
             let tbStudent1: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT1] as Global.Components.Selector;
             let tbStudent2: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT2] as Global.Components.Selector;
@@ -368,12 +374,16 @@ namespace VC.Admin.Lists {
 
             return valid;
         }
+        */
         validateForm(focusOnError: boolean): boolean {
             let valid: boolean = true;
 
+            /*
             if (!this.validateStudents(focusOnError)) {
                 valid = false;
             }
+            */
+
             if (!this.validateName(focusOnError)) {
                 valid = false;
             }
@@ -468,6 +478,7 @@ namespace VC.Admin.Lists {
             let idVal: string = $(tbId).val();
             let nameVal: string = $(tbName).val();
 
+            /*
             let student1: IStudentsListItem = null;
             let tbStudent1: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT1] as Global.Components.Selector;
             let selectedStudent1: string = tbStudent1.getSelectedValue();
@@ -525,6 +536,8 @@ namespace VC.Admin.Lists {
             }
 
             let students: Array<IStudentsListItem> = [student1, student2, student3, student4, student5, student6, student7, student8];
+            */
+            let students: Array<IStudentsListItem> = null;
 
             $.ajax({
                 cache: false,
@@ -557,6 +570,7 @@ namespace VC.Admin.Lists {
             let idVal: string = $(tbId).val();
             let nameVal: string = $(tbName).val();
 
+            /*
             let student1: IStudentsListItem = null;
             let tbStudent1: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_STUDENT1] as Global.Components.Selector;
             let selectedStudent1: string = tbStudent1.getSelectedValue();
@@ -614,6 +628,8 @@ namespace VC.Admin.Lists {
             }
 
             let students: Array<IStudentsListItem> = [student1, student2, student3, student4, student5, student6, student7, student8];
+            */
+            let students: Array<IStudentsListItem> = null;
 
             $.ajax({
                 cache: false,
@@ -676,10 +692,13 @@ namespace VC.Admin.Lists {
             });
         }
 
+        /*
         onSelectedStudentChanged(): void {
             this.validateStudents(false);
         }
+        */
 
+        /*
         renderForm(): JSX.Element {
             return (
                 <form className="form-horizontal" role="form">
@@ -751,6 +770,27 @@ namespace VC.Admin.Lists {
                         <div className="col-sm-10">
                             <Global.Components.Selector ref={REF_FORM_TB + FORM_STUDENT8} classroomId={this.props.classroomId} loadAction="GetAvailableFeaturedStudents" defaultName="Select Student computer" onSelectedItemChanged={() => this.onSelectedStudentChanged() } className="form-control" />
                             <span ref={REF_FORM_ICON + FORM_STUDENT8} style={{ display: "none" }}></span>
+                        </div>
+                    </div>
+                </form>
+            );
+        }
+        */
+        renderForm(): JSX.Element {
+            return (
+                <form className="form-horizontal" role="form">
+                    <div ref={REF_FORM_DIV + FORM_ID} className="form-group">
+                        <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_ID}>Id: </label>
+                        <div className="col-sm-10">
+                            <input ref={REF_FORM_TB + FORM_ID} type="text" className="form-control" disabled={this.state.type !== BoxTypes.Create} placeholder="Featured computer Id" maxLength="25" onPaste={() => this.validateId(false) } onCut={() => this.validateId(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressId(e) } />
+                            <span ref={REF_FORM_ICON + FORM_ID} style={{ display: "none" }}></span>
+                        </div>
+                    </div>
+                    <div ref={REF_FORM_DIV + FORM_NAME} className="form-group">
+                        <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_NAME}>Name: </label>
+                        <div className="col-sm-10">
+                            <input ref={REF_FORM_TB + FORM_NAME} type="text" className="form-control" disabled={this.state.type === BoxTypes.Delete} placeholder="Featured computer name" maxLength="150" onPaste={() => this.validateName(false) } onCut={() => this.validateName(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressName(e) } />
+                            <span ref={REF_FORM_ICON + FORM_NAME} style={{ display: "none" }}></span>
                         </div>
                     </div>
                 </form>

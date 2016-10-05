@@ -97,28 +97,15 @@ var VC;
             signalReceived(event) {
                 let signalType = App.Global.Signaling.getSignalType(event.type);
                 switch (signalType) {
-                    case App.Global.SignalTypes.TurnAv:
-                        this.turnAvSignalReceived(event);
-                        break;
                     case App.Global.SignalTypes.TurnOff:
                         this.turnOffSignalReceived(event);
+                        break;
+                    case App.Global.SignalTypes.Chat:
+                        this.chatSignalReceived(event);
                         break;
                     case App.Global.SignalTypes.RaiseHand:
                         this.raiseHandSignalReceived(event);
                         break;
-                }
-            }
-            turnAvSignalReceived(event) {
-                let data = JSON.parse(event.data);
-                if (data.role === undefined || data.role === App.Roles.PC) {
-                    if (data.audio !== null) {
-                        this.dataResponse.ComputerSetting.Audio = data.audio;
-                        this.boxPublisher.audio(data.audio);
-                    }
-                    if (data.video !== null) {
-                        this.dataResponse.ComputerSetting.Video = data.video;
-                        this.boxPublisher.video(data.video);
-                    }
                 }
             }
             turnOffSignalReceived(event) {

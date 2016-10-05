@@ -106,28 +106,15 @@ namespace VC.App {
         signalReceived(event: any): void {
             let signalType: Global.SignalTypes = Global.Signaling.getSignalType(event.type);
             switch (signalType) {
-                case Global.SignalTypes.TurnAv:
-                    this.turnAvSignalReceived(event);
-                    break;
                 case Global.SignalTypes.TurnOff:
                     this.turnOffSignalReceived(event);
+                    break;
+                case Global.SignalTypes.Chat:
+                    this.chatSignalReceived(event);
                     break;
                 case Global.SignalTypes.RaiseHand:
                     this.raiseHandSignalReceived(event);
                     break;
-            }
-        }
-        private turnAvSignalReceived(event: any): void {
-            let data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.role === undefined || data.role === Roles.PC) {
-                if (data.audio !== null) {
-                    this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisher.audio(data.audio);
-                }
-                if (data.video !== null) {
-                    this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisher.video(data.video);
-                }
             }
         }
         private turnOffSignalReceived(event: any): void {

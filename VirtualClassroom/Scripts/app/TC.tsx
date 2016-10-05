@@ -131,7 +131,7 @@ namespace VC.App {
         }
         private turnAvSignalReceived(event: any): void {
             var data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.role === undefined || data.role === Roles.PC) {
+            if (data.role === undefined || data.role === Roles.TC) {
                 if (data.audio !== null) {
                     this.dataResponse.ComputerSetting.Audio = data.audio;
                     if (this.isScreenSharing) {

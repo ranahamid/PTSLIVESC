@@ -113,7 +113,7 @@ var VC;
             }
             turnAvSignalReceived(event) {
                 var data = JSON.parse(event.data);
-                if (data.role === undefined || data.role === App.Roles.PC) {
+                if (data.role === undefined || data.role === App.Roles.TC) {
                     if (data.audio !== null) {
                         this.dataResponse.ComputerSetting.Audio = data.audio;
                         if (this.isScreenSharing) {

@@ -22,9 +22,11 @@ namespace VC.App {
         private isScreenSharing: boolean = false;
         private chMirror: HTMLInputElement;
         private divMirror: HTMLDivElement;
+        private studentsAudio: Components.Audio;
 
         constructor(props: IProps) {
             super(props, Roles.TC);
+            this.studentsAudio = new Components.Audio();
         }
 
         // abstract methods
@@ -85,12 +87,25 @@ namespace VC.App {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me .. there is not fired this event for publisher
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                if (tokenData.Role === Roles.PC) {
+                    // student
+                    // connect to audio
+                    this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                }
             }
         }
         streamDestroyed(connection: any, stream: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
             if (this.dataResponse.Uid === tokenData.Uid) {
                 // me .. there is not fired this event for publisher
+            } else if (this.isInMyGroup(tokenData.Uid)) {
+                // my group
+                if (tokenData.Role === Roles.PC) {
+                    // student ... connect to audio
+                    this.studentsAudio.unsubscribe(tokenData.Uid);
+                }
             }
         }
         streamPropertyChanged(event: any): void {
@@ -102,6 +117,9 @@ namespace VC.App {
             switch (signalType) {
                 case Global.SignalTypes.TurnAv:
                     this.turnAvSignalReceived(event);
+                    break;
+                case Global.SignalTypes.Volume:
+                    this.volumeSignalReceived(event);
                     break;
                 case Global.SignalTypes.TurnOff:
                     this.turnOffSignalReceived(event);
@@ -116,12 +134,27 @@ namespace VC.App {
             if (data.role === undefined || data.role === Roles.PC) {
                 if (data.audio !== null) {
                     this.dataResponse.ComputerSetting.Audio = data.audio;
-                    this.boxPublisherScreen.audio(data.audio);
+                    if (this.isScreenSharing) {
+                        this.boxPublisherScreen.audio(data.audio);
+                    } else {
+                        this.boxPublisherWebcam.audio(data.audio);
+                    }
                 }
                 if (data.video !== null) {
                     this.dataResponse.ComputerSetting.Video = data.video;
-                    this.boxPublisherScreen.video(data.video);
+                    if (this.isScreenSharing) {
+                        this.boxPublisherScreen.video(data.video);
+                    } else {
+                        this.boxPublisherWebcam.video(data.video);
+                    }
                 }
+            }
+        }
+        private volumeSignalReceived(event: any): void {
+            let data: Global.ISignalVolumeData = JSON.parse(event.data) as Global.ISignalVolumeData;
+            if (data.volume !== null) {
+                this.dataResponse.ComputerSetting.Volume = data.volume;
+                this.studentsAudio.audioVolume(data.volume);
             }
         }
         private turnOffSignalReceived(event: any): void {

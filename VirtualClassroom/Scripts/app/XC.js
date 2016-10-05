@@ -32,7 +32,7 @@ var VC;
                 this.publishProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "off" } };
                 this.subscribeProps = { width: "100%", height: "100%", style: { buttonDisplayMode: "on" } };
                 this.screenSharingExtensionId = "gedopbhbkblbppgdhhinadlfcphccpch";
-                this.state = { extensionError: "", layout: 0 };
+                this.state = { extensionError: "" };
             }
             componentDidMount() {
                 this.didMount();

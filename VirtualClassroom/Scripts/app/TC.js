@@ -9,6 +9,7 @@ var VC;
                 super(props, App.Roles.TC);
                 this.isWebcamPublishing = false;
                 this.isScreenSharing = false;
+                this.studentsAudio = new App.Components.Audio();
             }
             // abstract methods
             setStatusText(text, style) {
@@ -69,10 +70,25 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
                 }
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.PC) {
+                        // student
+                        // connect to audio
+                        this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                    }
+                }
             }
             streamDestroyed(connection, stream) {
                 let tokenData = App.Global.Fce.toTokenData(connection.data);
                 if (this.dataResponse.Uid === tokenData.Uid) {
+                }
+                else if (this.isInMyGroup(tokenData.Uid)) {
+                    // my group
+                    if (tokenData.Role === App.Roles.PC) {
+                        // student ... connect to audio
+                        this.studentsAudio.unsubscribe(tokenData.Uid);
+                    }
                 }
             }
             streamPropertyChanged(event) {
@@ -83,6 +99,9 @@ var VC;
                 switch (signalType) {
                     case App.Global.SignalTypes.TurnAv:
                         this.turnAvSignalReceived(event);
+                        break;
+                    case App.Global.SignalTypes.Volume:
+                        this.volumeSignalReceived(event);
                         break;
                     case App.Global.SignalTypes.TurnOff:
                         this.turnOffSignalReceived(event);
@@ -97,12 +116,29 @@ var VC;
                 if (data.role === undefined || data.role === App.Roles.PC) {
                     if (data.audio !== null) {
                         this.dataResponse.ComputerSetting.Audio = data.audio;
-                        this.boxPublisherScreen.audio(data.audio);
+                        if (this.isScreenSharing) {
+                            this.boxPublisherScreen.audio(data.audio);
+                        }
+                        else {
+                            this.boxPublisherWebcam.audio(data.audio);
+                        }
                     }
                     if (data.video !== null) {
                         this.dataResponse.ComputerSetting.Video = data.video;
-                        this.boxPublisherScreen.video(data.video);
+                        if (this.isScreenSharing) {
+                            this.boxPublisherScreen.video(data.video);
+                        }
+                        else {
+                            this.boxPublisherWebcam.video(data.video);
+                        }
                     }
+                }
+            }
+            volumeSignalReceived(event) {
+                let data = JSON.parse(event.data);
+                if (data.volume !== null) {
+                    this.dataResponse.ComputerSetting.Volume = data.volume;
+                    this.studentsAudio.audioVolume(data.volume);
                 }
             }
             turnOffSignalReceived(event) {

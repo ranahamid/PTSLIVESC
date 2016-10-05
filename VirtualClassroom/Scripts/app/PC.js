@@ -8,6 +8,7 @@ var VC;
             constructor(props) {
                 super(props, App.Roles.PC);
                 this.singleBoxVisible = false;
+                this.studentsAudio = new App.Components.Audio();
             }
             // abstract methods
             setStatusText(text, style) {
@@ -38,13 +39,12 @@ var VC;
                     // my group
                     if (tokenData.Role === App.Roles.SC) {
                         // seat computer
-                        // show raise hand button
-                        // this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
                         if (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop) {
                             App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
                         }
                     }
                     else if (tokenData.Role === App.Roles.FC) {
+                        // featured computer
                         if (this.switchButtonHand.getStatus() === App.Components.SwitchButtonStatus.Stop) {
                             App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: true });
                         }
@@ -74,13 +74,8 @@ var VC;
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
-                    if (tokenData.Role === App.Roles.SC) {
-                        // hide raise hand button
-                        // this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
-                        this.fitLayout();
-                    }
-                    else if (tokenData.Role === App.Roles.TC) {
-                        // seat computer
+                    if (tokenData.Role === App.Roles.TC) {
+                        // teacher computer
                         this.label.setText("Teacher computer not connected.", App.Components.BoxLabelStyle.NotConnected);
                     }
                 }
@@ -99,8 +94,12 @@ var VC;
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
                     if (tokenData.Role === App.Roles.TC) {
-                        // seat computer
-                        this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[1]);
+                        // teacher computer
+                        this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                    }
+                    else if (tokenData.Role === App.Roles.PC) {
+                        // student computer
+                        this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                     }
                 }
             }
@@ -110,10 +109,13 @@ var VC;
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
-                    // seat or teacher computer
                     if (tokenData.Role === App.Roles.TC) {
-                        // seat computer
+                        // teacher computer
                         this.boxSubscriber.unsubscribe(this.session);
+                    }
+                    else if (tokenData.Role === App.Roles.PC) {
+                        // student computer
+                        this.studentsAudio.unsubscribe(tokenData.Uid);
                     }
                 }
             }
@@ -157,9 +159,10 @@ var VC;
             }
             volumeSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.volume[1] !== null) {
-                    this.dataResponse.ComputerSetting.Volume[1] = data.volume[1];
-                    this.boxSubscriber.audioVolume(data.volume[1]);
+                if (data.volume !== null) {
+                    this.dataResponse.ComputerSetting.Volume = data.volume;
+                    this.boxSubscriber.audioVolume(data.volume);
+                    this.studentsAudio.audioVolume(data.volume);
                 }
             }
             turnOffSignalReceived(event) {
@@ -320,7 +323,7 @@ var VC;
                     "connected",
                     "" // handRaised (no need for PC)
                 ];
-                return (React.createElement("div", {className: "pcContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }, className: "layout"}, React.createElement("table", {width: "100%", frameBorder: "0"}, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {ref: (ref) => this.divMain = ref, className: "main"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriber = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true})), React.createElement("div", {ref: (ref) => this.divFrame = ref, className: "frame"}, React.createElement("div", {ref: (ref) => this.divButtons = ref, className: "divButtons"}, React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonHand = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Start, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton"})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonAudio = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(false, null); }, onOff: () => { this.turnAv(true, null); }, className: "avButton"})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonVideo = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(null, false); }, onOff: () => { this.turnAv(null, true); }, className: "avButton"}))), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true}), React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))))));
+                return (React.createElement("div", {className: "pcContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }, className: "layout"}, React.createElement("table", {width: "100%", frameBorder: "0"}, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {ref: (ref) => this.divMain = ref, className: "main"}, React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscriber = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: true}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label = ref, text: "Teacher computer not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: true})), React.createElement("div", {ref: (ref) => this.divFrame = ref, className: "frame"}, React.createElement("div", {ref: (ref) => this.divButtons = ref, className: "divButtons"}, React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonHand = ref, textOn: "Raise your hand", textOff: "Lower your hand", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-hand-up", iconOff: "glyphicon glyphicon-hand-down", status: App.Components.SwitchButtonStatus.Start, onOn: this.raiseHand.bind(this), onOff: this.lowerHand.bind(this), className: "handButton", delayed: 500})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonAudio = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-music", iconOff: "glyphicon glyphicon-music", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(false, null); }, onOff: () => { this.turnAv(true, null); }, className: "avButton", delayed: 500})), React.createElement("div", null, React.createElement(App.Components.SwitchButton, {ref: (ref) => this.switchButtonVideo = ref, textOn: "", textOff: "", classOn: "btn btn-success", classOff: "btn btn-danger", iconOn: "glyphicon glyphicon-facetime-video", iconOff: "glyphicon glyphicon-facetime-video", status: App.Components.SwitchButtonStatus.Hidden, onOn: () => { this.turnAv(null, false); }, onOff: () => { this.turnAv(null, true); }, className: "avButton", delayed: 500}))), React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "cBoxP", visible: true}), React.createElement(App.Components.Chat, {ref: (ref) => this.chatPublic = ref, title: "Classroom chat (Public)", fixedHeight: true, onItemSubmitted: (item) => this.onChatPublicItemSubmitted(item)}))))))));
             }
         }
         class InitPC {

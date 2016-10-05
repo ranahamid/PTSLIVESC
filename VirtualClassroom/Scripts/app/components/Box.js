@@ -16,7 +16,7 @@ var VC;
                     super(props);
                     this.streamHandler = null;
                     this.isConnected = false;
-                    this.state = { mirror: this.props.mirror };
+                    this.state = { mirror: props.mirror, visible: props.visible };
                 }
                 getBox() {
                     return this.divBox;
@@ -24,6 +24,20 @@ var VC;
                 clearBox() {
                     let box = this.getBox();
                     box.innerHTML = "<div id=" + this.props.id + "></div>";
+                }
+                setVisibility(visible) {
+                    if (visible) {
+                        if (this.divBox.style.display === "none") {
+                            this.divBox.style.display = "block";
+                            this.state.visible = true;
+                        }
+                    }
+                    else {
+                        if (this.divBox.style.display === "block") {
+                            this.divBox.style.display = "none";
+                            this.state.visible = false;
+                        }
+                    }
                 }
                 subscribe(session, stream, volume) {
                     this.isConnected = true;
@@ -52,14 +66,51 @@ var VC;
                         }
                     });
                 }
-                unsubscribe(session) {
-                    session.unsubscribe(this.streamHandler);
-                    this.streamHandler = null;
+                subscribeVideo(session, stream) {
+                    this.isConnected = true;
+                    let subscribeProps = this.props.streamProps;
+                    if (this.props.mirror) {
+                        subscribeProps.mirror = this.props.mirror;
+                    }
+                    subscribeProps.subscribeToAudio = false;
+                    switch (this.props.fitMode) {
+                        case BoxFitMode.Contain:
+                            subscribeProps.fitMode = "contain";
+                            break;
+                        case BoxFitMode.Cover:
+                            subscribeProps.fitMode = "cover";
+                            break;
+                    }
                     this.clearBox();
-                    this.isConnected = false;
+                    this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
+                        if (error) {
+                            // error
+                            alert("ERROR: " + error);
+                        }
+                        else {
+                        }
+                    });
                 }
-                setMirror(mirror) {
-                    this.state = { mirror: mirror };
+                subscribeAudio(session, stream, volume) {
+                    this.isConnected = true;
+                    let subscribeProps = this.props.streamProps;
+                    subscribeProps.subscribeToVideo = false;
+                    this.clearBox();
+                    this.streamHandler = session.subscribeToAudio(stream, this.props.id, subscribeProps, (error) => {
+                        if (error) {
+                            // error
+                            alert("ERROR: " + error);
+                        }
+                        else {
+                            // subscribed
+                            this.streamHandler.setAudioVolume(volume);
+                        }
+                    });
+                }
+                audioVolume(volume) {
+                    if (this.streamHandler !== null) {
+                        this.streamHandler.setAudioVolume(volume);
+                    }
                 }
                 publish(session, source, audio, video, startedHandler, stoppedHandler) {
                     this.isConnected = true;
@@ -138,10 +189,14 @@ var VC;
                         this.streamHandler.publishVideo(on);
                     }
                 }
-                audioVolume(volume) {
-                    if (this.streamHandler !== null) {
-                        this.streamHandler.setAudioVolume(volume);
-                    }
+                setMirror(mirror) {
+                    this.state.mirror = mirror;
+                }
+                unsubscribe(session) {
+                    session.unsubscribe(this.streamHandler);
+                    this.streamHandler = null;
+                    this.clearBox();
+                    this.isConnected = false;
                 }
                 getStats(completionHandler) {
                     if (this.streamHandler !== null) {
@@ -149,7 +204,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: this.props.className, style: { display: (this.props.visible ? "block" : "none") }}));
+                    return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: this.props.className, style: { display: (this.state.visible ? "block" : "none") }}));
                 }
             }
             Components.Box = Box;

@@ -419,6 +419,8 @@ namespace VirtualClassroom.Models
 		
 		private bool _Video;
 		
+		private int _Volume;
+		
 		private EntitySet<TblPC> _TblPCs;
 		
 		private EntityRef<TblClassroom> _TblClassroom;
@@ -439,6 +441,8 @@ namespace VirtualClassroom.Models
     partial void OnAudioChanged();
     partial void OnVideoChanging(bool value);
     partial void OnVideoChanged();
+    partial void OnVolumeChanging(int value);
+    partial void OnVolumeChanged();
     #endregion
 		
 		public TblTC()
@@ -568,6 +572,26 @@ namespace VirtualClassroom.Models
 					this._Video = value;
 					this.SendPropertyChanged("Video");
 					this.OnVideoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int NOT NULL")]
+		public int Volume
+		{
+			get
+			{
+				return this._Volume;
+			}
+			set
+			{
+				if ((this._Volume != value))
+				{
+					this.OnVolumeChanging(value);
+					this.SendPropertyChanging();
+					this._Volume = value;
+					this.SendPropertyChanged("Volume");
+					this.OnVolumeChanged();
 				}
 			}
 		}
@@ -867,8 +891,6 @@ namespace VirtualClassroom.Models
 		
 		private System.Guid _PcUid;
 		
-		private int _Volume;
-		
 		private int _Position;
 		
 		private EntityRef<TblFC> _TblFC;
@@ -885,8 +907,6 @@ namespace VirtualClassroom.Models
     partial void OnFcUidChanged();
     partial void OnPcUidChanging(System.Guid value);
     partial void OnPcUidChanged();
-    partial void OnVolumeChanging(int value);
-    partial void OnVolumeChanged();
     partial void OnPositionChanging(int value);
     partial void OnPositionChanged();
     #endregion
@@ -962,26 +982,6 @@ namespace VirtualClassroom.Models
 					this._PcUid = value;
 					this.SendPropertyChanged("PcUid");
 					this.OnPcUidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int NOT NULL")]
-		public int Volume
-		{
-			get
-			{
-				return this._Volume;
-			}
-			set
-			{
-				if ((this._Volume != value))
-				{
-					this.OnVolumeChanging(value);
-					this.SendPropertyChanging();
-					this._Volume = value;
-					this.SendPropertyChanged("Volume");
-					this.OnVolumeChanged();
 				}
 			}
 		}
@@ -1658,9 +1658,7 @@ namespace VirtualClassroom.Models
 		
 		private bool _Video;
 		
-		private int _Volume1;
-		
-		private int _Volume2;
+		private int _Volume;
 		
 		private EntitySet<TblFCPC> _TblFCPCs;
 		
@@ -1694,10 +1692,8 @@ namespace VirtualClassroom.Models
     partial void OnAudioChanged();
     partial void OnVideoChanging(bool value);
     partial void OnVideoChanged();
-    partial void OnVolume1Changing(int value);
-    partial void OnVolume1Changed();
-    partial void OnVolume2Changing(int value);
-    partial void OnVolume2Changed();
+    partial void OnVolumeChanging(int value);
+    partial void OnVolumeChanged();
     #endregion
 		
 		public TblPC()
@@ -1902,42 +1898,22 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume1", DbType="Int NOT NULL")]
-		public int Volume1
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int NOT NULL")]
+		public int Volume
 		{
 			get
 			{
-				return this._Volume1;
+				return this._Volume;
 			}
 			set
 			{
-				if ((this._Volume1 != value))
+				if ((this._Volume != value))
 				{
-					this.OnVolume1Changing(value);
+					this.OnVolumeChanging(value);
 					this.SendPropertyChanging();
-					this._Volume1 = value;
-					this.SendPropertyChanged("Volume1");
-					this.OnVolume1Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume2", DbType="Int NOT NULL")]
-		public int Volume2
-		{
-			get
-			{
-				return this._Volume2;
-			}
-			set
-			{
-				if ((this._Volume2 != value))
-				{
-					this.OnVolume2Changing(value);
-					this.SendPropertyChanging();
-					this._Volume2 = value;
-					this.SendPropertyChanged("Volume2");
-					this.OnVolume2Changed();
+					this._Volume = value;
+					this.SendPropertyChanged("Volume");
+					this.OnVolumeChanged();
 				}
 			}
 		}
@@ -2129,26 +2105,6 @@ namespace VirtualClassroom.Models
 		
 		private string _Name;
 		
-		private bool _Audio;
-		
-		private bool _Video;
-		
-		private int _Volume1;
-		
-		private int _Volume2;
-		
-		private int _Volume3;
-		
-		private int _Volume4;
-		
-		private int _Volume5;
-		
-		private int _Volume6;
-		
-		private int _Volume7;
-		
-		private int _Volume8;
-		
 		private EntitySet<TblPC> _TblPCs;
 		
 		private EntityRef<TblClassroom> _TblClassroom;
@@ -2165,26 +2121,6 @@ namespace VirtualClassroom.Models
     partial void OnIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnAudioChanging(bool value);
-    partial void OnAudioChanged();
-    partial void OnVideoChanging(bool value);
-    partial void OnVideoChanged();
-    partial void OnVolume1Changing(int value);
-    partial void OnVolume1Changed();
-    partial void OnVolume2Changing(int value);
-    partial void OnVolume2Changed();
-    partial void OnVolume3Changing(int value);
-    partial void OnVolume3Changed();
-    partial void OnVolume4Changing(int value);
-    partial void OnVolume4Changed();
-    partial void OnVolume5Changing(int value);
-    partial void OnVolume5Changed();
-    partial void OnVolume6Changing(int value);
-    partial void OnVolume6Changed();
-    partial void OnVolume7Changing(int value);
-    partial void OnVolume7Changed();
-    partial void OnVolume8Changing(int value);
-    partial void OnVolume8Changed();
     #endregion
 		
 		public TblSC()
@@ -2274,206 +2210,6 @@ namespace VirtualClassroom.Models
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Audio", DbType="Bit NOT NULL")]
-		public bool Audio
-		{
-			get
-			{
-				return this._Audio;
-			}
-			set
-			{
-				if ((this._Audio != value))
-				{
-					this.OnAudioChanging(value);
-					this.SendPropertyChanging();
-					this._Audio = value;
-					this.SendPropertyChanged("Audio");
-					this.OnAudioChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Video", DbType="Bit NOT NULL")]
-		public bool Video
-		{
-			get
-			{
-				return this._Video;
-			}
-			set
-			{
-				if ((this._Video != value))
-				{
-					this.OnVideoChanging(value);
-					this.SendPropertyChanging();
-					this._Video = value;
-					this.SendPropertyChanged("Video");
-					this.OnVideoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume1", DbType="Int NOT NULL")]
-		public int Volume1
-		{
-			get
-			{
-				return this._Volume1;
-			}
-			set
-			{
-				if ((this._Volume1 != value))
-				{
-					this.OnVolume1Changing(value);
-					this.SendPropertyChanging();
-					this._Volume1 = value;
-					this.SendPropertyChanged("Volume1");
-					this.OnVolume1Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume2", DbType="Int NOT NULL")]
-		public int Volume2
-		{
-			get
-			{
-				return this._Volume2;
-			}
-			set
-			{
-				if ((this._Volume2 != value))
-				{
-					this.OnVolume2Changing(value);
-					this.SendPropertyChanging();
-					this._Volume2 = value;
-					this.SendPropertyChanged("Volume2");
-					this.OnVolume2Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume3", DbType="Int NOT NULL")]
-		public int Volume3
-		{
-			get
-			{
-				return this._Volume3;
-			}
-			set
-			{
-				if ((this._Volume3 != value))
-				{
-					this.OnVolume3Changing(value);
-					this.SendPropertyChanging();
-					this._Volume3 = value;
-					this.SendPropertyChanged("Volume3");
-					this.OnVolume3Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume4", DbType="Int NOT NULL")]
-		public int Volume4
-		{
-			get
-			{
-				return this._Volume4;
-			}
-			set
-			{
-				if ((this._Volume4 != value))
-				{
-					this.OnVolume4Changing(value);
-					this.SendPropertyChanging();
-					this._Volume4 = value;
-					this.SendPropertyChanged("Volume4");
-					this.OnVolume4Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume5", DbType="Int NOT NULL")]
-		public int Volume5
-		{
-			get
-			{
-				return this._Volume5;
-			}
-			set
-			{
-				if ((this._Volume5 != value))
-				{
-					this.OnVolume5Changing(value);
-					this.SendPropertyChanging();
-					this._Volume5 = value;
-					this.SendPropertyChanged("Volume5");
-					this.OnVolume5Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume6", DbType="Int NOT NULL")]
-		public int Volume6
-		{
-			get
-			{
-				return this._Volume6;
-			}
-			set
-			{
-				if ((this._Volume6 != value))
-				{
-					this.OnVolume6Changing(value);
-					this.SendPropertyChanging();
-					this._Volume6 = value;
-					this.SendPropertyChanged("Volume6");
-					this.OnVolume6Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume7", DbType="Int NOT NULL")]
-		public int Volume7
-		{
-			get
-			{
-				return this._Volume7;
-			}
-			set
-			{
-				if ((this._Volume7 != value))
-				{
-					this.OnVolume7Changing(value);
-					this.SendPropertyChanging();
-					this._Volume7 = value;
-					this.SendPropertyChanged("Volume7");
-					this.OnVolume7Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume8", DbType="Int NOT NULL")]
-		public int Volume8
-		{
-			get
-			{
-				return this._Volume8;
-			}
-			set
-			{
-				if ((this._Volume8 != value))
-				{
-					this.OnVolume8Changing(value);
-					this.SendPropertyChanging();
-					this._Volume8 = value;
-					this.SendPropertyChanged("Volume8");
-					this.OnVolume8Changed();
 				}
 			}
 		}

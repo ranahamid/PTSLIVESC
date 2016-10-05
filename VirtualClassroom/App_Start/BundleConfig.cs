@@ -81,6 +81,7 @@ namespace VirtualClassroom
                 "~/Scripts/app/components/Status.js",
                 "~/Scripts/app/components/Box.js",
                 "~/Scripts/app/components/BoxLabel.js",
+                "~/Scripts/app/components/Audio.js",
                 "~/Scripts/app/components/Chat.js",
                 "~/Scripts/app/XC.js"
                 ));

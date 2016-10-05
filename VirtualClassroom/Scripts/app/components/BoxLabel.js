@@ -15,13 +15,27 @@ var VC;
             class BoxLabel extends React.Component {
                 constructor(props) {
                     super(props);
-                    this.state = { text: props.text, style: props.style };
+                    this.state = { text: props.text, style: props.style, visible: props.visible };
                 }
                 setText(text, style) {
                     this.setState({ text: text, style: style });
                 }
                 setStyle(style) {
                     this.setState({ text: this.state.text, style: style });
+                }
+                setVisibility(visible) {
+                    if (visible) {
+                        if (this.div.style.display === "none") {
+                            this.div.style.display = "block";
+                            this.state.visible = true;
+                        }
+                    }
+                    else {
+                        if (this.div.style.display === "block") {
+                            this.div.style.display = "none";
+                            this.state.visible = false;
+                        }
+                    }
                 }
                 getIconByStyle(style) {
                     let icon = "";
@@ -48,7 +62,7 @@ var VC;
                     if (icon !== "") {
                         text = " " + text;
                     }
-                    return (React.createElement("div", {className: this.props.className, ref: (ref) => this.div = ref, style: { display: (this.props.visible ? "block" : "none") }}, React.createElement("div", {className: className}, React.createElement("span", {className: icon}), text)));
+                    return (React.createElement("div", {className: this.props.className, ref: (ref) => this.div = ref, style: { display: (this.state.visible ? "block" : "none") }}, React.createElement("div", {className: className}, React.createElement("span", {className: icon}), text)));
                 }
             }
             Components.BoxLabel = BoxLabel;

@@ -10,7 +10,6 @@ namespace VC.App {
     }
     export interface IState {
         extensionError: string;
-        layout: number;
     }
 
     export enum Roles {
@@ -44,7 +43,7 @@ namespace VC.App {
 
         constructor(props: IProps, public role: Roles) {
             super(props);
-            this.state = { extensionError: "", layout: 0 } as IState;
+            this.state = { extensionError: "" } as IState;
         }
 
         componentDidMount(): void {

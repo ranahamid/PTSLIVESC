@@ -20,12 +20,15 @@ namespace VC.App.Components {
         onOn: () => void;
         onOff: () => void;
         className: string;
+        delayed?: number;
     }
     interface ISwitchButtonState {
         status: SwitchButtonStatus;
     }
 
     export class SwitchButton extends React.Component<ISwitchButtonProps, ISwitchButtonState> {
+        private button: HTMLButtonElement;
+
         constructor(props: ISwitchButtonProps) {
             super(props);
             this.state = { status: props.status };
@@ -68,11 +71,22 @@ namespace VC.App.Components {
             return iconClassName;
         }
         private onClick(): void {
+            if (!this.button.disabled) {
+                if (this.props.delayed !== undefined) {
+                    this.button.disabled = true;
+                    window.setTimeout(() => { this.performClick(); }, this.props.delayed);
+                } else {
+                    this.performClick();
+                }
+            }
+        }
+        private performClick(): void {
             if (this.state.status === SwitchButtonStatus.Start) {
                 this.setState({ status: SwitchButtonStatus.Stop } as ISwitchButtonState, this.props.onOn);
             } else if (this.state.status === SwitchButtonStatus.Stop) {
                 this.setState({ status: SwitchButtonStatus.Start } as ISwitchButtonState, this.props.onOff);
             }
+            this.button.disabled = false;
         }
         public setStatus(status: SwitchButtonStatus): void {
             this.setState({ status: status } as ISwitchButtonState);
@@ -91,7 +105,7 @@ namespace VC.App.Components {
 
             return (
                 <div style={{ display: (this.state.status === SwitchButtonStatus.Hidden ? "none" : "block") }} className={this.props.className}>
-                    <button type="button" className={btnClassName} onClick={() => this.onClick() }><span className={iconClassName}></span>{btnValue}</button>
+                    <button ref={(ref: HTMLButtonElement) => this.button = ref} type="button" className={btnClassName} onClick={() => this.onClick() }><span className={iconClassName}></span>{btnValue}</button>
                 </div>
             );
         }

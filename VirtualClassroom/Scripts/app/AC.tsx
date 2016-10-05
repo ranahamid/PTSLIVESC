@@ -146,7 +146,7 @@ namespace VC.App {
                 success: (r: any): void => {
                     // send signal
                     Global.Signaling.sendSignalAll<Global.ISignalTurnAvData>(this.session, Global.SignalTypes.TurnAv, { role: role, audio: audio, video: video } as Global.ISignalTurnAvData);
-                    this.computersList.updateComputerAvAllState(audio, video);
+                    this.computersList.updateComputerAvAllState(role, audio, video);
                 },
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
@@ -163,7 +163,7 @@ namespace VC.App {
             // send signal
             Global.Signaling.sendSignalAll<Global.ISignalTurnOffData>(this.session, Global.SignalTypes.TurnOff, { role: role } as Global.ISignalTurnOffData);
         }
-        private changeVolume(uid: string, volume: Array<number>): void {
+        private changeVolume(uid: string, volume: number): void {
             let connection: any = this.getConnectionByUid(uid);
             let role: Roles = Global.Fce.toTokenData(connection.data).Role;
 
@@ -187,15 +187,8 @@ namespace VC.App {
         private featuredComputerClick(uid: string, name: string): void {
             this.featuredBox.open(uid, name);
         }
-        private onFeaturedUpdated(uid: string, layout: number, students: Array<VC.App.AC.IStudentItem>): void {
-            // update volume bars of students in the list
-            let volume: Array<number> = [];
-            for (let i: number = 0; i < layout; i++) {
-                volume.push(80); // default volume
-            }
-            this.computersList.updateComputerVolume(uid, volume);
-
-            // send signal to FC to update group & layout
+        private onFeaturedUpdated(uid: string, students: Array<VC.App.AC.IStudentItem>): void {
+            // send signal to FC
             let connection: any = this.getConnectionByUid(uid);
             Global.Signaling.sendSignal<Global.ISignalFeaturedChangedData>(this.session, connection, Global.SignalTypes.FeaturedChanged, { } as Global.ISignalFeaturedChangedData);
         }
@@ -246,9 +239,9 @@ namespace VC.App {
                             turnAvAll={(role: Roles, audio?: boolean, video?: boolean) => this.turnAvAll(role, audio, video) }
                             turnOff={(uid: string) => this.turnOff(uid) }
                             turnOffAll={(role: Roles) => this.turnOffAll(role) }
-                            changeVolume={(uid: string, volume: Array<number>) => this.changeVolume(uid, volume) }
+                            changeVolume={(uid: string, volume: number) => this.changeVolume(uid, volume) }
                             featuredComputerClick={(uid: string, name: string) => this.featuredComputerClick(uid, name) } />
-                        <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, layout: number, students: Array<VC.App.AC.IStudentItem>) => this.onFeaturedUpdated(uid, layout, students) } />
+                        <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, students: Array<VC.App.AC.IStudentItem>) => this.onFeaturedUpdated(uid, students) } />
                     </div>
                 </div>
             );

@@ -351,19 +351,6 @@ var VC;
                         student8 = { id: selectedStudent8, name: tbStudent8.getSelectedText(), position: 8 };
                     }
                     let students = [student1, student2, student3, student4, student5, student6, student7, student8];
-                    let layout = 1;
-                    if (student8 || student7) {
-                        layout = 8;
-                    }
-                    else if (student6 || student5) {
-                        layout = 6;
-                    }
-                    else if (student4 || student3) {
-                        layout = 4;
-                    }
-                    else if (student2) {
-                        layout = 2;
-                    }
                     $.ajax({
                         cache: false,
                         type: "POST",
@@ -374,7 +361,7 @@ var VC;
                             this.hide();
                             if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                                 // update list
-                                this.props.onFeaturedUpdated(this.state.uid, layout, students);
+                                this.props.onFeaturedUpdated(this.state.uid, students);
                             }
                             else {
                                 // error

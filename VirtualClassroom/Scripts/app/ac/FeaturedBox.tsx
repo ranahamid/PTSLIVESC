@@ -42,7 +42,7 @@ namespace VC.App.AC {
 
     interface IFeaturedBoxProps {
         classroomId: string;
-        onFeaturedUpdated: (uid: string, layout: number, students: Array<IStudentItem>) => void;
+        onFeaturedUpdated: (uid: string, students: Array<IStudentItem>) => void;
     }
     interface IFeaturedBoxState {
         uid: string;
@@ -435,17 +435,6 @@ namespace VC.App.AC {
 
             let students: Array<IStudentItem> = [student1, student2, student3, student4, student5, student6, student7, student8];
 
-            let layout: number = 1;
-            if (student8 || student7) {
-                layout = 8;
-            } else if (student6 || student5) {
-                layout = 6;
-            } else if (student4 || student3) {
-                layout = 4;
-            } else if (student2) {
-                layout = 2;
-            }
-
             $.ajax({
                 cache: false,
                 type: "POST",
@@ -456,7 +445,7 @@ namespace VC.App.AC {
                     this.hide();
                     if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                         // update list
-                        this.props.onFeaturedUpdated(this.state.uid, layout, students);
+                        this.props.onFeaturedUpdated(this.state.uid, students);
                     } else {
                         // error
                         alert("ERROR: " + r.message);

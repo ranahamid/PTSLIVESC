@@ -18,187 +18,37 @@ namespace VirtualClassroom.Code
             public string Id { get; set; }
             public string Key { get; set; }
             public ComputerConfig ComputerSetting { get; set; }
-            public ClassroomConfig ClassroomSetting { get; set; }
             public TokBoxSession Session { get; set; }
             public List<GroupComputer> Group { get; set; }
         }
 
         [DataObject]
-        public class ClassroomConfig
-        {
-            public ClassroomConfig()
-            {
-            }
-            public ClassroomConfig(TblClassroom tblClassroom)
-            {
-            }
-        }
-        [DataObject]
         public class ComputerConfig
         {
             public bool Audio;
             public bool Video;
-            public List<int?> Volume;
-            public int Layout;
+            public int Volume;
 
-            public ComputerConfig()
-            {
-            }
-            public ComputerConfig(bool audio, bool video)
-            {
-                this.Audio = audio;
-                this.Video = video;
-                this.Volume = new List<int?>();
-            }
             public ComputerConfig(TblPC pc)
             {
                 this.Audio = pc.Audio;
                 this.Video = pc.Video;
-                this.Volume = new List<int?>()
-                {
-                    pc.Volume1,
-                    pc.Volume2
-                };
+                this.Volume = pc.Volume;
             }
             public ComputerConfig(TblSC sc)
             {
-                this.Audio = sc.Audio;
-                this.Video = sc.Video;
-                this.Volume = new List<int?>();
-
-                this.Layout = VC.ScLayout(sc.Uid);
-
-                if (this.Layout > 0)
-                {
-                    this.Volume.Add(sc.Volume1);
-                }
-                if (this.Layout > 0)
-                {
-                    this.Volume.Add(sc.Volume2);
-                }
-                if (this.Layout > 2)
-                {
-                    this.Volume.Add(sc.Volume3);
-                    this.Volume.Add(sc.Volume4);
-                }
-                if (this.Layout > 4)
-                {
-                    this.Volume.Add(sc.Volume5);
-                    this.Volume.Add(sc.Volume6);
-                }
-                if (this.Layout > 6)
-                {
-                    this.Volume.Add(sc.Volume7);
-                    this.Volume.Add(sc.Volume8);
-                }
             }
             public ComputerConfig(TblTC tc)
             {
                 this.Audio = tc.Audio;
                 this.Video = tc.Video;
-                this.Volume = new List<int?>()
-                {
-                };
+                this.Volume = tc.Volume;
             }
             public ComputerConfig(TblFC fc)
             {
-                this.Video = false;
-                this.Audio = false;
-                this.Volume = new List<int?>();
-
-                var q = from x in fc.TblFCPCs
-                        orderby x.Position
-                        select x;
-
-                List<TblFCPC> tbl = q.ToList();
-
-                this.Layout = VC.FcLayout(fc.Uid);
-
-                if (this.Layout > 0)
-                {
-                    if (tbl.Where(x => x.Position == 1).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 1).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                }
-
-                if (this.Layout > 1)
-                {
-                    if (tbl.Where(x => x.Position == 2).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 2).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                }
-
-                if (this.Layout > 2)
-                {
-                    if (tbl.Where(x => x.Position == 3).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 3).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                    if (tbl.Where(x => x.Position == 4).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 4).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                }
-
-                if (this.Layout > 4)
-                {
-                    if (tbl.Where(x => x.Position == 5).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 5).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                    if (tbl.Where(x => x.Position == 6).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 6).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                }
-
-                if (this.Layout > 6)
-                {
-                    if (tbl.Where(x => x.Position == 7).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 7).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                    if (tbl.Where(x => x.Position == 8).Count() == 1)
-                    {
-                        this.Volume.Add(tbl.Where(x => x.Position == 8).Single().Volume);
-                    }
-                    else
-                    {
-                        this.Volume.Add(80);
-                    }
-                }
-
-                // this.Volume = q.Select(x => (int?)x.Volume).ToList();
+            }
+            public ComputerConfig(TblClassroom ac)
+            {
             }
         }
         [DataObject]
@@ -346,11 +196,11 @@ namespace VirtualClassroom.Code
                 });
             }
 
-            // students within the seat (for private chat)
-            if (pc.ScUid.HasValue)
+            // students within the teacher
+            if (pc.TcUid.HasValue)
             {
                 group.AddRange(
-                    pc.TblSC.TblPCs
+                    pc.TblTC.TblPCs
                         .Where(x => x.Uid != pc.Uid) // not me
                         .Select(x => new GroupComputer
                         {

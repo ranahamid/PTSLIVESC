@@ -4,7 +4,6 @@ namespace VC.App.Components {
     "use strict";
 
     interface IVolumeProps {
-        title: string;
         volume: number;
         display: boolean;
         onVolumeChanged: (volume: number) => void;
@@ -84,7 +83,6 @@ namespace VC.App.Components {
                                     </div>
                                 </td>
                                 <td className="tbBtn"><button type="button" disabled={this.state.volume === 100} className={this.state.volume < 100 ? "btn btn-xs btn-info" : "btn btn-xs btn-success"} onClick={() => this.increaseVolume() }><span className="glyphicon glyphicon-volume-up"></span></button></td>
-                                <td className="tbTitle">{this.props.title}</td>
                             </tr>
                         </tbody>
                     </table>

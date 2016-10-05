@@ -17,18 +17,14 @@ namespace VC.App.Global {
         Uid: string;
         Id: string;
         Key: string;
-        ClassroomSetting: IClassroomConfig;
         ComputerSetting: IComputerConfig;
         Session: TokBoxSession;
         Group: Array<GroupComputer>
     }
-    export interface IClassroomConfig {
-    }
     export interface IComputerConfig {
         Audio: boolean;
         Video: boolean;
-        Volume: Array<number>;
-        Layout: number;
+        Volume: number;
     }
     export interface GroupComputer {
         Uid: string;

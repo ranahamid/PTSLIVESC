@@ -16,26 +16,42 @@ namespace VC.App.Components {
         labelClasses: Array<string>;
         visible: boolean;
     }
-    interface IBoxTitleState {
+    interface IBoxLabelState {
         text: string;
         style: BoxLabelStyle;
+        visible: boolean;
     }
 
-    export class BoxLabel extends React.Component<IBoxLabelProps, IBoxTitleState> {
+    export class BoxLabel extends React.Component<IBoxLabelProps, IBoxLabelState> {
         private div: HTMLDivElement;
 
         constructor(props: IBoxLabelProps) {
             super(props);
-            this.state = { text: props.text, style: props.style };
+            this.state = { text: props.text, style: props.style, visible: props.visible };
         }
 
         public setText(text: string, style: BoxLabelStyle): void {
-            this.setState({ text: text, style: style });
+            this.setState({ text: text, style: style } as IBoxLabelState);
         }
 
         public setStyle(style: BoxLabelStyle): void {
-            this.setState({ text: this.state.text, style: style });
+            this.setState({ text: this.state.text, style: style } as IBoxLabelState);
         }
+
+        public setVisibility(visible: boolean): void {
+            if (visible) {
+                if (this.div.style.display === "none") {
+                    this.div.style.display = "block";
+                    this.state.visible = true;
+                }
+            } else {
+                if (this.div.style.display === "block") {
+                    this.div.style.display = "none";
+                    this.state.visible = false;
+                }
+            }
+        }
+
         private getIconByStyle(style: BoxLabelStyle): string {
             let icon: string = "";
             switch (style) {
@@ -64,7 +80,7 @@ namespace VC.App.Components {
                 text = " " + text;
             }
             return (
-                <div className={this.props.className} ref={(ref: HTMLDivElement) => this.div = ref} style={{ display: (this.props.visible ? "block" : "none") }}>
+                <div className={this.props.className} ref={(ref: HTMLDivElement) => this.div = ref} style={{ display: (this.state.visible ? "block" : "none") }}>
                     <div className={className}><span className={icon}></span>{text}</div>
                 </div>
             );

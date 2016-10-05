@@ -18,6 +18,7 @@ namespace VC.App.Components {
     }
     interface IBoxState {
         mirror?: boolean;
+        visible: boolean;
     }
 
     export class Box extends React.Component<IBoxProps, IBoxState> {
@@ -27,7 +28,7 @@ namespace VC.App.Components {
 
         constructor(props: IBoxProps) {
             super(props);
-            this.state = { mirror: this.props.mirror } as IBoxState;
+            this.state = { mirror: props.mirror, visible: props.visible } as IBoxState;
         }
 
         public getBox(): HTMLDivElement {
@@ -37,6 +38,21 @@ namespace VC.App.Components {
             let box: HTMLDivElement = this.getBox();
             box.innerHTML = "<div id=" + this.props.id + "></div>";
         }
+
+        public setVisibility(visible: boolean): void {
+            if (visible) {
+                if (this.divBox.style.display === "none") {
+                    this.divBox.style.display = "block";
+                    this.state.visible = true;
+                }
+            } else {
+                if (this.divBox.style.display === "block") {
+                    this.divBox.style.display = "none";
+                    this.state.visible = false;
+                }
+            }
+        }
+
         public subscribe(session: any, stream: any, volume: number): void {
             this.isConnected = true;
 
@@ -72,16 +88,68 @@ namespace VC.App.Components {
                 }
             );
         }
-        public unsubscribe(session: any): void {
-            session.unsubscribe(this.streamHandler);
-            this.streamHandler = null;
+        public subscribeVideo(session: any, stream: any): void {
+            this.isConnected = true;
+
+            let subscribeProps: any = this.props.streamProps;
+
+            if (this.props.mirror) {
+                subscribeProps.mirror = this.props.mirror;
+            }
+
+            subscribeProps.subscribeToAudio = false;
+
+            switch (this.props.fitMode) {
+                case BoxFitMode.Contain:
+                    subscribeProps.fitMode = "contain";
+                    break;
+                case BoxFitMode.Cover:
+                    subscribeProps.fitMode = "cover";
+                    break;
+            }
+
             this.clearBox();
-
-            this.isConnected = false;
+            this.streamHandler = session.subscribe(
+                stream,
+                this.props.id,
+                subscribeProps,
+                (error: any): void => {
+                    if (error) {
+                        // error
+                        alert("ERROR: " + error);
+                    } else {
+                        // subscribed
+                    }
+                }
+            );
         }
+        public subscribeAudio(session: any, stream: any, volume: number): void {
+            this.isConnected = true;
 
-        public setMirror(mirror) {
-            this.state = { mirror: mirror };
+            let subscribeProps: any = this.props.streamProps;
+
+            subscribeProps.subscribeToVideo = false;
+
+            this.clearBox();
+            this.streamHandler = session.subscribeToAudio(
+                stream,
+                this.props.id,
+                subscribeProps,
+                (error: any): void => {
+                    if (error) {
+                        // error
+                        alert("ERROR: " + error);
+                    } else {
+                        // subscribed
+                        this.streamHandler.setAudioVolume(volume);
+                    }
+                }
+            );
+        }
+        public audioVolume(volume: number): void {
+            if (this.streamHandler !== null) {
+                this.streamHandler.setAudioVolume(volume);
+            }
         }
 
         public publish(session: any, source: PublishSources, audio: boolean, video: boolean, startedHandler: (event: any) => void, stoppedHandler: (event: any) => void): void {
@@ -168,10 +236,17 @@ namespace VC.App.Components {
                 this.streamHandler.publishVideo(on);
             }
         }
-        public audioVolume(volume: number): void {
-            if (this.streamHandler !== null) {
-                this.streamHandler.setAudioVolume(volume);
-            }
+
+        public setMirror(mirror) {
+            this.state.mirror = mirror;
+        }
+
+        public unsubscribe(session: any): void {
+            session.unsubscribe(this.streamHandler);
+            this.streamHandler = null;
+            this.clearBox();
+
+            this.isConnected = false;
         }
 
         public getStats(completionHandler: (error: any, stats: any) => void): void {
@@ -182,7 +257,7 @@ namespace VC.App.Components {
 
         render(): JSX.Element {
             return (
-                <div ref={(ref: HTMLDivElement) => this.divBox = ref} className={this.props.className} style={{ display: (this.props.visible ? "block" : "none") }}></div>
+                <div ref={(ref: HTMLDivElement) => this.divBox = ref} className={this.props.className} style={{ display: (this.state.visible ? "block" : "none") }}></div>
             );
         }
     }

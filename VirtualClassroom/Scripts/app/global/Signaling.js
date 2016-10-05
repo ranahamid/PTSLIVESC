@@ -20,8 +20,7 @@ var VC;
             })(Global.SignalTypes || (Global.SignalTypes = {}));
             var SignalTypes = Global.SignalTypes;
             (function (ChatType) {
-                ChatType[ChatType["Private"] = 0] = "Private";
-                ChatType[ChatType["Public"] = 1] = "Public";
+                ChatType[ChatType["Public"] = 0] = "Public";
             })(Global.ChatType || (Global.ChatType = {}));
             var ChatType = Global.ChatType;
             class Signaling {

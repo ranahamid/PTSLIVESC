@@ -54,12 +54,24 @@ var VC;
                     return iconClassName;
                 }
                 onClick() {
+                    if (!this.button.disabled) {
+                        if (this.props.delayed !== undefined) {
+                            this.button.disabled = true;
+                            window.setTimeout(() => { this.performClick(); }, this.props.delayed);
+                        }
+                        else {
+                            this.performClick();
+                        }
+                    }
+                }
+                performClick() {
                     if (this.state.status === SwitchButtonStatus.Start) {
                         this.setState({ status: SwitchButtonStatus.Stop }, this.props.onOn);
                     }
                     else if (this.state.status === SwitchButtonStatus.Stop) {
                         this.setState({ status: SwitchButtonStatus.Start }, this.props.onOff);
                     }
+                    this.button.disabled = false;
                 }
                 setStatus(status) {
                     this.setState({ status: status });
@@ -74,7 +86,7 @@ var VC;
                     if (iconClassName !== "" && btnValue !== "") {
                         btnValue = " " + btnValue;
                     }
-                    return (React.createElement("div", {style: { display: (this.state.status === SwitchButtonStatus.Hidden ? "none" : "block") }, className: this.props.className}, React.createElement("button", {type: "button", className: btnClassName, onClick: () => this.onClick()}, React.createElement("span", {className: iconClassName}), btnValue)));
+                    return (React.createElement("div", {style: { display: (this.state.status === SwitchButtonStatus.Hidden ? "none" : "block") }, className: this.props.className}, React.createElement("button", {ref: (ref) => this.button = ref, type: "button", className: btnClassName, onClick: () => this.onClick()}, React.createElement("span", {className: iconClassName}), btnValue)));
                 }
             }
             Components.SwitchButton = SwitchButton;

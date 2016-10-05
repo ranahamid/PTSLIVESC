@@ -232,7 +232,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Interfaces\ApiControllerR.cs" />
     <Compile Include="Controllers\Interfaces\ControllerR.cs" />
-    <Compile Include="Controllers\PC2Controller.cs" />
     <Compile Include="Controllers\PCController.cs" />
     <Compile Include="Controllers\FCController.cs" />
     <Compile Include="Controllers\SCController.cs" />
@@ -252,7 +251,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DbScript.sql" />
+    <Content Include="App_Data\DbScript.Update.1.0.0.-1.0.1.sql" />
+    <Content Include="App_Data\DbScript.1.0.0.sql" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\images\logo-white.png" />
     <Content Include="Extensions\ScreenSharing\Chrome\background-script.js" />
@@ -390,10 +390,10 @@
     <Content Include="Views\TC\Index.cshtml" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\FC\Index.cshtml" />
-    <Content Include="Views\PC2\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Audio.tsx" />
     <TypeScriptCompile Include="Scripts\app\PC.tsx" />
     <TypeScriptCompile Include="Scripts\global\components\Selector.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
@@ -420,7 +420,6 @@
     <TypeScriptCompile Include="Scripts\app\global\Fce.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Interfaces.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Signaling.ts" />
-    <TypeScriptCompile Include="Scripts\app\PC2.tsx" />
     <TypeScriptCompile Include="Scripts\app\SC.tsx" />
     <TypeScriptCompile Include="Scripts\forms\components\Component.Checkboxes.tsx" />
     <TypeScriptCompile Include="Scripts\forms\components\Component.Label.tsx" />

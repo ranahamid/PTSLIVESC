@@ -464,17 +464,7 @@ namespace VirtualClassroom.Controllers
                 Uid = scUid,
                 Id = item.id,
                 ClassroomId = classroomId,
-                Name = item.name,
-                Audio = true,
-                Video = true,
-                Volume1 = 80,
-                Volume2 = 80,
-                Volume3 = 80,
-                Volume4 = 80,
-                Volume5 = 80,
-                Volume6 = 80,
-                Volume7 = 80,
-                Volume8 = 80
+                Name = item.name
             });
 
             // assign students and positions
@@ -664,17 +654,7 @@ namespace VirtualClassroom.Controllers
                             Uid = newScUid,
                             Id = seat.id,
                             ClassroomId = classroomId,
-                            Name = seat.name,
-                            Audio = true,
-                            Video = true,
-                            Volume1 = 80,
-                            Volume2 = 80,
-                            Volume3 = 80,
-                            Volume4 = 80,
-                            Volume5 = 80,
-                            Volume6 = 80,
-                            Volume7 = 80,
-                            Volume8 = 80
+                            Name = seat.name
                         });
 
                         seat.uid = newScUid;
@@ -726,8 +706,7 @@ namespace VirtualClassroom.Controllers
                         Uid = Guid.NewGuid(),
                         FcUid = fcUid,
                         PcUid = tblPC.Uid,
-                        Position = position,
-                        Volume = 80
+                        Position = position
                     };
                 }
             }
@@ -1057,8 +1036,7 @@ namespace VirtualClassroom.Controllers
                 Position = 0,
                 Audio = true,
                 Video = true,
-                Volume1 = 80,
-                Volume2 = 80
+                Volume = 80
             });
 
             try
@@ -1252,8 +1230,7 @@ namespace VirtualClassroom.Controllers
                             Position = 0,
                             Audio = true,
                             Video = true,
-                            Volume1 = 80,
-                            Volume2 = 80
+                            Volume = 80
                         });
 
                         student.uid = newPcUid;

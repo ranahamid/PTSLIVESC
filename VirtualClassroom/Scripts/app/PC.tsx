@@ -17,11 +17,13 @@ namespace VC.App {
         private chatPublic: Components.Chat;
         private divMain: HTMLDivElement;
         private divFrame: HTMLDivElement;
+        private studentsAudio: Components.Audio;
 
         public singleBoxVisible: boolean = false;
 
         constructor(props: IProps) {
             super(props, Roles.PC);
+            this.studentsAudio = new Components.Audio();
         }
 
         // abstract methods
@@ -59,12 +61,11 @@ namespace VC.App {
                 // my group
                 if (tokenData.Role === Roles.SC) {
                     // seat computer
-                    // show raise hand button
-                    // this.switchButton.setStatus(Components.SwitchButtonStatus.Start);
                     if (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop) {
                         Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
                     }
                 } else if (tokenData.Role === Roles.FC) {
+                    // featured computer
                     if (this.switchButtonHand.getStatus() === Components.SwitchButtonStatus.Stop) {
                         Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: true } as Global.ISignalRaiseHandData);
                     }
@@ -94,12 +95,8 @@ namespace VC.App {
                 this.setStatusText("Disconnected from the session.", Components.StatusStyle.Error);
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
-                if (tokenData.Role === Roles.SC) {
-                    // hide raise hand button
-                    // this.switchButton.setStatus(Components.SwitchButtonStatus.Hidden);
-                    this.fitLayout();
-                } else if (tokenData.Role === Roles.TC) {
-                    // seat computer
+                if (tokenData.Role === Roles.TC) {
+                    // teacher computer
                     this.label.setText("Teacher computer not connected.", Components.BoxLabelStyle.NotConnected);
                 }
             }
@@ -118,8 +115,11 @@ namespace VC.App {
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
                 if (tokenData.Role === Roles.TC) {
-                    // seat computer
-                    this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume[1]);
+                    // teacher computer
+                    this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                } else if (tokenData.Role === Roles.PC) {
+                    // student computer
+                    this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                 }
             }
         }
@@ -129,10 +129,12 @@ namespace VC.App {
                 // me .. there is not fired this event for publisher
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
-                // seat or teacher computer
                 if (tokenData.Role === Roles.TC) {
-                    // seat computer
+                    // teacher computer
                     this.boxSubscriber.unsubscribe(this.session);
+                } else if (tokenData.Role === Roles.PC) {
+                    // student computer
+                    this.studentsAudio.unsubscribe(tokenData.Uid);
                 }
             }
         }
@@ -177,9 +179,10 @@ namespace VC.App {
         }
         private volumeSignalReceived(event: any): void {
             let data: Global.ISignalVolumeData = JSON.parse(event.data) as Global.ISignalVolumeData;
-            if (data.volume[1] !== null) {
-                this.dataResponse.ComputerSetting.Volume[1] = data.volume[1];
-                this.boxSubscriber.audioVolume(data.volume[1]);
+            if (data.volume !== null) {
+                this.dataResponse.ComputerSetting.Volume = data.volume;
+                this.boxSubscriber.audioVolume(data.volume);
+                this.studentsAudio.audioVolume(data.volume);
             }
         }
         private turnOffSignalReceived(event: any): void {
@@ -384,9 +387,9 @@ namespace VC.App {
                                     </div>
                                     <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">
                                         <div ref={(ref: HTMLDivElement) => this.divButtons = ref} className="divButtons">
-                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" /></div>
-                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" /></div>
-                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" /></div>
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-hand-up" iconOff="glyphicon glyphicon-hand-down" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" delayed={500} /></div>
                                         </div>
                                         <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
                                         <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />

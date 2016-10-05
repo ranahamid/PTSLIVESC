@@ -56,7 +56,6 @@ namespace VirtualClassroom.Controllers
                 cData.Id = tc.Id;
                 cData.Key = TokBoxHelper.Key;
                 cData.ComputerSetting = new TokBoxHelper.ComputerConfig(tc);
-                cData.ClassroomSetting = new TokBoxHelper.ClassroomConfig(tc.TblClassroom);
                 cData.Session = TokBoxHelper.GetSession(tc.ClassroomId,
                     new TokBoxHelper.TokenData
                     {

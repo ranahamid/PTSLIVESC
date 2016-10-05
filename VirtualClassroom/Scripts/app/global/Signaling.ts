@@ -17,8 +17,7 @@ namespace VC.App.Global {
     }
 
     export enum ChatType {
-        Private = 0,
-        Public = 1
+        Public = 0
     }
 
     export interface ISignalRaiseHandData {
@@ -27,7 +26,7 @@ namespace VC.App.Global {
     export interface ISignalConnectedData {
         audio: boolean;
         video: boolean;
-        volume: Array<number>;
+        volume: number;
         handRaised: boolean;
     }
     export interface ISignalTurnAvData {
@@ -36,7 +35,7 @@ namespace VC.App.Global {
         video?: boolean;
     }
     export interface ISignalVolumeData {
-        volume: Array<number>;
+        volume: number;
     }
     export interface ISignalTurnOffData {
         role?: Roles;

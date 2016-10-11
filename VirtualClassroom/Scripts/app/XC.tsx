@@ -29,7 +29,9 @@ namespace VC.App {
         public dataResponse: Global.IComputerData = null;
 
         public connections: Array<any> = [];
-        public alreadyConnected: boolean = false;
+
+        private isConnected: boolean = false;
+        private alreadyConnected: boolean = false;
 
         public session: any = null;
 
@@ -100,7 +102,7 @@ namespace VC.App {
                 success: (r: VC.Global.Data.IDataResponse<Global.IComputerData>): void => {
                     if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                         this.dataResponse = r.data;
-                        this.setStatusText("Connecting the session ...", Components.StatusStyle.Connecting);
+                        this.setStatusText("Connecting to the session ...", Components.StatusStyle.Connecting);
                         this.sessionConnect();
                     } else {
                         this.setStatusText(r.message, Components.StatusStyle.Error);
@@ -285,11 +287,7 @@ namespace VC.App {
             return isEqual;
         }
 
-
-        private sessionConnect(): void {
-            let s: Global.TokBoxSession = this.dataResponse.Session;
-
-            this.session = OT.initSession(this.dataResponse.Key, s.SessionId);
+        private attachSessionEvents(): void {
             this.session.on({
                 signal: (event: any): void => {
                     this.signalReceived(event);
@@ -302,11 +300,24 @@ namespace VC.App {
                         if (this.session.connection.connectionId === event.connection.connectionId) {
                             // its me, successfully connected
                             this.setStatusText("Connected to the session.", Components.StatusStyle.Connected);
-                            this.connected(event.connection);
+                            window.setTimeout(() => { // not necessary, but we want to show the "connected message"
+                                this.isConnected = true;
+                                // invoke added connections
+                                this.connections.forEach((connection: any) => {
+                                    this.connected(connection);
+                                });
+                                // invoke stream created
+                                this.streams.forEach((stream: any) => {
+                                    this.streamCreated(stream.connection, stream);
+                                });
+                            }, 500);
                         } else if (this.session.connection.connectionId !== event.connection.connectionId
                             && tokenData.Uid !== this.dataResponse.Uid) {
                             // not me and not already connected
-                            this.connected(event.connection);
+                            if (this.isConnected) {
+                                // call immediatelly if connected, if not, will be invoked after
+                                this.connected(event.connection);
+                            }
                         }
                     } else if (this.session.connection.connectionId === event.connection.connectionId) {
                         // its me and already connected - disconnect
@@ -334,23 +345,40 @@ namespace VC.App {
                 },
                 streamCreated: (event: any): void => {
                     this.addStream(event.stream);
-                    this.streamCreated(event.stream.connection, event.stream);
+                    if (this.isConnected) {
+                        // call immediatelly if connected, if not, will be invoked after
+                        this.streamCreated(event.stream.connection, event.stream);
+                    }
                 },
                 streamDestroyed: (event: any): void => {
                     this.removeStream(event.stream);
-                    this.streamDestroyed(event.stream.connection, event.stream);
+                    if (this.isConnected) {
+                        this.streamDestroyed(event.stream.connection, event.stream);
+                    }
                 },
                 streamPropertyChanged: (event: any): void => {
                     // video / audio changed
                 }
             });
-            this.session.connect(s.Token, (err: any): void => {
-                if (err) {
-                    this.setStatusText("Error connecting: " + err.message, Components.StatusStyle.Error);
-                } else {
-                    // connected, better to use connectionCreated event
-                }
-            });
+        }
+        private sessionConnect(): void {
+            let s: Global.TokBoxSession = this.dataResponse.Session;
+
+            $(window).bind("beforeunload", () => { try { this.session.disconnect(); } catch (err) { } });
+
+            this.session = OT.initSession(this.dataResponse.Key, s.SessionId);
+
+            this.attachSessionEvents();
+
+            window.setTimeout(() => {
+                this.session.connect(s.Token, (err: any): void => {
+                    if (err) {
+                        this.setStatusText("Error connecting: " + err.message, Components.StatusStyle.Error);
+                    } else {
+                        //this.attachSessionEvents();
+                    }
+                });
+            }, 500);
         }
 
         public disconnect(): void {

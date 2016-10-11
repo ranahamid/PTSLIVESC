@@ -58,7 +58,7 @@ var VC;
                     this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
                         if (error) {
                             // error
-                            alert("ERROR: " + error);
+                            console.log("ERROR 0x04: " + error);
                         }
                         else {
                             // subscribed
@@ -85,25 +85,25 @@ var VC;
                     this.streamHandler = session.subscribe(stream, this.props.id, subscribeProps, (error) => {
                         if (error) {
                             // error
-                            alert("ERROR: " + error);
+                            alert("ERROR 0x03: " + error);
                         }
                         else {
                         }
                     });
                 }
                 subscribeAudio(session, stream, volume) {
-                    this.isConnected = true;
                     let subscribeProps = this.props.streamProps;
                     subscribeProps.subscribeToVideo = false;
                     this.clearBox();
                     this.streamHandler = session.subscribeToAudio(stream, this.props.id, subscribeProps, (error) => {
                         if (error) {
                             // error
-                            alert("ERROR: " + error);
+                            console.log("ERROR 0x02: " + error);
                         }
                         else {
                             // subscribed
                             this.streamHandler.setAudioVolume(volume);
+                            this.isConnected = true;
                         }
                     });
                 }
@@ -113,7 +113,6 @@ var VC;
                     }
                 }
                 publish(session, source, audio, video, startedHandler, stoppedHandler) {
-                    this.isConnected = true;
                     var publishProps = this.props.streamProps;
                     switch (source) {
                         case App.PublishSources.Camera:
@@ -159,15 +158,14 @@ var VC;
                             });
                             session.publish(this.streamHandler, (error) => {
                                 if (error) {
-                                    // alert("Something went wrong: " + error.message);
-                                    stoppedHandler(null);
                                 }
                                 else {
                                     // audio/video
                                     this.streamHandler.publishAudio(audio);
                                     this.streamHandler.publishVideo(video);
                                     // publishing
-                                    startedHandler(null);
+                                    // startedHandler(null);
+                                    this.isConnected = true;
                                 }
                             });
                         }

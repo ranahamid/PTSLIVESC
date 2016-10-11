@@ -46,10 +46,24 @@ namespace VC.App {
                     this.dataResponse.ComputerSetting.Audio,
                     this.dataResponse.ComputerSetting.Video,
                     (event: any) => {
-                        // nothing to do
+                        // started
+                        if (this.dataResponse.ComputerSetting.Audio) {
+                            // send signal to subscribe my audio
+                            Global.Signaling.sendSignalAll<Global.ISignalAudioPublish>(this.session, Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: true
+                            } as Global.ISignalAudioPublish);
+                        }
                     },
                     (event: any) => {
-                        // nothing to do
+                        // stopped
+                        if (this.dataResponse.ComputerSetting.Audio) {
+                            // send signal to unsubscribe my audio
+                            Global.Signaling.sendSignalAll<Global.ISignalAudioPublish>(this.session, Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: false
+                            } as Global.ISignalAudioPublish);
+                        }
                     }
                 );
                 // av buttons
@@ -72,6 +86,23 @@ namespace VC.App {
                 } else if (tokenData.Role === Roles.TC) {
                     // teacher computer
                     this.label.setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
+                    // send notification that im connected
+                    Global.Signaling.sendSignal<Global.ISignalConnectedData>(this.session, connection, Global.SignalTypes.Connected, {} as Global.ISignalConnectedData);
+                    // send signal to subscribe to my audio
+                    if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
+                        Global.Signaling.sendSignal<Global.ISignalAudioPublish>(this.session, connection, Global.SignalTypes.AudioPublish, {
+                            studentUid: this.dataResponse.Uid,
+                            audionOn: true
+                        } as Global.ISignalAudioPublish);
+                    }
+                } else if (tokenData.Role === Roles.PC) {
+                    // send signal to subscribe to my audio
+                    if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
+                        Global.Signaling.sendSignal<Global.ISignalAudioPublish>(this.session, connection, Global.SignalTypes.AudioPublish, {
+                            studentUid: this.dataResponse.Uid,
+                            audionOn: true
+                        } as Global.ISignalAudioPublish);
+                    }
                 }
             } else if (tokenData.Role === Roles.AC) {
                 // admin computer
@@ -119,7 +150,8 @@ namespace VC.App {
                     this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
                 } else if (tokenData.Role === Roles.PC) {
                     // student computer
-                    this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                    // connect to audio .. auto subscribe, we are going to do signal based subscribing, to do not subsribe automatically to everyone
+                    // this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                 }
             }
         }
@@ -134,7 +166,7 @@ namespace VC.App {
                     this.boxSubscriber.unsubscribe(this.session);
                 } else if (tokenData.Role === Roles.PC) {
                     // student computer
-                    this.studentsAudio.unsubscribe(tokenData.Uid);
+                    this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                 }
             }
         }
@@ -159,6 +191,12 @@ namespace VC.App {
                     break;
                 case Global.SignalTypes.GroupChanged:
                     this.groupChangedSignalReceived(event);
+                    break;
+                case Global.SignalTypes.AudioPublish:
+                    this.audioPublishSignalReceived(event);
+                    break;
+                case Global.SignalTypes.RaiseHand:
+                    this.raiseHandSignalReceived(event);
                     break;
             }
         }
@@ -191,6 +229,20 @@ namespace VC.App {
                 this.disconnect();
             }
         }
+        private raiseHandSignalReceived(event: any): void {
+            let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
+
+            if (tokenData.Role === Roles.AC) {
+                // can be received from AC only
+                let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
+
+                if (data.raised) {
+                    this.raiseHand();
+                } else {
+                    this.lowerHand();
+                }
+            }
+        }
         private chatSignalReceived(event: any): void {
             let data: Global.ISignalChatData = JSON.parse(event.data) as Global.ISignalChatData;
                 if (data.type === Global.ChatType.Public) {
@@ -219,6 +271,19 @@ namespace VC.App {
             data.removeUids.forEach((uid: string) => {
                 this.removeGroupComputer(uid);
             });
+        }
+        private audioPublishSignalReceived(event: any): void {
+            let data: Global.ISignalAudioPublish = JSON.parse(event.data) as Global.ISignalAudioPublish;
+
+            if (this.isInMyGroup(data.studentUid)) {
+                if (data.audionOn) {
+                    // subscribe to audio
+                    this.studentsAudio.subscribe(data.studentUid, this.session, this.getStream(data.studentUid), this.dataResponse.ComputerSetting.Volume);
+                } else {
+                    // unsubscribe from audio
+                    this.studentsAudio.unsubscribe(data.studentUid, this.session, this.getStream(data.studentUid));
+                }
+            }
         }
 
         private raiseHand(): void {
@@ -261,6 +326,11 @@ namespace VC.App {
                 this.dataResponse.ComputerSetting.Audio = audio;
                 this.boxPublisher.audio(audio);
                 this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? Components.SwitchButtonStatus.Start : Components.SwitchButtonStatus.Stop);
+                // send signal to subscribe/unsubsribe my audio
+                Global.Signaling.sendSignalAll<Global.ISignalAudioPublish>(this.session, Global.SignalTypes.AudioPublish, {
+                    studentUid: this.dataResponse.Uid,
+                    audionOn: audio
+                } as Global.ISignalAudioPublish);
             }
             if (video !== null) {
                 this.dataResponse.ComputerSetting.Video = video;
@@ -280,7 +350,7 @@ namespace VC.App {
                 },
                 error: (xhr: JQueryXHR, status: string, error: string): void => {
                     // error
-                    alert("ERROR: " + error);
+                    console.log("ERROR 0x01: " + error);
                 }
             });
         }

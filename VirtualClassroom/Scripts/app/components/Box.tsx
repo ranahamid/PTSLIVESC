@@ -80,7 +80,7 @@ namespace VC.App.Components {
                 (error: any): void => {
                     if (error) {
                         // error
-                        alert("ERROR: " + error);
+                        console.log("ERROR 0x04: " + error);
                     } else {
                         // subscribed
                         this.streamHandler.setAudioVolume(volume);
@@ -116,7 +116,7 @@ namespace VC.App.Components {
                 (error: any): void => {
                     if (error) {
                         // error
-                        alert("ERROR: " + error);
+                        alert("ERROR 0x03: " + error);
                     } else {
                         // subscribed
                     }
@@ -124,8 +124,6 @@ namespace VC.App.Components {
             );
         }
         public subscribeAudio(session: any, stream: any, volume: number): void {
-            this.isConnected = true;
-
             let subscribeProps: any = this.props.streamProps;
 
             subscribeProps.subscribeToVideo = false;
@@ -138,10 +136,11 @@ namespace VC.App.Components {
                 (error: any): void => {
                     if (error) {
                         // error
-                        alert("ERROR: " + error);
+                        console.log("ERROR 0x02: " + error);
                     } else {
                         // subscribed
                         this.streamHandler.setAudioVolume(volume);
+                        this.isConnected = true;
                     }
                 }
             );
@@ -153,8 +152,6 @@ namespace VC.App.Components {
         }
 
         public publish(session: any, source: PublishSources, audio: boolean, video: boolean, startedHandler: (event: any) => void, stoppedHandler: (event: any) => void): void {
-            this.isConnected = true;
-
             var publishProps: any = this.props.streamProps;
 
             switch (source) {
@@ -190,6 +187,7 @@ namespace VC.App.Components {
             }
 
             this.clearBox();
+
             this.streamHandler = OT.initPublisher(this.props.id,
                 publishProps,
                 (error: any): void => {
@@ -207,13 +205,14 @@ namespace VC.App.Components {
                             (error: any): void => {
                                 if (error) {
                                     // alert("Something went wrong: " + error.message);
-                                    stoppedHandler(null);
+                                    // stoppedHandler(null);
                                 } else {
                                     // audio/video
                                     this.streamHandler.publishAudio(audio);
                                     this.streamHandler.publishVideo(video);
                                     // publishing
-                                    startedHandler(null);
+                                    // startedHandler(null);
+                                    this.isConnected = true;
                                 }
                             });
                     }

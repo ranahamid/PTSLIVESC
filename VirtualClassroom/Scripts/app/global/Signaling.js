@@ -15,8 +15,9 @@ var VC;
                 SignalTypes[SignalTypes["TurnOff"] = 5] = "TurnOff";
                 SignalTypes[SignalTypes["Chat"] = 6] = "Chat";
                 SignalTypes[SignalTypes["Forms"] = 7] = "Forms";
-                SignalTypes[SignalTypes["FeaturedChanged"] = 8] = "FeaturedChanged";
-                SignalTypes[SignalTypes["GroupChanged"] = 9] = "GroupChanged"; // used for FC => PC
+                SignalTypes[SignalTypes["AudioPublish"] = 8] = "AudioPublish";
+                SignalTypes[SignalTypes["FeaturedChanged"] = 9] = "FeaturedChanged";
+                SignalTypes[SignalTypes["GroupChanged"] = 10] = "GroupChanged"; // used for FC => PC
             })(Global.SignalTypes || (Global.SignalTypes = {}));
             var SignalTypes = Global.SignalTypes;
             (function (ChatType) {
@@ -82,6 +83,9 @@ var VC;
                             break;
                         case signalPrefix + this.signalTypeAsString(SignalTypes.Forms).toLowerCase():
                             signalType = SignalTypes.Forms;
+                            break;
+                        case signalPrefix + this.signalTypeAsString(SignalTypes.AudioPublish).toLowerCase():
+                            signalType = SignalTypes.AudioPublish;
                             break;
                         case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
                             signalType = SignalTypes.FeaturedChanged;

@@ -10,28 +10,41 @@ var VC;
                 constructor() {
                     this.handlers = [];
                 }
+                isHandlerAlreadyExists(uid) {
+                    let exists = false;
+                    for (let i = 0; i < this.handlers.length && !exists; i++) {
+                        if (uid === this.handlers[i].uid) {
+                            exists = true;
+                        }
+                    }
+                    return exists;
+                }
                 subscribe(uid, session, stream, volume) {
-                    // create div
-                    let div = document.createElement("div");
-                    let handler = null;
-                    handler = session.subscribe(stream, div, { subscribeToVideo: false }, (error) => {
-                        if (error) {
-                            // error
-                            alert("ERROR: " + error);
+                    if (stream !== null) {
+                        if (!this.isHandlerAlreadyExists(uid)) {
+                            let div = document.createElement("div");
+                            let handler = null;
+                            // document.body.appendChild(div);
+                            // subscribe
+                            handler = session.subscribe(stream, div, { subscribeToVideo: false }, (error) => {
+                                if (error) {
+                                    // error
+                                    console.log("ERROR 0x05: " + error);
+                                }
+                                else {
+                                    // subscribed
+                                    handler.setAudioVolume(volume);
+                                    // add to array
+                                    let audioHander = {
+                                        uid: uid,
+                                        div: div,
+                                        handler: handler
+                                    };
+                                    this.handlers.push(audioHander);
+                                }
+                            });
                         }
-                        else {
-                            // subscribed
-                            handler.setAudioVolume(volume);
-                            // add to array
-                            let audioHander = {
-                                uid: uid,
-                                session: session,
-                                div: div,
-                                handler: handler
-                            };
-                            this.handlers.push(audioHander);
-                        }
-                    });
+                    }
                 }
                 audioVolume(volume) {
                     this.handlers.forEach((audioHandler) => {
@@ -40,18 +53,20 @@ var VC;
                         }
                     });
                 }
-                unsubscribe(uid) {
-                    let handlers = [];
-                    this.handlers.forEach((audioHandler) => {
-                        if (audioHandler.uid === uid) {
-                            // unsubscribe
-                            audioHandler.session.unsubscribe(audioHandler.handler);
-                        }
-                        else {
-                            handlers.push(audioHandler);
-                        }
-                    });
-                    this.handlers = handlers;
+                unsubscribe(uid, session, stream) {
+                    if (stream !== null) {
+                        let handlers = [];
+                        this.handlers.forEach((audioHandler) => {
+                            if (audioHandler.uid === uid) {
+                                // unsubscribe
+                                session.unsubscribe(stream);
+                            }
+                            else {
+                                handlers.push(audioHandler);
+                            }
+                        });
+                        this.handlers = handlers;
+                    }
                 }
             }
             Components.Audio = Audio;

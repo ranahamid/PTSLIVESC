@@ -73,9 +73,6 @@ var VC;
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
                     if (tokenData.Role === App.Roles.PC) {
-                        // student
-                        // connect to audio
-                        this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                     }
                 }
             }
@@ -87,7 +84,7 @@ var VC;
                     // my group
                     if (tokenData.Role === App.Roles.PC) {
                         // student ... connect to audio
-                        this.studentsAudio.unsubscribe(tokenData.Uid);
+                        this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                     }
                 }
             }
@@ -108,6 +105,9 @@ var VC;
                         break;
                     case App.Global.SignalTypes.Forms:
                         this.formsSignalReceived(event);
+                        break;
+                    case App.Global.SignalTypes.AudioPublish:
+                        this.audioPublishSignalReceived(event);
                         break;
                 }
             }
@@ -155,6 +155,19 @@ var VC;
                     }
                     else if (data.type === VC.Forms.FormType.Poll && this.divUIpolls.style.display === "block") {
                         this.polls.answerReceived(data.formId, data.answerId, data.status, data.resultData);
+                    }
+                }
+            }
+            audioPublishSignalReceived(event) {
+                let data = JSON.parse(event.data);
+                if (this.isInMyGroup(data.studentUid)) {
+                    if (data.audionOn) {
+                        // subscribe to audio
+                        this.studentsAudio.subscribe(data.studentUid, this.session, this.getStream(data.studentUid), this.dataResponse.ComputerSetting.Volume);
+                    }
+                    else {
+                        // unsubscribe from audio
+                        this.studentsAudio.unsubscribe(data.studentUid, this.session, this.getStream(data.studentUid));
                     }
                 }
             }

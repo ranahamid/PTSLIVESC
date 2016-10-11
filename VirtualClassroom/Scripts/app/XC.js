@@ -25,6 +25,7 @@ var VC;
                 this.role = role;
                 this.dataResponse = null;
                 this.connections = [];
+                this.isConnected = false;
                 this.alreadyConnected = false;
                 this.session = null;
                 this.streams = [];
@@ -88,7 +89,7 @@ var VC;
                     success: (r) => {
                         if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
                             this.dataResponse = r.data;
-                            this.setStatusText("Connecting the session ...", App.Components.StatusStyle.Connecting);
+                            this.setStatusText("Connecting to the session ...", App.Components.StatusStyle.Connecting);
                             this.sessionConnect();
                         }
                         else {
@@ -263,9 +264,7 @@ var VC;
                 }
                 return isEqual;
             }
-            sessionConnect() {
-                let s = this.dataResponse.Session;
-                this.session = OT.initSession(this.dataResponse.Key, s.SessionId);
+            attachSessionEvents() {
                 this.session.on({
                     signal: (event) => {
                         this.signalReceived(event);
@@ -278,12 +277,25 @@ var VC;
                             if (this.session.connection.connectionId === event.connection.connectionId) {
                                 // its me, successfully connected
                                 this.setStatusText("Connected to the session.", App.Components.StatusStyle.Connected);
-                                this.connected(event.connection);
+                                window.setTimeout(() => {
+                                    this.isConnected = true;
+                                    // invoke added connections
+                                    this.connections.forEach((connection) => {
+                                        this.connected(connection);
+                                    });
+                                    // invoke stream created
+                                    this.streams.forEach((stream) => {
+                                        this.streamCreated(stream.connection, stream);
+                                    });
+                                }, 500);
                             }
                             else if (this.session.connection.connectionId !== event.connection.connectionId
                                 && tokenData.Uid !== this.dataResponse.Uid) {
                                 // not me and not already connected
-                                this.connected(event.connection);
+                                if (this.isConnected) {
+                                    // call immediatelly if connected, if not, will be invoked after
+                                    this.connected(event.connection);
+                                }
                             }
                         }
                         else if (this.session.connection.connectionId === event.connection.connectionId) {
@@ -314,23 +326,39 @@ var VC;
                     },
                     streamCreated: (event) => {
                         this.addStream(event.stream);
-                        this.streamCreated(event.stream.connection, event.stream);
+                        if (this.isConnected) {
+                            // call immediatelly if connected, if not, will be invoked after
+                            this.streamCreated(event.stream.connection, event.stream);
+                        }
                     },
                     streamDestroyed: (event) => {
                         this.removeStream(event.stream);
-                        this.streamDestroyed(event.stream.connection, event.stream);
+                        if (this.isConnected) {
+                            this.streamDestroyed(event.stream.connection, event.stream);
+                        }
                     },
                     streamPropertyChanged: (event) => {
                         // video / audio changed
                     }
                 });
-                this.session.connect(s.Token, (err) => {
-                    if (err) {
-                        this.setStatusText("Error connecting: " + err.message, App.Components.StatusStyle.Error);
-                    }
-                    else {
-                    }
-                });
+            }
+            sessionConnect() {
+                let s = this.dataResponse.Session;
+                $(window).bind("beforeunload", () => { try {
+                    this.session.disconnect();
+                }
+                catch (err) { } });
+                this.session = OT.initSession(this.dataResponse.Key, s.SessionId);
+                this.attachSessionEvents();
+                window.setTimeout(() => {
+                    this.session.connect(s.Token, (err) => {
+                        if (err) {
+                            this.setStatusText("Error connecting: " + err.message, App.Components.StatusStyle.Error);
+                        }
+                        else {
+                        }
+                    });
+                }, 500);
             }
             disconnect() {
                 if (this.session) {

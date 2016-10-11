@@ -91,8 +91,8 @@ namespace VC.App {
                 // my group
                 if (tokenData.Role === Roles.PC) {
                     // student
-                    // connect to audio
-                    this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
+                    // connect to audio .. auto subscribe, we are going to do signal based subscribing, to do not subsribe automatically to everyone
+                    // this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace VC.App {
                 // my group
                 if (tokenData.Role === Roles.PC) {
                     // student ... connect to audio
-                    this.studentsAudio.unsubscribe(tokenData.Uid);
+                    this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                 }
             }
         }
@@ -126,6 +126,9 @@ namespace VC.App {
                     break;
                 case Global.SignalTypes.Forms:
                     this.formsSignalReceived(event);
+                    break;
+                case Global.SignalTypes.AudioPublish:
+                    this.audioPublishSignalReceived(event);
                     break;
             }
         }
@@ -170,6 +173,18 @@ namespace VC.App {
                     this.surveys.answerReceived(data.formId, data.answerId, data.status);
                 } else if (data.type === Forms.FormType.Poll && this.divUIpolls.style.display === "block") {
                     this.polls.answerReceived(data.formId, data.answerId, data.status, data.resultData);
+                }
+            }
+        }
+        private audioPublishSignalReceived(event: any): void {
+            let data: Global.ISignalAudioPublish = JSON.parse(event.data) as Global.ISignalAudioPublish;
+            if (this.isInMyGroup(data.studentUid)) {
+                if (data.audionOn) {
+                    // subscribe to audio
+                    this.studentsAudio.subscribe(data.studentUid, this.session, this.getStream(data.studentUid), this.dataResponse.ComputerSetting.Volume);
+                } else {
+                    // unsubscribe from audio
+                    this.studentsAudio.unsubscribe(data.studentUid, this.session, this.getStream(data.studentUid));
                 }
             }
         }

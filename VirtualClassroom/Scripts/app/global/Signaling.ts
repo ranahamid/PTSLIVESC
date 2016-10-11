@@ -12,8 +12,9 @@ namespace VC.App.Global {
         TurnOff = 5,    // used for AC => PC, SC, TC
         Chat = 6,
         Forms = 7,
-        FeaturedChanged = 8, // used for AC => FC
-        GroupChanged = 9 // used for FC => PC
+        AudioPublish = 8,
+        FeaturedChanged = 9, // used for AC => FC
+        GroupChanged = 10 // used for FC => PC
     }
 
     export enum ChatType {
@@ -53,6 +54,10 @@ namespace VC.App.Global {
         type: Forms.FormType;
         status: Forms.FormAnswerStatus;
         resultData: string;
+    }
+    export interface ISignalAudioPublish {
+        studentUid: string;
+        audionOn: boolean;
     }
     export interface ISignalFeaturedChangedData {
     }
@@ -119,6 +124,9 @@ namespace VC.App.Global {
                     break;
                 case signalPrefix + this.signalTypeAsString(SignalTypes.Forms).toLowerCase():
                     signalType = SignalTypes.Forms;
+                    break;
+                case signalPrefix + this.signalTypeAsString(SignalTypes.AudioPublish).toLowerCase():
+                    signalType = SignalTypes.AudioPublish;
                     break;
                 case signalPrefix + this.signalTypeAsString(SignalTypes.FeaturedChanged).toLowerCase():
                     signalType = SignalTypes.FeaturedChanged;

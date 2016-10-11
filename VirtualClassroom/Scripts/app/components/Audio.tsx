@@ -5,9 +5,8 @@ namespace VC.App.Components {
 
     interface AudioHandler {
         uid: string;
-        session: any;
-        handler: any;
         div: HTMLDivElement;
+        handler: any;
     }
 
     export class Audio {
@@ -16,33 +15,49 @@ namespace VC.App.Components {
         constructor() {
         }
 
-        public subscribe(uid: string, session: any, stream: any, volume: number): void {
-            // create div
-            let div: HTMLDivElement = document.createElement("div");
-            let handler: any = null;
+        private isHandlerAlreadyExists(uid: string): boolean {
+            let exists: boolean = false;
 
-            handler = session.subscribe(
-                stream,
-                div,
-                { subscribeToVideo: false },
-                (error: any): void => {
-                    if (error) {
-                        // error
-                        alert("ERROR: " + error);
-                    } else {
-                        // subscribed
-                        handler.setAudioVolume(volume);
-                        // add to array
-                        let audioHander: AudioHandler = {
-                            uid: uid,
-                            session: session,
-                            div: div,
-                            handler: handler
-                        };
-                        this.handlers.push(audioHander);
-                    }
+            for (let i: number = 0; i < this.handlers.length && !exists; i++) {
+                if (uid === this.handlers[i].uid) {
+                    exists = true;
                 }
-            );
+            }
+
+            return exists;
+        }
+
+        public subscribe(uid: string, session: any, stream: any, volume: number): void {
+            if (stream !== null) {
+                if (!this.isHandlerAlreadyExists(uid)) {
+                    let div: HTMLDivElement = document.createElement("div");
+                    let handler: any = null;
+                    // document.body.appendChild(div);
+
+                    // subscribe
+                    handler = session.subscribe(
+                        stream,
+                        div,
+                        { subscribeToVideo: false },
+                        (error: any): void => {
+                            if (error) {
+                                // error
+                                console.log("ERROR 0x05: " + error);
+                            } else {
+                                // subscribed
+                                handler.setAudioVolume(volume);
+                                // add to array
+                                let audioHander: AudioHandler = {
+                                    uid: uid,
+                                    div: div,
+                                    handler: handler
+                                };
+                                this.handlers.push(audioHander);
+                            }
+                        }
+                    );
+                }
+            }
         }
         public audioVolume(volume: number): void {
             this.handlers.forEach((audioHandler: AudioHandler) => {
@@ -52,18 +67,20 @@ namespace VC.App.Components {
             });
         }
 
-        public unsubscribe(uid: string): void {
-            let handlers: Array<AudioHandler> = [];
-            this.handlers.forEach((audioHandler: AudioHandler) => {
-                if (audioHandler.uid === uid) {
-                    // unsubscribe
-                    audioHandler.session.unsubscribe(audioHandler.handler);
-                } else {
-                    handlers.push(audioHandler);
-                }
-            });
-            this.handlers = handlers;
+        public unsubscribe(uid: string, session: any, stream: any): void {
+            if (stream !== null) {
+                let handlers: Array<AudioHandler> = [];
+                this.handlers.forEach((audioHandler: AudioHandler) => {
+                    if (audioHandler.uid === uid) {
+                        // unsubscribe
+                        session.unsubscribe(stream);
+                        // document.body.removeChild(audioHandler.div);
+                    } else {
+                        handlers.push(audioHandler);
+                    }
+                });
+                this.handlers = handlers;
+            }
         }
-
     }
 }

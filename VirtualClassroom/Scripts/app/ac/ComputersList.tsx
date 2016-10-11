@@ -21,6 +21,7 @@ namespace VC.App.AC {
         turnAvAll: (role: Roles, audio?: boolean, video?: boolean) => void;
         turnOff: (uid: string) => void;
         turnOffAll: (role: Roles) => void;
+        raiseHandAll: (up: boolean) => void;
         changeVolume: (uid: string, volume: number) => void;
         featuredComputerClick: (uid: string, name: string) => void;
     }
@@ -133,6 +134,15 @@ namespace VC.App.AC {
             });
             this.setState(this.state);
         }
+        public updateAllPcRaiseHandState(handRaised: boolean): void {
+            this.state.computers.forEach((item: IComputersListItem) => {
+                if (item.role === Roles.PC) {
+                    // set raise hand
+                    item.handRaised = handRaised;
+                }
+            });
+            this.setState(this.state);
+        }
 
         public hasRaisedHand(id: string): boolean {
             let handRaised: boolean = false;
@@ -232,8 +242,16 @@ namespace VC.App.AC {
             return (
                 <div>
                     <div className="cListButton" style={{ display: (this.state.computers.length === 0 ? "none" : "block") }}><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOffAll(role) }><span className="glyphicon glyphicon-off"></span> ALL</button></div>
-                    <div key={"SwitchButtonVideoAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC || role === Roles.SC ? "none" : "block") }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={(videoOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, null, true) } onOff={() => this.props.turnAvAll(role, null, false) } className="" /></div>
-                    <div key={"SwitchButtonAudioAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC || role === Roles.SC ? "none" : "block") }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={(audioOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, true, null) } onOff={() => this.props.turnAvAll(role, false, null) } className="" /></div>
+                    <div key={"ButtonVideoAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC || role === Roles.SC ? "none" : "block") }}>
+                        <div style={{ display: "none" }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={(videoOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, null, true) } onOff={() => this.props.turnAvAll(role, null, false) } className="" /></div>
+                    </div>
+                    <div key={"ButtonAudioAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role === Roles.FC || role === Roles.SC ? "none" : "block") }}>
+                        <div style={{ display: "none" }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={(audioOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, true, null) } onOff={() => this.props.turnAvAll(role, false, null) } className="" /></div>
+                        <button type="button" className="btn btn-xs btn-danger" onClick={() => { this.props.turnAvAll(role, false, null) } }><span className="glyphicon glyphicon-music"></span> Mute ALL</button>
+                    </div>
+                    <div key={"ButtonHandsAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role !== Roles.PC ? "none" : "block") }}>
+                        <button type="button" className="btn btn-xs btn-danger" onClick={() => { this.props.raiseHandAll(false); } }><span className="glyphicon glyphicon-hand-down"></span> ALL Hands Down</button>
+                    </div>
                 </div>
             );
         }

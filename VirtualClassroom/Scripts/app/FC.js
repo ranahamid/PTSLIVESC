@@ -12,6 +12,7 @@ var VC;
                 this.divFloatingChat = new Array(8);
                 this.floatingChat = new Array(8);
                 this.connectedStudents = [false, false, false, false, false, false, false, false];
+                this.raisedHands = [false, false, false, false, false, false, false, false];
             }
             // abstract methods
             setStatusText(text, style) {
@@ -33,7 +34,7 @@ var VC;
                     if (tokenData.Role === App.Roles.PC) {
                         // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
-                        this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
+                        this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
                         this.connectedStudents[groupComputer.Position - 1] = true;
                         this.fitLayout();
                     }
@@ -57,6 +58,7 @@ var VC;
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
                         this.label[groupComputer.Position - 1].setText("Student PC not connected.", App.Components.BoxLabelStyle.NotConnected);
                         this.connectedStudents[groupComputer.Position - 1] = false;
+                        this.raisedHands[groupComputer.Position - 1] = false;
                         this.fitLayout();
                     }
                 }
@@ -120,7 +122,20 @@ var VC;
                 let tokenData = App.Global.Fce.toTokenData(event.from.data);
                 let groupComputer = this.getGroupComputer(tokenData.Uid);
                 let data = JSON.parse(event.data);
-                this.label[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                if (tokenData.Role === App.Roles.AC) {
+                    // all
+                    for (let i = 0; i < 8; i++) {
+                        if (this.connectedStudents[i]) {
+                            this.raisedHands[i] = data.raised;
+                            this.label[i].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                        }
+                    }
+                }
+                else {
+                    // single student
+                    this.raisedHands[groupComputer.Position - 1] = data.raised;
+                    this.label[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                }
             }
             chatSignalReceived(event) {
                 let data = JSON.parse(event.data);

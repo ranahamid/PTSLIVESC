@@ -95,7 +95,14 @@ namespace VC.App {
         private raiseHandSignalReceived(event: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
             let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
-            this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
+
+            if (tokenData.Role === Roles.AC) {
+                // all
+                this.computersList.updateAllPcRaiseHandState(data.raised);
+            } else {
+                // single PC
+                this.computersList.updateComputerRaiseHandState(tokenData.Uid, data.raised);
+            }
         }
         private turnAvSignalReceived(event: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
@@ -162,6 +169,10 @@ namespace VC.App {
         private turnOffAll(role: Roles): void {
             // send signal
             Global.Signaling.sendSignalAll<Global.ISignalTurnOffData>(this.session, Global.SignalTypes.TurnOff, { role: role } as Global.ISignalTurnOffData);
+        }
+        private raiseHandAll(up: boolean): void {
+            // send signal
+            Global.Signaling.sendSignalAll<Global.ISignalRaiseHandData>(this.session, Global.SignalTypes.RaiseHand, { raised: up } as Global.ISignalRaiseHandData);
         }
         private changeVolume(uid: string, volume: number): void {
             let connection: any = this.getConnectionByUid(uid);
@@ -239,6 +250,7 @@ namespace VC.App {
                             turnAvAll={(role: Roles, audio?: boolean, video?: boolean) => this.turnAvAll(role, audio, video) }
                             turnOff={(uid: string) => this.turnOff(uid) }
                             turnOffAll={(role: Roles) => this.turnOffAll(role) }
+                            raiseHandAll={(up: boolean) => this.raiseHandAll(up) }
                             changeVolume={(uid: string, volume: number) => this.changeVolume(uid, volume) }
                             featuredComputerClick={(uid: string, name: string) => this.featuredComputerClick(uid, name) } />
                         <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, students: Array<VC.App.AC.IStudentItem>) => this.onFeaturedUpdated(uid, students) } />

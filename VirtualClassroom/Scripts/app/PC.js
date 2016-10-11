@@ -25,9 +25,23 @@ var VC;
                     this.setStatusVisibility(false);
                     this.setUiVisibility(true);
                     this.boxPublisher.publish(this.session, App.PublishSources.Camera, this.dataResponse.ComputerSetting.Audio, this.dataResponse.ComputerSetting.Video, (event) => {
-                        // nothing to do
+                        // started
+                        if (this.dataResponse.ComputerSetting.Audio) {
+                            // send signal to subscribe my audio
+                            App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: true
+                            });
+                        }
                     }, (event) => {
-                        // nothing to do
+                        // stopped
+                        if (this.dataResponse.ComputerSetting.Audio) {
+                            // send signal to unsubscribe my audio
+                            App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: false
+                            });
+                        }
                     });
                     // av buttons
                     this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
@@ -52,6 +66,24 @@ var VC;
                     else if (tokenData.Role === App.Roles.TC) {
                         // teacher computer
                         this.label.setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
+                        // send notification that im connected
+                        App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.Connected, {});
+                        // send signal to subscribe to my audio
+                        if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: true
+                            });
+                        }
+                    }
+                    else if (tokenData.Role === App.Roles.PC) {
+                        // send signal to subscribe to my audio
+                        if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
+                            App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.AudioPublish, {
+                                studentUid: this.dataResponse.Uid,
+                                audionOn: true
+                            });
+                        }
                     }
                 }
                 else if (tokenData.Role === App.Roles.AC) {
@@ -98,8 +130,6 @@ var VC;
                         this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
                     }
                     else if (tokenData.Role === App.Roles.PC) {
-                        // student computer
-                        this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
                     }
                 }
             }
@@ -115,7 +145,7 @@ var VC;
                     }
                     else if (tokenData.Role === App.Roles.PC) {
                         // student computer
-                        this.studentsAudio.unsubscribe(tokenData.Uid);
+                        this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                     }
                 }
             }
@@ -139,6 +169,12 @@ var VC;
                         break;
                     case App.Global.SignalTypes.GroupChanged:
                         this.groupChangedSignalReceived(event);
+                        break;
+                    case App.Global.SignalTypes.AudioPublish:
+                        this.audioPublishSignalReceived(event);
+                        break;
+                    case App.Global.SignalTypes.RaiseHand:
+                        this.raiseHandSignalReceived(event);
                         break;
                 }
             }
@@ -171,6 +207,19 @@ var VC;
                     this.disconnect();
                 }
             }
+            raiseHandSignalReceived(event) {
+                let tokenData = App.Global.Fce.toTokenData(event.from.data);
+                if (tokenData.Role === App.Roles.AC) {
+                    // can be received from AC only
+                    let data = JSON.parse(event.data);
+                    if (data.raised) {
+                        this.raiseHand();
+                    }
+                    else {
+                        this.lowerHand();
+                    }
+                }
+            }
             chatSignalReceived(event) {
                 let data = JSON.parse(event.data);
                 if (data.type === App.Global.ChatType.Public) {
@@ -199,6 +248,19 @@ var VC;
                 data.removeUids.forEach((uid) => {
                     this.removeGroupComputer(uid);
                 });
+            }
+            audioPublishSignalReceived(event) {
+                let data = JSON.parse(event.data);
+                if (this.isInMyGroup(data.studentUid)) {
+                    if (data.audionOn) {
+                        // subscribe to audio
+                        this.studentsAudio.subscribe(data.studentUid, this.session, this.getStream(data.studentUid), this.dataResponse.ComputerSetting.Volume);
+                    }
+                    else {
+                        // unsubscribe from audio
+                        this.studentsAudio.unsubscribe(data.studentUid, this.session, this.getStream(data.studentUid));
+                    }
+                }
             }
             raiseHand() {
                 App.Global.Signaling.sendSignal(this.session, this.getScConnection(), App.Global.SignalTypes.RaiseHand, { raised: true });
@@ -234,6 +296,11 @@ var VC;
                     this.dataResponse.ComputerSetting.Audio = audio;
                     this.boxPublisher.audio(audio);
                     this.switchButtonAudio.setStatus(this.dataResponse.ComputerSetting.Audio ? App.Components.SwitchButtonStatus.Start : App.Components.SwitchButtonStatus.Stop);
+                    // send signal to subscribe/unsubsribe my audio
+                    App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.AudioPublish, {
+                        studentUid: this.dataResponse.Uid,
+                        audionOn: audio
+                    });
                 }
                 if (video !== null) {
                     this.dataResponse.ComputerSetting.Video = video;
@@ -253,7 +320,7 @@ var VC;
                     },
                     error: (xhr, status, error) => {
                         // error
-                        alert("ERROR: " + error);
+                        console.log("ERROR 0x01: " + error);
                     }
                 });
             }

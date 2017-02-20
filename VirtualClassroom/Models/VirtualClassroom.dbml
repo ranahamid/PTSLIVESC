@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="VC" Class="VirtualClassroomDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=JIRIZ-PC\SQLEXPRESS;Initial Catalog=VC;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="VirtualClassroomDbConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="WebSettings" ConnectionString="Data Source=CTM;Initial Catalog=CTMLive;User ID=CTMLive.db;Password=TcMI1v3#D72$" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="VirtualClassroomDbConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.TblClassroom" Member="TblClassrooms">
     <Type Name="TblClassroom">
       <Column Name="Id" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />

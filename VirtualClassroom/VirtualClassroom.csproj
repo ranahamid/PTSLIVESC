@@ -45,7 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vsBC49.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\MATT~1.ADM\AppData\Local\Temp\6\vsFC90.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -357,19 +357,80 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="Properties\PublishProfiles\Debug.pubxml" />
     <None Include="Properties\PublishProfiles\LocalPublish.pubxml" />
     <None Include="Properties\PublishProfiles\Release.pubxml" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\admin\Admin.js" />
+    <Content Include="Scripts\admin\Administration.js" />
+    <Content Include="Scripts\admin\Base.js" />
+    <Content Include="Scripts\admin\Classrooms.js" />
+    <Content Include="Scripts\admin\lists\Base.js" />
+    <Content Include="Scripts\admin\lists\Classrooms.js" />
+    <Content Include="Scripts\admin\lists\Featureds.js" />
+    <Content Include="Scripts\admin\lists\Forms.js" />
+    <Content Include="Scripts\admin\lists\Seats.js" />
+    <Content Include="Scripts\admin\lists\Students.js" />
+    <Content Include="Scripts\admin\lists\Surveys.js" />
+    <Content Include="Scripts\admin\lists\Teachers.js" />
+    <Content Include="Scripts\admin\Seats.js" />
+    <Content Include="Scripts\app\AC.js" />
+    <Content Include="Scripts\app\ac\ComputersList.js" />
+    <Content Include="Scripts\app\ac\FeaturedBox.js" />
+    <Content Include="Scripts\app\components\Audio.js" />
+    <Content Include="Scripts\app\components\Box.js" />
+    <Content Include="Scripts\app\components\BoxLabel.js" />
+    <Content Include="Scripts\app\components\Chat.js" />
+    <Content Include="Scripts\app\components\ComputersList.js" />
+    <Content Include="Scripts\app\components\Status.js" />
+    <Content Include="Scripts\app\components\SwitchButton.js" />
+    <Content Include="Scripts\app\components\Volume.js" />
+    <Content Include="Scripts\app\FC.js" />
+    <Content Include="Scripts\app\global\Fce.js" />
+    <Content Include="Scripts\app\global\Interfaces.js" />
+    <Content Include="Scripts\app\global\Signaling.js" />
+    <Content Include="Scripts\app\PC.js" />
+    <Content Include="Scripts\app\pc\FormsPc.js" />
+    <Content Include="Scripts\app\SC.js" />
+    <Content Include="Scripts\app\TC.js" />
+    <Content Include="Scripts\app\tc\FormsTc.js" />
+    <Content Include="Scripts\app\XC.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\canvasjs.min.js" />
+    <Content Include="Scripts\forms\Component.Checkboxes.js" />
+    <Content Include="Scripts\forms\Component.js" />
+    <Content Include="Scripts\forms\Component.Label.js" />
+    <Content Include="Scripts\forms\Component.Radiobuttons.js" />
+    <Content Include="Scripts\forms\Component.Textbox.js" />
+    <Content Include="Scripts\forms\components\Chart.js" />
+    <Content Include="Scripts\forms\components\Component.Checkboxes.js" />
+    <Content Include="Scripts\forms\components\Component.js" />
+    <Content Include="Scripts\forms\components\Component.Label.js" />
+    <Content Include="Scripts\forms\components\Component.Radiobuttons.js" />
+    <Content Include="Scripts\forms\components\Component.Textbox.js" />
+    <Content Include="Scripts\forms\Form.Body.js" />
+    <Content Include="Scripts\forms\Form.js" />
+    <Content Include="Scripts\forms\Form.Panel.js" />
+    <Content Include="Scripts\forms\SComponent.Checkboxes.js" />
+    <Content Include="Scripts\forms\SComponent.js" />
+    <Content Include="Scripts\forms\SComponent.Label.js" />
+    <Content Include="Scripts\forms\SComponent.Radiobuttons.js" />
+    <Content Include="Scripts\forms\SComponent.Textbox.js" />
+    <Content Include="Scripts\forms\Survey.js" />
+    <Content Include="Scripts\global\components\Selector.js" />
+    <Content Include="Scripts\global\components\Tabs.js" />
+    <Content Include="Scripts\global\Consts.js" />
+    <Content Include="Scripts\global\Data.js" />
+    <Content Include="Scripts\global\Interfaces.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Scripts\react-dom.js" />
     <Content Include="Scripts\react-dom.min.js" />
     <Content Include="Scripts\react.js" />
     <Content Include="Scripts\react.min.js" />
-    <Content Include="Scripts\_references.js" />
+    <None Include="Scripts\_references.js" />
+    <Content Include="System.Web.Optimization.React.dll" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -392,55 +453,66 @@
     <Content Include="Views\TC\Index.cshtml" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\FC\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\Audio.tsx" />
-    <TypeScriptCompile Include="Scripts\app\PC.tsx" />
-    <TypeScriptCompile Include="Scripts\global\components\Selector.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
-    <TypeScriptCompile Include="Scripts\app\ac\FeaturedBox.tsx" />
-    <TypeScriptCompile Include="Scripts\app\pc\FormsPc.tsx" />
-    <TypeScriptCompile Include="Scripts\app\FC.tsx" />
-    <TypeScriptCompile Include="Scripts\app\tc\FormsTc.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Chart.tsx" />
-    <TypeScriptCompile Include="Scripts\global\components\Tabs.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Base.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Classrooms.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Students.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Forms.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Teachers.tsx" />
-    <TypeScriptCompile Include="Scripts\admin\lists\Seats.tsx" />
-    <TypeScriptCompile Include="Scripts\app\AC.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\Box.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\BoxLabel.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\Chat.tsx" />
-    <TypeScriptCompile Include="Scripts\app\ac\ComputersList.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\Status.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\SwitchButton.tsx" />
-    <TypeScriptCompile Include="Scripts\app\components\Volume.tsx" />
-    <TypeScriptCompile Include="Scripts\app\global\Fce.ts" />
-    <TypeScriptCompile Include="Scripts\app\global\Interfaces.ts" />
-    <TypeScriptCompile Include="Scripts\app\global\Signaling.ts" />
-    <TypeScriptCompile Include="Scripts\app\SC.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Component.Checkboxes.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Component.Label.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Component.Radiobuttons.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Component.Textbox.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\components\Component.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\Form.Body.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\Form.Panel.tsx" />
-    <TypeScriptCompile Include="Scripts\forms\Form.tsx" />
-    <TypeScriptCompile Include="Scripts\app\TC.tsx" />
-    <TypeScriptCompile Include="Scripts\app\XC.tsx" />
-    <TypeScriptCompile Include="Scripts\global\Data.ts" />
-    <TypeScriptCompile Include="Scripts\typings\bootstrap.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\canvasjs.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\jquery.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\opentok.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\react-dom.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\react-global.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\react.d.ts" />
+    <Content Include="Scripts\admin\Admin.js.map" />
+    <Content Include="Scripts\admin\Administration.js.map" />
+    <Content Include="Scripts\admin\Base.js.map" />
+    <Content Include="Scripts\admin\Classrooms.js.map" />
+    <Content Include="Scripts\admin\lists\Base.js.map" />
+    <Content Include="Scripts\admin\lists\Classrooms.js.map" />
+    <Content Include="Scripts\admin\lists\Featureds.js.map" />
+    <Content Include="Scripts\admin\lists\Forms.js.map" />
+    <Content Include="Scripts\admin\lists\Seats.js.map" />
+    <Content Include="Scripts\admin\lists\Students.js.map" />
+    <Content Include="Scripts\admin\lists\Surveys.js.map" />
+    <Content Include="Scripts\admin\lists\Teachers.js.map" />
+    <Content Include="Scripts\admin\Seats.js.map" />
+    <Content Include="Scripts\app\AC.js.map" />
+    <Content Include="Scripts\app\ac\ComputersList.js.map" />
+    <Content Include="Scripts\app\ac\FeaturedBox.js.map" />
+    <Content Include="Scripts\app\components\Audio.js.map" />
+    <Content Include="Scripts\app\components\Box.js.map" />
+    <Content Include="Scripts\app\components\BoxLabel.js.map" />
+    <Content Include="Scripts\app\components\Chat.js.map" />
+    <Content Include="Scripts\app\components\ComputersList.js.map" />
+    <Content Include="Scripts\app\components\Status.js.map" />
+    <Content Include="Scripts\app\components\SwitchButton.js.map" />
+    <Content Include="Scripts\app\components\Volume.js.map" />
+    <Content Include="Scripts\app\FC.js.map" />
+    <Content Include="Scripts\app\global\Fce.js.map" />
+    <Content Include="Scripts\app\global\Interfaces.js.map" />
+    <Content Include="Scripts\app\global\Signaling.js.map" />
+    <Content Include="Scripts\app\PC.js.map" />
+    <Content Include="Scripts\app\pc\FormsPc.js.map" />
+    <Content Include="Scripts\app\SC.js.map" />
+    <Content Include="Scripts\app\TC.js.map" />
+    <Content Include="Scripts\app\tc\FormsTc.js.map" />
+    <Content Include="Scripts\app\XC.js.map" />
+    <Content Include="Scripts\forms\Component.Checkboxes.js.map" />
+    <Content Include="Scripts\forms\Component.js.map" />
+    <Content Include="Scripts\forms\Component.Label.js.map" />
+    <Content Include="Scripts\forms\Component.Radiobuttons.js.map" />
+    <Content Include="Scripts\forms\Component.Textbox.js.map" />
+    <Content Include="Scripts\forms\components\Chart.js.map" />
+    <Content Include="Scripts\forms\components\Component.Checkboxes.js.map" />
+    <Content Include="Scripts\forms\components\Component.js.map" />
+    <Content Include="Scripts\forms\components\Component.Label.js.map" />
+    <Content Include="Scripts\forms\components\Component.Radiobuttons.js.map" />
+    <Content Include="Scripts\forms\components\Component.Textbox.js.map" />
+    <Content Include="Scripts\forms\Form.Body.js.map" />
+    <Content Include="Scripts\forms\Form.js.map" />
+    <Content Include="Scripts\forms\Form.Panel.js.map" />
+    <Content Include="Scripts\forms\SComponent.Checkboxes.js.map" />
+    <Content Include="Scripts\forms\SComponent.js.map" />
+    <Content Include="Scripts\forms\SComponent.Label.js.map" />
+    <Content Include="Scripts\forms\SComponent.Radiobuttons.js.map" />
+    <Content Include="Scripts\forms\SComponent.Textbox.js.map" />
+    <Content Include="Scripts\forms\Survey.js.map" />
+    <Content Include="Scripts\global\components\Selector.js.map" />
+    <Content Include="Scripts\global\components\Tabs.js.map" />
+    <Content Include="Scripts\global\Consts.js.map" />
+    <Content Include="Scripts\global\Data.js.map" />
+    <Content Include="Scripts\global\Interfaces.js.map" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -453,9 +525,56 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\admin\Administration.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Base.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Classrooms.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Forms.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Seats.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Students.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Teachers.tsx" />
+    <TypeScriptCompile Include="Scripts\app\AC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\ac\ComputersList.tsx" />
+    <TypeScriptCompile Include="Scripts\app\ac\FeaturedBox.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Audio.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Box.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\BoxLabel.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Chat.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Status.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\SwitchButton.tsx" />
+    <TypeScriptCompile Include="Scripts\app\components\Volume.tsx" />
+    <TypeScriptCompile Include="Scripts\app\FC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\global\Fce.ts" />
+    <TypeScriptCompile Include="Scripts\app\global\Interfaces.ts" />
+    <TypeScriptCompile Include="Scripts\app\global\Signaling.ts" />
+    <TypeScriptCompile Include="Scripts\app\PC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\pc\FormsPc.tsx" />
+    <TypeScriptCompile Include="Scripts\app\SC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\TC.tsx" />
+    <TypeScriptCompile Include="Scripts\app\tc\FormsTc.tsx" />
+    <TypeScriptCompile Include="Scripts\app\XC.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Chart.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Component.Checkboxes.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Component.Label.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Component.Radiobuttons.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Component.Textbox.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\components\Component.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\Form.Body.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\Form.Panel.tsx" />
+    <TypeScriptCompile Include="Scripts\forms\Form.tsx" />
+    <TypeScriptCompile Include="Scripts\global\components\Selector.tsx" />
+    <TypeScriptCompile Include="Scripts\global\components\Tabs.tsx" />
+    <TypeScriptCompile Include="Scripts\global\Data.ts" />
+    <TypeScriptCompile Include="Scripts\typings\bootstrap.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\canvasjs.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\opentok.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\react-dom.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\react-global.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\react.d.ts" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -475,7 +594,7 @@
     <TypeScriptSourceMap>True</TypeScriptSourceMap>
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
-    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vsBC49.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\MATT~1.ADM\AppData\Local\Temp\6\vsFC90.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

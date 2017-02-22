@@ -5,3 +5,7 @@
 /.vs
 /packages
 /VirtualClassroom/Properties/PublishProfiles
+/VirtualClassroom/VirtualClassroom/obj
+/VirtualClassroom/bin/VirtualClassroom.dll
+/VirtualClassroom/bin/VirtualClassroom.dll.config
+/VirtualClassroom/bin/VirtualClassroom.pdb

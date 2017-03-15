@@ -200,7 +200,7 @@ var VC;
                     });
                     if (items.length > 0) {
                         if (this.state.selectedRole === App.Roles.PC) {
-                            return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Student computer"), React.createElement("th", null, "Volume"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
+                            return (React.createElement("table", { className: "table", align: "center" }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", { style: { width: "40%" } }, "Student computer"), React.createElement("th", null, "Volume"), React.createElement("th", null, "Seat"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));
                         }
                         else if (this.state.selectedRole === App.Roles.SC) {
                             return (React.createElement("table", {className: "table", align: "center"}, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {style: { width: "50%" }}, "Seat computer"), React.createElement("th", null, this.renderComputerAllButtons(this.state.selectedRole)))), React.createElement("tbody", null, items)));

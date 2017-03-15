@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web.Mvc;
 using VirtualClassroom.Code;
 using VirtualClassroom.Models;
+using System.Text;
+
 
 namespace VirtualClassroom.Controllers
 {
@@ -148,6 +150,21 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student Id.");
             }
         }
+
+        //public ActionResult SaveTextFile(string content)
+        //{
+
+        //    var builder = new StringBuilder();
+        //    //this is probably a loop...
+        //    builder.AppendFormat("1,2{0}", "Envrionment.NewLine");
+        //    builder.AppendFormat("3,4{0}", "Envrionment.NewLine");
+
+        //    ///   content = content.Replace("~","\n");
+        //    return File(new System.Text.UTF8Encoding().GetBytes(builder.ToString()), "text/plain",
+        //             "ChatReport.txt");
+        //}
+
+
 
         // dispose
         protected override void Dispose(bool disposing)

@@ -137,6 +137,7 @@ var VC;
                 renderComputers() {
                     let items = [];
                     this.state.computers.forEach((item) => {
+                        debugger;
                         if (item.role === this.state.selectedRole) {
                             items.push(this.renderComputer(item));
                         }

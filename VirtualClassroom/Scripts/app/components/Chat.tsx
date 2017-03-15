@@ -330,14 +330,24 @@ namespace VC.App.Components {
         render(): JSX.Element {
             return (
                 <div ref={(ref: HTMLDivElement) => this.divChat = ref} className="panel-group chat">
-                    <div className="panel panel-default" onMouseEnter={() => this.setFocus() }>
-                        {this.renderHeading() }
+                    <div className="panel panel-default" onMouseEnter={() => this.setFocus()}>
+                        <div className='header-button'>
+                            <button id='exportchat' >Export</button>
+                            <button id='minimizechat'>
+                                <i class="fa fa-window-minimize" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        
+                        {this.renderHeading()}
                         <div className="panel-body">
                             <ChatList ref={(ref: ChatList) => this.chatList = ref} fadingOut={false} />
                         </div>
+
                         <div className="panel-footer" ref={(ref: HTMLDivElement) => this.divFooter = ref}>
                             <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
                         </div>
+
+
                     </div>
                 </div>
             );

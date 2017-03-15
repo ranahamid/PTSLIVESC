@@ -5,6 +5,7 @@
     ViewBag.Name = Model.Name;
 }
 
+
 @if (!String.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert alert-danger">@Model.ErrorMessage</div>
@@ -20,9 +21,58 @@ else
     @Scripts.Render("~/vc/app")
     @Scripts.Render("~/vc/app/PC")
 
+
+    <script src="https://cdn.rawgit.com/eligrey/Blob.js/0cef2746414269b16834878a8abc52eb9d53e6bd/Blob.js"></script>
+    <script async="" src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             var _c = new VC.App.InitPC('targetDiv', '@Model.ClassroomId', '@Model.ActionUrl');
         });
+
+
+        $(function ()
+        {
+
+            $("#minimizechat").css('float', 'right');
+            $("#minimizechat").css('margin-top', '3px');
+            $("#minimizechat").css('margin-right', '2px');
+            $("#minimizechat").css('color', '#fff');
+            
+            $(".header-button").css('background-color', '#5cb85c');
+            $(".header-button").css('border-color', '#4cae4c');
+            $("#exportchat").css('background-color', '#5cb85c');
+            $("#exportchat").css('border-color', '#4cae4c');
+            $("#exportchat").css('color', '#fff');
+
+            
+            $("#exportchat").click(function ()
+            {           
+                var values = [];
+                var val="";
+
+                $(".item").each(function ()
+                {                
+                    val = val + $(this).find(".itemName").text() + '\n';
+                    val = val + $(this).find(".itemTime").text() + '\n';
+                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';                    
+                                    
+                });
+                var blob = new Blob([val], { type: "text/plain;charset=utf-8" });
+                saveAs(blob, "ChatReport.txt");
+  
+            });
+            $("#minimizechat").click(function ()
+            {
+                $(".panel-heading").slideToggle();                
+                $(".panel-body").slideToggle();
+                $(".panel-footer").slideToggle();
+                
+            });
+
+            
+        });
+
     </script>
+  
 }

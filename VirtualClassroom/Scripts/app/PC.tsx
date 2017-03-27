@@ -362,7 +362,7 @@ namespace VC.App {
         private setLayoutVisibility(visible: boolean): void {
             // body1 style
             let body1: HTMLBodyElement = document.getElementById("Body1") as HTMLBodyElement;
-            body1.className = visible ? "lightBody" : "darkBody";
+            body1.className = visible ? "lightBody" : "Gray98";
 
             /*
             // divBody1 class
@@ -461,8 +461,16 @@ namespace VC.App {
                                             <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>
                                             <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" delayed={500} /></div>
                                         </div>
+
+                                        <div className='header-button'>                                           
+                                            <button id='minimizevideo'>
+                                                <i class="fa fa-window-minimize" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+
+
                                         <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
-                                        <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Classroom chat (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
+                                        <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Message Cohort (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
                                     </div>
                                 </td>
                             </tr>

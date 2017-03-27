@@ -12,6 +12,8 @@ namespace VC.App.Global {
         Id: string;
         Name: string;
         Role: number;
+        Seat: string;
+
     }
     export interface IComputerData {
         Uid: string;
@@ -31,5 +33,6 @@ namespace VC.App.Global {
         Id: string;
         Role: number;
         Position: number;
+        Seat: string;
     }
 }

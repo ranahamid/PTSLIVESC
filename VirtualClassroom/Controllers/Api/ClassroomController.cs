@@ -236,7 +236,7 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblClassroom tblClassroom = q.Single();
                 tblClassroom.Name = item.name;
@@ -268,7 +268,7 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == loweredId
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 // delete forms and answers
                 db.TblFormAnswers.DeleteAllOnSubmit(from x in db.TblFormAnswers
@@ -493,7 +493,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblSC tblSC = q.Single();
                 tblSC.Name = item.name;
@@ -539,7 +539,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblSC tblSC = q.Single();
 
@@ -790,7 +790,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblFC tblFC = q.Single();
                 tblFC.Name = item.name;
@@ -844,7 +844,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblFC tblFC = q.Single();
 
@@ -1059,7 +1059,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 Guid? tcUid = null;
                 if (item.teacher != null)
@@ -1104,7 +1104,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblPC tblPC = q.Single();
 
@@ -1312,7 +1312,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
                 tblTC.Name = item.name;
@@ -1342,7 +1342,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
 

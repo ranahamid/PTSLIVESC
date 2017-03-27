@@ -26,7 +26,7 @@ namespace VirtualClassroom.Controllers
 
             ComputerViewModel viewModel = new ComputerViewModel();
 
-            if (q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblPC pc = q.Single();
 
@@ -57,7 +57,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblPC pc = q.Single();
 
@@ -127,7 +127,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblPC tblPC = q.Single();
                 if (audio.HasValue)

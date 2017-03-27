@@ -257,7 +257,7 @@ namespace VC.App {
             if (connection !== null) {
                 let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
                 // we don't know the position, so it is always 0, but it doesn't matter because we are using it only to assign new FCs
-                this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role } as Global.GroupComputer);
+                this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role, Seat: tokenData.Seat } as Global.GroupComputer);
                 added = true;
             }
             return added;

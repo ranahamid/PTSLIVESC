@@ -25,7 +25,7 @@ namespace VirtualClassroom.Controllers
 
             ComputerViewModel viewModel = new ComputerViewModel();
 
-            if (q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblClassroom tblClassroom = q.Single();
 

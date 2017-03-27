@@ -11,7 +11,6 @@ namespace VirtualClassroom.Controllers
     public class ACController : Interfaces.ControllerR
     {
         private VirtualClassroomDataContext db;
-
         public ACController()
         {
             db = new VirtualClassroomDataContext();
@@ -25,10 +24,9 @@ namespace VirtualClassroom.Controllers
 
             ComputerViewModel viewModel = new ComputerViewModel();
 
-            if (q.Count() == 1)
+            if (q!=null && q.Count() == 1)
             {
                 TblClassroom ac = q.Single();
-
                 viewModel.Name = "Admin computer - " + ac.Name;
                 viewModel.ClassroomId = ac.Id;
                 viewModel.ActionUrl = Url.Action();
@@ -48,7 +46,7 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == classroomId.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblClassroom classroom = q.Single();
 
@@ -84,7 +82,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
                     select x;
 
-            if (q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblPC tblPC = q.Single();
                 if (audio.HasValue)
@@ -114,7 +112,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
                 if (audio.HasValue)
@@ -196,7 +194,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblPC tblPC = q.Single();
                 tblPC.Volume = volume;
@@ -223,7 +221,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
                 tblTC.Volume = volume;

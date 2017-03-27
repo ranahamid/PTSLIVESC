@@ -1,8 +1,21 @@
 ﻿@model VirtualClassroom.Models.ComputerViewModel
 
+<style>
+    .panel-body {
+  background-color:#a09f9f;
+}
+
+</style>
+<script>
+    $("#Header1").css('display', 'none');
+    $("#Footer1 hr").css('display', 'none');
+    $(".divBody").css('margin-top', '20px');
+   
+</script>
 @{
     ViewBag.Title = "Personal Computer";
-    ViewBag.Name = Model.Name;
+    //   ViewBag.Name = Model.Name;
+    ViewBag.Name = "";
 }
 
 
@@ -34,13 +47,29 @@ else
         $(function ()
         {
 
+            
+            $("#Footer1 #copyright").text('C:TMONLINE');
+            //minimizechat
             $("#minimizechat").css('float', 'right');
             $("#minimizechat").css('margin-top', '3px');
             $("#minimizechat").css('margin-right', '2px');
             $("#minimizechat").css('color', '#fff');
-            
+            //minimizevideo
+         
+            $("#minimizevideo").css('margin-right', '2px');
+            $("#minimizevideo").css('float', 'right');
+            $("#minimizevideo").css('color', '#fff');
+
+            //header-button
             $(".header-button").css('background-color', '#5cb85c');
             $(".header-button").css('border-color', '#4cae4c');
+
+            //header-button2
+            $(".header-button2").css('background-color', '#5cb85c');
+            $(".header-button2").css('border-color', '#4cae4c');
+            $(".header-button2").css('height', '8px');
+
+            //exportchat
             $("#exportchat").css('background-color', '#5cb85c');
             $("#exportchat").css('border-color', '#4cae4c');
             $("#exportchat").css('color', '#fff');
@@ -62,6 +91,7 @@ else
                 saveAs(blob, "ChatReport.txt");
   
             });
+
             $("#minimizechat").click(function ()
             {
                 $(".panel-heading").slideToggle();                
@@ -70,6 +100,10 @@ else
                 
             });
 
+
+            $("#minimizevideo").click(function () {
+                $(".cBoxP").slideToggle();              
+            });
             
         });
 

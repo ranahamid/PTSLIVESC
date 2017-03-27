@@ -74,6 +74,7 @@ namespace VirtualClassroom.Code
             public string Id { get; set; }
             public string Name { get; set; }
             public int Role { get; set; }
+            public string Seat { get; set; }
         }
 
         public static string Key
@@ -118,7 +119,7 @@ namespace VirtualClassroom.Code
                     where x.Id.ToLower() == classroomId.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 // Classroom id found
                 TblClassroom ac = q.Single();

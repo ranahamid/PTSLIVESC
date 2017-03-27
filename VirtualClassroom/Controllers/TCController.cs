@@ -24,7 +24,7 @@ namespace VirtualClassroom.Controllers
 
             ComputerViewModel viewModel = new ComputerViewModel();
 
-            if (q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblTC tc = q.Single();
                 viewModel.Name = tc.TblClassroom.Name + " - " + tc.Name;
@@ -46,7 +46,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 
-            if (q.Count() == 1)
+             if (q!=null && q.Count() == 1)
             {
                 TblTC tc = q.Single();
 

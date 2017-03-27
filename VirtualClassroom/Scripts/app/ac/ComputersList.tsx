@@ -212,12 +212,9 @@ namespace VC.App.AC {
                     <td style={{ display: (this.state.selectedRole === Roles.PC || this.state.selectedRole === Roles.TC ? "block" : "none")}}>
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
-                    <td>
-                        <div>
-                            
-                           Seat 9
-                        </div>
-                    </td>
+
+                 
+
                     <td style={{ textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>
                         <div className="cListButton" style={{ display: "none" }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>

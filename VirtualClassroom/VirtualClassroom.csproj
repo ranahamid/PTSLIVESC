@@ -45,7 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\ranah\AppData\Local\Temp\vsDDD4.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vs4C72.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -359,6 +359,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\fonts\museosans-500.otf" />
     <None Include="Properties\PublishProfiles\Debug.pubxml" />
+    <None Include="Properties\PublishProfiles\DEV.pubxml" />
     <None Include="Properties\PublishProfiles\LocalPublish.pubxml" />
     <None Include="Properties\PublishProfiles\Release.pubxml" />
     <Content Include="Scripts\admin\Admin.js" />
@@ -598,7 +599,7 @@
     <TypeScriptSourceMap>True</TypeScriptSourceMap>
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
-    <IntermediateOutputPath>C:\Users\ranah\AppData\Local\Temp\vsDDD4.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vs4C72.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
@@ -614,7 +615,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>58895</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:58895/</IISUrl>
+          <IISUrl>http://localhost:58896/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -10,6 +10,7 @@ namespace VC.Admin.Lists {
     export interface IStudentsListItem extends IDataItem<string> {
         uid: string;
         name: string;
+        featuredpcname: string;
         position: number;
         teacher: ITeachersListItem;
     }
@@ -49,6 +50,8 @@ namespace VC.Admin.Lists {
             let l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}>{d.name}</td>);
+
+            l.push(<td key={"td_featuredpcname" + d.id}>{d.featuredpcname}</td>);
             l.push(<td key={"tdTeacher_" + d.id}>{d.teacher === null ? "-" : d.teacher.name}</td>);
             return l;
         }
@@ -56,6 +59,7 @@ namespace VC.Admin.Lists {
             let l: Array<JSX.Element> = [];
             l.push(<th key={"thId"}>ID</th>);
             l.push(<th key={"thStudent"}>Student computer</th>);
+            l.push(<th key={"thfeaturedpcname"}>Featured computer</th>);
             l.push(<th key={"thTeacher"}>Teacher computer</th>);
             return l;
         }

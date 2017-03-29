@@ -29,7 +29,6 @@ var VC;
                 BoxValidationStatus[BoxValidationStatus["Error"] = 2] = "Error";
             })(Lists.BoxValidationStatus || (Lists.BoxValidationStatus = {}));
             var BoxValidationStatus = Lists.BoxValidationStatus;
-          
             class Box extends React.Component {
                 constructor(defaultItem, props) {
                     super(props);

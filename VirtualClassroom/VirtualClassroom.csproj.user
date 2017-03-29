@@ -13,7 +13,7 @@
     <NameOfLastUsedPublishProfile>DEV</NameOfLastUsedPublishProfile>
     <IISExpressSSLPort>44314</IISExpressSSLPort>
     <WebStackScaffolding_DbContextTypeFullName>VirtualClassroom.Models.VirtualClassroomContext</WebStackScaffolding_DbContextTypeFullName>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <ToolsVersionPromptShown>2.1</ToolsVersionPromptShown>
   </PropertyGroup>
   <ProjectExtensions>

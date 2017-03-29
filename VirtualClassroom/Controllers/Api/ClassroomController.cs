@@ -155,7 +155,13 @@ namespace VirtualClassroom.Controllers
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                position=x.Position,
+             
+                featuredpcname = (from FC in db.TblFCs
+                                 where FC.Uid ==((from fcpc in db.TblFCPCs
+                                                  where fcpc.PcUid == x.Uid
+                                                  select fcpc.FcUid).FirstOrDefault())
+                                 select FC.Name).FirstOrDefault(),
+
                 teacher = x.TcUid.HasValue ? new Teacher() { id = x.TblTC.Id, name = x.TblTC.Name } : null
             }).ToList();
 

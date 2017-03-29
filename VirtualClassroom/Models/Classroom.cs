@@ -34,6 +34,8 @@ namespace VirtualClassroom.Models
     {
         public int position { get; set; }
         public Teacher teacher { get; set; }
+        public string featuredpcname{get;set;}
+        public Guid FcUid { get; set; }
     }
 
     [DataObject]

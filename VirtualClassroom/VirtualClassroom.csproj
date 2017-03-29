@@ -45,7 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vs4C72.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\ranah\AppData\Local\Temp\vs5DB6.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -254,6 +254,12 @@
   <ItemGroup>
     <Content Include="App_Data\DbScript.Update.1.0.0.-1.0.1.sql" />
     <Content Include="App_Data\DbScript.1.0.0.sql" />
+    <Content Include="Content\CTMShared\CTM-Camera-Off.png" />
+    <Content Include="Content\CTMShared\CTM-Camera-On.png" />
+    <Content Include="Content\CTMShared\CTM-Mic-Off.png" />
+    <Content Include="Content\CTMShared\CTM-Mic-On.png" />
+    <Content Include="Content\CTMShared\CTM-Question-No.png" />
+    <Content Include="Content\CTMShared\CTM-Question-Yes.png" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\images\logo-white.png" />
     <Content Include="Extensions\ScreenSharing\Chrome\background-script.js" />
@@ -599,7 +605,7 @@
     <TypeScriptSourceMap>True</TypeScriptSourceMap>
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
-    <IntermediateOutputPath>C:\Users\ADAM~1.ADM\AppData\Local\Temp\2\vs4C72.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\ranah\AppData\Local\Temp\vs5DB6.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

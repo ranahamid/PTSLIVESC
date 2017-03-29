@@ -43,7 +43,10 @@ namespace VirtualClassroom.Controllers
         {
             var q = from x in db.TblFCs
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    orderby x.Name
                     select x;
+                    
+           
             
              if (q!=null && q.Count() == 1)
             {

@@ -79,7 +79,6 @@ var VC;
                     video: data.video,
                     volume: data.volume,
                     handRaised: data.handRaised
-
                 });
                 this.tabs.increaseBadge(tokenData.Role);
             }

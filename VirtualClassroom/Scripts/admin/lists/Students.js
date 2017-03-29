@@ -29,17 +29,14 @@ var VC;
                     let l = [];
                     l.push(React.createElement("td", {key: "tdId_" + d.id}, d.id));
                     l.push(React.createElement("td", {key: "tdName_" + d.id}, d.name));
-                    l.push(React.createElement("td", { key: "tdTeacher_" + d.id }, d.teacher === null ? "-" : d.teacher.name));
-                   
-                    l.push(React.createElement("td", { key: "position" + d.id }, d.position));
+                    l.push(React.createElement("td", {key: "tdTeacher_" + d.id}, d.teacher === null ? "-" : d.teacher.name));
                     return l;
                 }
                 renderTableHeaderCols() {
                     let l = [];
                     l.push(React.createElement("th", {key: "thId"}, "ID"));
                     l.push(React.createElement("th", {key: "thStudent"}, "Student computer"));
-                    l.push(React.createElement("th", { key: "thTeacher" }, "Teacher computer"));
-                    l.push(React.createElement("th", { key: "position" }, "Position"));
+                    l.push(React.createElement("th", {key: "thTeacher"}, "Teacher computer"));
                     return l;
                 }
             }

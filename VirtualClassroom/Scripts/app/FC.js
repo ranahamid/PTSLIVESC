@@ -229,7 +229,8 @@ var VC;
             getGroupStudentComputerByPosition(position, data) {
                 let iUser = null;
                 for (let i = 0; i < data.Group.length && iUser === null; i++) {
-                    if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
+                    //if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
+                    if (data.Group[i].Role === VC.App.Roles.PC) {
                         iUser = data.Group[i];
                     }
                 }

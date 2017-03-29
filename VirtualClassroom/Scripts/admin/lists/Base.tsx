@@ -16,7 +16,8 @@ namespace VC.Admin.Lists {
     export enum BoxTypes {
         Create,
         Edit,
-        Delete
+        Delete,
+        Disable
     }
     export enum BoxValidationStatus {
         None,
@@ -47,6 +48,7 @@ namespace VC.Admin.Lists {
         showBoxNew: () => void;
         showBoxEdit: (id: R) => void;
         showBoxDelete: (id: R) => void;
+        
     }
     export interface IListState<D> {
         status: ListStatus;
@@ -73,6 +75,7 @@ namespace VC.Admin.Lists {
         open(type: BoxTypes, item: D): void;
         close(): void;
     }
+
     export abstract class Box<R, D extends IDataItem<R>, P extends IBoxProps<D>, S extends IBoxState<D>> extends React.Component<P, S> implements IBox<R, D> {
         private divBox: HTMLDivElement;
         public divButtons: HTMLDivElement;
@@ -426,6 +429,8 @@ namespace VC.Admin.Lists {
                     <td style={{ textAlign: "right" }}>
                         <button type="button" className="btn btn-sm btn-info" onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span> Edit</button>
                         &nbsp;
+                        <button type="button" className="btn btn-sm btn-warning" id="disableclass"><span className="glyphicon glyphicon-minus-sign"></span> Disable</button>
+                        &nbsp;
                         <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.showBoxDelete(d.id) }><span className="glyphicon glyphicon-trash"></span> Delete</button>
                     </td>
                 </tr>
@@ -499,6 +504,9 @@ namespace VC.Admin.Lists {
                 Box1.open(BoxTypes.Delete, item);
             }
         }
+        
+      
+
         public showBoxImport(): void {
             let ImportBox1: I = this.getImportBox();
             ImportBox1.open();

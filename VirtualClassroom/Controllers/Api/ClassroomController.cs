@@ -143,6 +143,8 @@ namespace VirtualClassroom.Controllers
                 students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
             }).ToList();
 
+          //  data= data.OrderBy(x=>x.position)
+
             return responseSuccess(data);
         }
         [HttpGet]
@@ -153,6 +155,7 @@ namespace VirtualClassroom.Controllers
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
+                position=x.Position,
                 teacher = x.TcUid.HasValue ? new Teacher() { id = x.TblTC.Id, name = x.TblTC.Name } : null
             }).ToList();
 

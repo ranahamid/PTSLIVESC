@@ -239,7 +239,8 @@ namespace VC.App {
         private getGroupStudentComputerByPosition(position: number, data: Global.IComputerData): Global.GroupComputer {
             let iUser: Global.GroupComputer = null;
             for (let i: number = 0; i < data.Group.length && iUser === null; i++) {
-                if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
+                //if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
+                if (data.Group[i].Role === VC.App.Roles.PC ) {
                     iUser = data.Group[i];
                 }
             }

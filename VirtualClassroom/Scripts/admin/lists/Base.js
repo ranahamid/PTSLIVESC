@@ -20,6 +20,7 @@ var VC;
                 BoxTypes[BoxTypes["Create"] = 0] = "Create";
                 BoxTypes[BoxTypes["Edit"] = 1] = "Edit";
                 BoxTypes[BoxTypes["Delete"] = 2] = "Delete";
+                BoxTypes[BoxTypes["Disable"] = 3] = "Disable";
             })(Lists.BoxTypes || (Lists.BoxTypes = {}));
             var BoxTypes = Lists.BoxTypes;
             (function (BoxValidationStatus) {
@@ -28,6 +29,7 @@ var VC;
                 BoxValidationStatus[BoxValidationStatus["Error"] = 2] = "Error";
             })(Lists.BoxValidationStatus || (Lists.BoxValidationStatus = {}));
             var BoxValidationStatus = Lists.BoxValidationStatus;
+          
             class Box extends React.Component {
                 constructor(defaultItem, props) {
                     super(props);
@@ -253,7 +255,7 @@ var VC;
                     return (React.createElement("div", {className: "panel-body"}, body));
                 }
                 renderItem(d) {
-                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), " Edit"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), " Delete"))));
+                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), " Edit"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-warning", id: "disableclass"}, React.createElement("span", {className: "glyphicon glyphicon-minus-sign"}), " Disable"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), " Delete"))));
                 }
                 renderTable() {
                     let items = [];

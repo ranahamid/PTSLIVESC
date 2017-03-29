@@ -58,6 +58,8 @@ namespace VirtualClassroom.Code
             public string Id { get; set; }
             public int Role { get; set; }
             public int Position { get; set; }
+
+            public string Name { get; set; }
         }
 
         [DataObject]
@@ -279,10 +281,11 @@ namespace VirtualClassroom.Code
                 {
                     Uid = x.TblPC.Uid,
                     Id = x.TblPC.Id,
+                    Name=x.TblPC.Name,
                     Role = (int)VC.VcRoles.PC,
                     Position = x.Position
                 }));
-
+            group = group.OrderBy(x => x.Name).ToList();
             return group;
         }
         public static List<GroupComputer> CreateGroup(TblClassroom classroom)

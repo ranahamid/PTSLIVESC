@@ -235,7 +235,7 @@ var VC;
                 if (connection !== null) {
                     let tokenData = App.Global.Fce.toTokenData(connection.data);
                     // we don't know the position, so it is always 0, but it doesn't matter because we are using it only to assign new FCs
-                    this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role });
+                    this.dataResponse.Group.push({ Uid: tokenData.Uid, Id: tokenData.Id, Position: 0, Role: tokenData.Role, Seat: tokenData.Seat });
                     added = true;
                 }
                 return added;

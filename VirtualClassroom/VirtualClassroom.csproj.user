@@ -10,7 +10,7 @@
     <WebStackScaffolding_IsReferencingScriptLibrariesSelected>True</WebStackScaffolding_IsReferencingScriptLibrariesSelected>
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
-    <NameOfLastUsedPublishProfile>Release</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>DEV</NameOfLastUsedPublishProfile>
     <IISExpressSSLPort>44314</IISExpressSSLPort>
     <WebStackScaffolding_DbContextTypeFullName>VirtualClassroom.Models.VirtualClassroomContext</WebStackScaffolding_DbContextTypeFullName>
     <ProjectView>ProjectFiles</ProjectView>

@@ -73,8 +73,8 @@ else
             //exportchat
             $("#exportchat").css('background-color', '#5cb85c');
             $("#exportchat").css('border-color', '#4cae4c');
-            $("#exportchat").css('color', '#fff');
-
+           // $("#exportchat").css('color', '#fff');
+            $("#exportchat").css('color', '#0000ff');
             
             $("#exportchat").click(function ()
             {           
@@ -83,8 +83,8 @@ else
 
                 $(".item").each(function ()
                 {                
-                    val = val + $(this).find(".itemName").text() + '\n';
-                    val = val + $(this).find(".itemTime").text() + '\n';
+                    val = val + $(this).find(".itemName").text() ;
+                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
                     val = val + $(this).find(".itemMessage").text() + '\n' + '\n';                    
                                     
                 });

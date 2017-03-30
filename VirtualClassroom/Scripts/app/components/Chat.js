@@ -19,8 +19,12 @@ var VC;
                     var ms = currentDate.getTime() - this.props.item.timestamp.getTime();
                     return App.Global.Fce.toSimplifiedTimeString(ms);
                 }
+                getItemTimeString2() {
+                    var ms = this.props.item.timestamp.toUTCString();
+                    return ms;
+                }
                 render() {
-                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)), React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString()))), React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)))));
+                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)), React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString())), React.createElement("div", {className: "col-sm-6", style: { display: 'none' }}, React.createElement("div", {ref: (ref) => this.divTime2 = ref, className: "itemTimechat"}, this.getItemTimeString2()))), React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)))));
                 }
             }
             class ChatList extends React.Component {

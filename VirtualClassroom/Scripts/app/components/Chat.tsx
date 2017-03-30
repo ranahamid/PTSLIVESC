@@ -23,13 +23,14 @@ namespace VC.App.Components {
 
     class ChatItem extends React.Component<IChatItemProps, IChatItemState> {
         private divTime: HTMLDivElement;
-
+        private divTime2: HTMLDivElement;
         constructor(props: IChatItemProps) {
             super(props);
         }
 
         updateTime(): void {
             this.divTime.innerHTML = this.getItemTimeString();
+    
         }
 
         getItemTimeString(): string {
@@ -37,13 +38,17 @@ namespace VC.App.Components {
             var ms: number = currentDate.getTime() - this.props.item.timestamp.getTime();
             return Global.Fce.toSimplifiedTimeString(ms);
         }
-
+        getItemTimeString2(): string {
+            var ms: string = this.props.item.timestamp.toUTCString();
+            return ms;
+        }
         render(): JSX.Element {
             return (
                 <div>
                     <div className="row">
                         <div className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
                         <div className="col-sm-6"><div ref={(ref: HTMLDivElement) => this.divTime = ref} className="itemTime">{this.getItemTimeString() }</div></div>
+                        <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
                     </div>
                     <div className="row">
                         <div className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>

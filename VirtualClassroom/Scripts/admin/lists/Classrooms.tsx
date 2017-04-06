@@ -55,11 +55,14 @@ namespace VC.Admin.Lists {
                         <Global.Components.Tabs ref={(ref: Global.Components.Tabs) => this.tabs = ref} items={tabItems} className="cTabs" />
                     </div>
                     <div>
-                        <ClassroomsList ref={(ref: ClassroomsList) => this.list = ref} title="Classroom" actionUrl={this.props.actionUrl} loadMethod="Load" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                        <ClassroomsList ref={(ref: ClassroomsList) => this.list = ref} title="Classroom" actionUrl={this.props.actionUrl} loadMethod="Load" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } disableClass={this.disableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
                         <ClassroomsBox ref={(ref: ClassroomsBox) => this.box = ref} title="Classroom" actionUrl={this.props.actionUrl} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
                         <ClassroomsImportBox ref={(ref: ClassroomsImportBox) => this.boxImport = ref} title="Import Classrooms" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></ClassroomsImportBox>
+                        
                     </div>
+                    
                 </div>
+               
             );
         }
     }
@@ -446,3 +449,4 @@ namespace VC.Admin.Lists {
     }
 
 }
+

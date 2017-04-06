@@ -21,15 +21,18 @@ namespace VirtualClassroom.Controllers
                     {
                         id = x.Id,
                         name = x.Name,
+                        
                         seats = x.TblSCs.OrderBy(y => y.Id).Select(y => new Seat()
                         {
                             uid = y.Uid,
                             id = y.Id,
                             name = y.Name,
                             students = y.TblPCs.OrderBy(z => z.Position).Select(z => new Student()
-                            { uid = z.Uid,
+                            {
+                                uid = z.Uid,
                                 id = z.Id,
                                 name = z.Name,
+                                address=z.Address,
                                 position = z.Position,
                                 teacher = null
                             }).ToList()

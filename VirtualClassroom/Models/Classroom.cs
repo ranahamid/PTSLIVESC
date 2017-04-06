@@ -18,6 +18,7 @@ namespace VirtualClassroom.Models
         public string id { get; set; }
         public string name { get; set; }
         public string url { get; set; }
+
         public List<Seat> seats { get; set; }
         public List<Teacher> teachers { get; set; }
         public List<Featured> featureds { get; set; }
@@ -36,6 +37,7 @@ namespace VirtualClassroom.Models
         public Teacher teacher { get; set; }
         public string featuredpcname{get;set;}
         public Guid FcUid { get; set; }
+        public string address { get; set; }
     }
 
     [DataObject]

@@ -254,7 +254,7 @@ var VC;
                     return (React.createElement("div", {className: "panel-body"}, body));
                 }
                 renderItem(d) {
-                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), " Edit"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-warning", id: "disableclass"}, React.createElement("span", {className: "glyphicon glyphicon-minus-sign"}), " Disable"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), " Delete"))));
+                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), " Edit"), " ", React.createElement("button", {style: { display: 'none' }, type: "button", className: "disableclass btn btn-sm btn-warning", onClick: this.props.disableClass(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-minus-sign"}), " Disable"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), " Delete"))));
                 }
                 renderTable() {
                     let items = [];
@@ -285,6 +285,13 @@ var VC;
                     if (item !== null) {
                         let Box1 = this.getBox();
                         Box1.open(BoxTypes.Edit, item);
+                    }
+                }
+                disableClass(id) {
+                    let item = this.getItem(id);
+                    if (item !== null) {
+                        console.log("disableclass: " + item);
+                        console.log("disableclass-id: " + id);
                     }
                 }
                 showBoxDelete(id) {

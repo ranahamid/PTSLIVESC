@@ -33,7 +33,7 @@ namespace VC.Admin.Lists {
         render(): JSX.Element {
             return (
                 <div>
-                    <StudentsList ref={(ref: StudentsList) => this.list = ref} title="Student computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadStudents" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                    <StudentsList ref={(ref: StudentsList) => this.list = ref} title="Student computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadStudents" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) }  disableClass={this.disableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
                     <StudentsBox ref={(ref: StudentsBox) => this.box = ref} title="Student computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
                     <StudentsImportBox ref={(ref: StudentsImportBox) => this.boxImport = ref} title="Import Student computers" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></StudentsImportBox>
                 </div>

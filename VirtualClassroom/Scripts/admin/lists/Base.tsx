@@ -47,6 +47,7 @@ namespace VC.Admin.Lists {
         showBoxImport?: () => void;
         showBoxNew: () => void;
         showBoxEdit: (id: R) => void;
+        disableClass: (id: R) => void;
         showBoxDelete: (id: R) => void;
         
     }
@@ -429,7 +430,7 @@ namespace VC.Admin.Lists {
                     <td style={{ textAlign: "right" }}>
                         <button type="button" className="btn btn-sm btn-info" onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span> Edit</button>
                         &nbsp;
-                        <button type="button" className="btn btn-sm btn-warning" id="disableclass"><span className="glyphicon glyphicon-minus-sign"></span> Disable</button>
+                        <button style={{ display: 'none' }} type="button" className="disableclass btn btn-sm btn-warning" onClick={ this.props.disableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span> Disable</button>
                         &nbsp;
                         <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.showBoxDelete(d.id) }><span className="glyphicon glyphicon-trash"></span> Delete</button>
                     </td>
@@ -497,6 +498,16 @@ namespace VC.Admin.Lists {
                 Box1.open(BoxTypes.Edit, item);
             }
         }
+
+        public disableClass(id: R): void {
+            let item: D = this.getItem(id);
+            if (item !== null) {
+                console.log("disableclass: " + item);
+                console.log("disableclass-id: " + id);
+            //disbale class code
+            }
+        }
+        
         public showBoxDelete(id: R): void {
             let item: D = this.getItem(id);
             if (item !== null) {

@@ -377,6 +377,7 @@ namespace VC.Admin.Lists {
                             <span ref={REF_FORM_ICON + FORM_NAME} style={{ display: "none" }}></span>
                         </div>
                     </div>
+                    
                 </form>
             );
         }

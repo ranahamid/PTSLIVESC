@@ -64,7 +64,8 @@ namespace VirtualClassroom.Controllers
                         Uid = fc.Uid,
                         Id = fc.Id,
                         Name = fc.Name,
-                        Role = (int)VC.VcRoles.FC
+                        Role = (int)VC.VcRoles.FC,
+                      
                     });
                 cData.Group = TokBoxHelper.CreateGroup(fc);
                 

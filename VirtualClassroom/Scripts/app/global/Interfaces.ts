@@ -13,7 +13,7 @@ namespace VC.App.Global {
         Name: string;
         Role: number;
         Seat: string;
-
+        Address: string;
     }
     export interface IComputerData {
         Uid: string;

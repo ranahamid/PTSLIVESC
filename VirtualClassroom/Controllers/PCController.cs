@@ -75,6 +75,7 @@ namespace VirtualClassroom.Controllers
                             Uid = pc.Uid,
                             Id = pc.Id,
                             Name = pc.Name,
+                            Address  =pc.Address,
                             Role = (int)VC.VcRoles.PC
                         });
                     cData.Group = TokBoxHelper.CreateGroup(pc);

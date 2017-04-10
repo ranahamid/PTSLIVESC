@@ -31,10 +31,14 @@ var VC;
                 }
                 else if (this.isInMyGroup(tokenData.Uid)) {
                     // my group
+                    // my group
                     if (tokenData.Role === App.Roles.PC) {
                         // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
-                        this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        if (tokenData.Address != null)
+                            this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + tokenData.Address + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        else
+                            this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
                         this.connectedStudents[groupComputer.Position - 1] = true;
                         this.fitLayout();
                     }
@@ -213,7 +217,10 @@ var VC;
                                     this.boxSubscribers[i].subscribeVideo(this.session, stream);
                                 }
                                 let tokenData = App.Global.Fce.toTokenData(newStudentConnection.data);
-                                this.label[i].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
+                                if (tokenData.Address != null)
+                                    this.label[i].setText(tokenData.Name + ", " + tokenData.Address + " connected.", App.Components.BoxLabelStyle.Connected);
+                                else
+                                    this.label[i].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                                 // send signal to add to group
                                 App.Global.Signaling.sendSignal(this.session, newStudentConnection, App.Global.SignalTypes.GroupChanged, { addUids: [this.dataResponse.Uid], removeUids: [] });
                                 // set connected status

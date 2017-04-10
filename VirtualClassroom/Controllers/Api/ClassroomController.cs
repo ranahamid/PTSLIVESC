@@ -140,7 +140,8 @@ namespace VirtualClassroom.Controllers
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+                
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name,address = z.TblPC.Address, position = z.Position, teacher = null }).ToList()
             }).ToList();
 
           //  data= data.OrderBy(x=>x.position)

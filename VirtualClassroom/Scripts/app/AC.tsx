@@ -84,6 +84,7 @@ namespace VC.App {
                 uid: tokenData.Uid,
                 id: tokenData.Id,
                 name: tokenData.Name,
+                address:tokenData.Address,
                 role: tokenData.Role,
                 audio: data.audio,
                 video: data.video,

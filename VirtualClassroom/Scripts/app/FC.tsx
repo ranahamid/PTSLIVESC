@@ -35,10 +35,14 @@ namespace VC.App {
                 this.setUiVisibility(true);
             } else if (this.isInMyGroup(tokenData.Uid)) {
                 // my group
+                // my group
                 if (tokenData.Role === Roles.PC) {
                     // student
                     let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
-                    this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
+                    if (tokenData.Address!=null)
+                        this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + tokenData.Address + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
+                    else
+                        this.label[groupComputer.Position - 1].setText(tokenData.Name +" connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
                     this.connectedStudents[groupComputer.Position - 1] = true;
                     this.fitLayout();
                 }
@@ -154,6 +158,7 @@ namespace VC.App {
                     this.floatingChat[groupComputer.Position - 1].addItem({
                         userUid: data.userUid,
                         userRole: data.userRole,
+
                         userName: data.userName,
                         message: data.message,
                         timestamp: new Date(),
@@ -222,7 +227,11 @@ namespace VC.App {
                                 this.boxSubscribers[i].subscribeVideo(this.session, stream);
                             }
                             let tokenData: Global.TokenData = Global.Fce.toTokenData(newStudentConnection.data);
-                            this.label[i].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
+                            if (tokenData.Address !=null)
+                                this.label[i].setText(tokenData.Name + ", " + tokenData.Address + " connected.", Components.BoxLabelStyle.Connected);
+                            else
+                                this.label[i].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
+
                             // send signal to add to group
                             Global.Signaling.sendSignal<Global.ISignalGroupChanged>(this.session, newStudentConnection, Global.SignalTypes.GroupChanged, { addUids: [this.dataResponse.Uid], removeUids: [] } as Global.ISignalGroupChanged);
                             // set connected status

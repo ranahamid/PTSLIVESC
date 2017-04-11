@@ -46,7 +46,7 @@ var VC;
                     let l = [];
                     l.push(React.createElement("td", {key: "tdId_" + d.id}, d.id));
                     l.push(React.createElement("td", {key: "tdName_" + d.id}, React.createElement("a", {href: d.url}, d.name)));
-                    l.push(React.createElement("td", {key: "tdStatus_" + d.id}, d.status));
+                    l.push(React.createElement("td", {id: "tdStatus_" + d.id, key: "tdStatus_" + d.id}, d.status));
                     return l;
                 }
                 renderTableHeaderCols() {

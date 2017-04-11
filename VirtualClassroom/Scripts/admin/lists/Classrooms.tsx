@@ -77,7 +77,7 @@ namespace VC.Admin.Lists {
             let l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}><a href={d.url}>{d.name}</a></td>);
-            l.push(<td key={"tdStatus_" + d.id}>{d.status}</td>);
+            l.push(<td id={"tdStatus_" + d.id} key={"tdStatus_" + d.id}>{d.status}</td>);
             return l;
         }
         renderTableHeaderCols(): JSX.Element[] {

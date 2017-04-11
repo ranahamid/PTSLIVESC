@@ -22,9 +22,19 @@
 
 <script>
     $(document).ajaxComplete(function () {
-        //console.log("ajaxComplete!");
+        console.log("ajaxComplete!");
         $('.showDisableClass').show();
         $('.showEnableClass').show();
+
+        $('.table tbody tr').each(function (i, row) {
+            console.log(row);
+        
+            var $row = $(row),
+                $tdStatus = $('#tdStatus_s');
+           
+
+
+        });
         
     });
     

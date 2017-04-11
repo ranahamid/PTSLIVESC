@@ -9,6 +9,7 @@ namespace VC.Admin.Lists {
     interface IClassroomsListItem extends IDataItem<string> {
         name: string;
         url: string;
+        status: string;
     }
 
     export class Classrooms extends Base<string, IClassroomsListItem, ClassroomsList, ClassroomsBox, ClassroomsImportBox> {
@@ -55,7 +56,7 @@ namespace VC.Admin.Lists {
                         <Global.Components.Tabs ref={(ref: Global.Components.Tabs) => this.tabs = ref} items={tabItems} className="cTabs" />
                     </div>
                     <div>
-                        <ClassroomsList ref={(ref: ClassroomsList) => this.list = ref} title="Classroom" actionUrl={this.props.actionUrl} loadMethod="Load" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } disableClass={this.disableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                        <ClassroomsList ref={(ref: ClassroomsList) => this.list = ref} title="Classroom" actionUrl={this.props.actionUrl} loadMethod="Load" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) }  showEnableClass={this.showEnableClass.bind(this) }   showBoxEdit={this.showBoxEdit.bind(this) } showDisableClass={this.showDisableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
                         <ClassroomsBox ref={(ref: ClassroomsBox) => this.box = ref} title="Classroom" actionUrl={this.props.actionUrl} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
                         <ClassroomsImportBox ref={(ref: ClassroomsImportBox) => this.boxImport = ref} title="Import Classrooms" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></ClassroomsImportBox>
                         
@@ -76,12 +77,14 @@ namespace VC.Admin.Lists {
             let l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}><a href={d.url}>{d.name}</a></td>);
+            l.push(<td key={"tdStatus_" + d.id}>{d.status}</td>);
             return l;
         }
         renderTableHeaderCols(): JSX.Element[] {
             let l: Array<JSX.Element> = [];
             l.push(<th key={"thId"}>ID</th>);
             l.push(<th key={"tdName"}>Classname</th>);
+            l.push(<th key={"tdstatus"}>Status</th>);
             return l;
         }
     }
@@ -92,7 +95,7 @@ namespace VC.Admin.Lists {
     class ClassroomsBox extends Box<string, IClassroomsListItem, IClassroomsBoxProps, IClassroomsBoxState> {
 
         constructor(props: IClassroomsBoxProps) {
-            super({ id: "", name: "" } as IClassroomsListItem,
+            super({ id: "", name: "", status:"" } as IClassroomsListItem,
                 props);
         }
 
@@ -242,7 +245,17 @@ namespace VC.Admin.Lists {
                 } else if (this.state.type === BoxTypes.Edit) {
                     // edit
                     this.doUpdate();
-                } else {
+                }
+                else if (this.state.type === BoxTypes.Disable)
+                {
+                    // edit
+                    this.doDisable();
+                }
+                else if (this.state.type === BoxTypes.Enable) {
+                    // edit
+                    this.doEnable();
+                }
+                else {
                     // delete
                     this.doDelete();
                 }
@@ -294,6 +307,8 @@ namespace VC.Admin.Lists {
                 }
             });
         }
+
+
         doUpdate(): void {
             let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
             let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
@@ -328,6 +343,81 @@ namespace VC.Admin.Lists {
                 }
             });
         }
+
+        
+        doDisable(): void {
+            let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
+            let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
+            let idVal: string = $(tbId).val();
+            let nameVal: string = $(tbName).val();
+
+            $.ajax({
+                type: "POST",
+                url: "/api/Classroom/Disable",
+                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
+                contentType: "application/json",
+                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
+                    this.close();
+                    if (r.status === Global.Data.RESPONSE_SUCCESS) {
+                        // update list
+                        let d: Array<IClassroomsListItem> = this.props.getListItems();
+                        for (let i: number = 0; i < d.length; i++) {
+                            if (d[i].id === this.state.item.id) {
+                                d[i] = r.data;
+                            }
+                        }
+                        this.props.setListItems(d);
+                    } else {
+                        // error
+                        alert("ERROR: " + r.message);
+                    }
+                },
+                error: (xhr: JQueryXHR, status: string, error: string): void => {
+                    // error
+                    alert("ERROR: " + error);
+                    this.close();
+                }
+            });
+        }
+
+
+        doEnable(): void {
+            let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
+            let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
+            let idVal: string = $(tbId).val();
+            let nameVal: string = $(tbName).val();
+
+            $.ajax({
+                type: "POST",
+                url: "/api/Classroom/Enable",
+                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
+                contentType: "application/json",
+                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
+                    this.close();
+                    if (r.status === Global.Data.RESPONSE_SUCCESS) {
+                        // update list
+                        let d: Array<IClassroomsListItem> = this.props.getListItems();
+                        for (let i: number = 0; i < d.length; i++) {
+                            if (d[i].id === this.state.item.id) {
+                                d[i] = r.data;
+                            }
+                        }
+                        this.props.setListItems(d);
+                    } else {
+                        // error
+                        alert("ERROR: " + r.message);
+                    }
+                },
+                error: (xhr: JQueryXHR, status: string, error: string): void => {
+                    // error
+                    alert("ERROR: " + error);
+                    this.close();
+                }
+            });
+        }
+
+       
+
         doDelete(): void {
             $.ajax({
                 cache: false,

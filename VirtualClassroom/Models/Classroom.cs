@@ -18,6 +18,7 @@ namespace VirtualClassroom.Models
         public string id { get; set; }
         public string name { get; set; }
         public string url { get; set; }
+        public int? status { get; set; }
 
         public List<Seat> seats { get; set; }
         public List<Teacher> teachers { get; set; }

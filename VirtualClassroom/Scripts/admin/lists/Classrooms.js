@@ -37,7 +37,7 @@ var VC;
                         { id: -2, title: "Home", onClick: this.tabOnClick.bind(this), active: false },
                         { id: -1, title: "Classrooms", onClick: this.tabOnClick.bind(this), active: true }
                     ];
-                    return (React.createElement("div", null, React.createElement("div", null, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"})), React.createElement("div", null, React.createElement(ClassroomsList, {ref: (ref) => this.list = ref, title: "Classroom", actionUrl: this.props.actionUrl, loadMethod: "Load", showBoxImport: () => this.showBoxImport(), showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), disableClass: this.disableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(ClassroomsBox, {ref: (ref) => this.box = ref, title: "Classroom", actionUrl: this.props.actionUrl, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)}), React.createElement(ClassroomsImportBox, {ref: (ref) => this.boxImport = ref, title: "Import Classrooms", classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)}))));
+                    return (React.createElement("div", null, React.createElement("div", null, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"})), React.createElement("div", null, React.createElement(ClassroomsList, {ref: (ref) => this.list = ref, title: "Classroom", actionUrl: this.props.actionUrl, loadMethod: "Load", showBoxImport: () => this.showBoxImport(), showBoxNew: this.showBoxNew.bind(this), showEnableClass: this.showEnableClass.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(ClassroomsBox, {ref: (ref) => this.box = ref, title: "Classroom", actionUrl: this.props.actionUrl, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)}), React.createElement(ClassroomsImportBox, {ref: (ref) => this.boxImport = ref, title: "Import Classrooms", classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)}))));
                 }
             }
             Lists.Classrooms = Classrooms;
@@ -46,18 +46,20 @@ var VC;
                     let l = [];
                     l.push(React.createElement("td", {key: "tdId_" + d.id}, d.id));
                     l.push(React.createElement("td", {key: "tdName_" + d.id}, React.createElement("a", {href: d.url}, d.name)));
+                    l.push(React.createElement("td", {key: "tdStatus_" + d.id}, d.status));
                     return l;
                 }
                 renderTableHeaderCols() {
                     let l = [];
                     l.push(React.createElement("th", {key: "thId"}, "ID"));
                     l.push(React.createElement("th", {key: "tdName"}, "Classname"));
+                    l.push(React.createElement("th", {key: "tdstatus"}, "Status"));
                     return l;
                 }
             }
             class ClassroomsBox extends Lists.Box {
                 constructor(props) {
-                    super({ id: "", name: "" }, props);
+                    super({ id: "", name: "", status: "" }, props);
                 }
                 boxWillShow() {
                     let tbId = this.refs[Lists.REF_FORM_TB + FORM_ID];
@@ -195,6 +197,14 @@ var VC;
                             // edit
                             this.doUpdate();
                         }
+                        else if (this.state.type === Lists.BoxTypes.Disable) {
+                            // edit
+                            this.doDisable();
+                        }
+                        else if (this.state.type === Lists.BoxTypes.Enable) {
+                            // edit
+                            this.doEnable();
+                        }
                         else {
                             // delete
                             this.doDelete();
@@ -253,6 +263,74 @@ var VC;
                     $.ajax({
                         type: "POST",
                         url: "/api/Classroom/Update",
+                        data: JSON.stringify({ id: idVal, name: nameVal, url: null }),
+                        contentType: "application/json",
+                        success: (r) => {
+                            this.close();
+                            if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
+                                // update list
+                                let d = this.props.getListItems();
+                                for (let i = 0; i < d.length; i++) {
+                                    if (d[i].id === this.state.item.id) {
+                                        d[i] = r.data;
+                                    }
+                                }
+                                this.props.setListItems(d);
+                            }
+                            else {
+                                // error
+                                alert("ERROR: " + r.message);
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            // error
+                            alert("ERROR: " + error);
+                            this.close();
+                        }
+                    });
+                }
+                doDisable() {
+                    let tbId = this.refs[Lists.REF_FORM_TB + FORM_ID];
+                    let tbName = this.refs[Lists.REF_FORM_TB + FORM_NAME];
+                    let idVal = $(tbId).val();
+                    let nameVal = $(tbName).val();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/Classroom/Disable",
+                        data: JSON.stringify({ id: idVal, name: nameVal, url: null }),
+                        contentType: "application/json",
+                        success: (r) => {
+                            this.close();
+                            if (r.status === VC.Global.Data.RESPONSE_SUCCESS) {
+                                // update list
+                                let d = this.props.getListItems();
+                                for (let i = 0; i < d.length; i++) {
+                                    if (d[i].id === this.state.item.id) {
+                                        d[i] = r.data;
+                                    }
+                                }
+                                this.props.setListItems(d);
+                            }
+                            else {
+                                // error
+                                alert("ERROR: " + r.message);
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            // error
+                            alert("ERROR: " + error);
+                            this.close();
+                        }
+                    });
+                }
+                doEnable() {
+                    let tbId = this.refs[Lists.REF_FORM_TB + FORM_ID];
+                    let tbName = this.refs[Lists.REF_FORM_TB + FORM_NAME];
+                    let idVal = $(tbId).val();
+                    let nameVal = $(tbName).val();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/Classroom/Enable",
                         data: JSON.stringify({ id: idVal, name: nameVal, url: null }),
                         contentType: "application/json",
                         success: (r) => {

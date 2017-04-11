@@ -114,6 +114,7 @@ namespace VirtualClassroom.Controllers
             {
                 id = x.Id,
                 name = x.Name,
+                status=x.Status,
                 url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = x.Id })
             }).ToList();
 
@@ -223,13 +224,14 @@ namespace VirtualClassroom.Controllers
             {
                 Id = item.id,
                 Name = item.name,
-                SessionId = String.Empty
+                SessionId = String.Empty,
+                Status=1
             });
 
             try
             {
                 db.SubmitChanges();
-
+                item.status =1;
                 item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
 
                 return responseSuccess(item);
@@ -250,14 +252,77 @@ namespace VirtualClassroom.Controllers
             {
                 TblClassroom tblClassroom = q.Single();
                 tblClassroom.Name = item.name;
-
+                
                 try
                 {
                     db.SubmitChanges();
 
                     item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
-
+                    item.status =tblClassroom.Status;
                     return responseSuccess(item);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<Classroom>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<Classroom>("Classroom Id not found.");
+            }
+        }
+
+
+        [HttpPost]
+        public DataResponse<Classroom> Enable([FromBody] Classroom item)
+        {
+            var q = from x in db.TblClassrooms
+                    where x.Id.ToLower() == item.id.ToLower()
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblClassroom tblClassroom = q.Single();
+                tblClassroom.Status = 1;
+
+                try
+                {
+                    db.SubmitChanges();
+                    item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
+                    item.status = 1;
+                    return responseSuccess(item);
+
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<Classroom>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<Classroom>("Classroom Id not found.");
+            }
+        }
+
+        [HttpPost]
+        public DataResponse<Classroom> Disable([FromBody] Classroom item)
+        {
+            var q = from x in db.TblClassrooms
+                    where x.Id.ToLower() == item.id.ToLower()
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblClassroom tblClassroom = q.Single();
+                tblClassroom.Status = 0;
+
+                try
+                {
+                    db.SubmitChanges();
+                    item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
+                    item.status = 0;
+                    return responseSuccess(item);
+
                 }
                 catch (ChangeConflictException ex)
                 {

@@ -41,6 +41,7 @@ var Admin;
             var l = [];
             l.push(React.createElement("th", null, "ID"));
             l.push(React.createElement("th", null, "Classname"));
+
             return l;
         };
         return ClassroomsList;

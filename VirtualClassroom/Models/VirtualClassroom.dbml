@@ -1,17 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="CTMLive" Class="VirtualClassroomDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="Data Source=DESKTOP-ESC9RL6;Initial Catalog=CTMLive;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="VirtualClassroomDbConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.TblClassroom" Member="TblClassrooms">
-    <Type Name="TblClassroom">
-      <Column Name="Id" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
-      <Column Name="SessionId" Type="System.String" DbType="NVarChar(1024) NOT NULL" CanBeNull="false" />
-      <Association Name="TblClassroom_TblTC" Member="TblTCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblTC" />
-      <Association Name="TblClassroom_TblFC" Member="TblFCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblFC" />
-      <Association Name="TblClassroom_TblForm" Member="TblForms" ThisKey="Id" OtherKey="ClassroomId" Type="TblForm" />
-      <Association Name="TblClassroom_TblSC" Member="TblSCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblSC" />
-      <Association Name="TblClassroom_TblPC" Member="TblPCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblPC" />
-    </Type>
-  </Table>
   <Table Name="dbo.TblTC" Member="TblTCs">
     <Type Name="TblTC">
       <Column Name="Uid" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -95,9 +83,22 @@
       <Column Name="Address" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Association Name="TblPC_TblFCPC" Member="TblFCPCs" ThisKey="Uid" OtherKey="PcUid" Type="TblFCPC" />
       <Association Name="TblPC_TblFormAnswer" Member="TblFormAnswers" ThisKey="Uid" OtherKey="PcUid" Type="TblFormAnswer" />
-      <Association Name="TblClassroom_TblPC" Member="TblClassroom" ThisKey="ClassroomId" OtherKey="Id" Type="TblClassroom" IsForeignKey="true" />
       <Association Name="TblSC_TblPC" Member="TblSC" ThisKey="ScUid" OtherKey="Uid" Type="TblSC" IsForeignKey="true" />
       <Association Name="TblTC_TblPC" Member="TblTC" ThisKey="TcUid" OtherKey="Uid" Type="TblTC" IsForeignKey="true" />
+      <Association Name="TblClassroom_TblPC" Member="TblClassroom" ThisKey="ClassroomId" OtherKey="Id" Type="TblClassroom" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TblClassroom" Member="TblClassrooms">
+    <Type Name="TblClassroom">
+      <Column Name="Id" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="SessionId" Type="System.String" DbType="NVarChar(1024) NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="TblClassroom_TblTC" Member="TblTCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblTC" />
+      <Association Name="TblClassroom_TblFC" Member="TblFCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblFC" />
+      <Association Name="TblClassroom_TblForm" Member="TblForms" ThisKey="Id" OtherKey="ClassroomId" Type="TblForm" />
+      <Association Name="TblClassroom_TblSC" Member="TblSCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblSC" />
+      <Association Name="TblClassroom_TblPC" Member="TblPCs" ThisKey="Id" OtherKey="ClassroomId" Type="TblPC" />
     </Type>
   </Table>
 </Database>

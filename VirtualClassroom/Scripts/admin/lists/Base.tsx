@@ -16,8 +16,10 @@ namespace VC.Admin.Lists {
     export enum BoxTypes {
         Create,
         Edit,
+        Disable,
         Delete,
-        Disable
+        Enable
+        
     }
     export enum BoxValidationStatus {
         None,
@@ -47,7 +49,8 @@ namespace VC.Admin.Lists {
         showBoxImport?: () => void;
         showBoxNew: () => void;
         showBoxEdit: (id: R) => void;
-        disableClass: (id: R) => void;
+        showDisableClass: (id: R) => void;
+        showEnableClass: (id: R) => void;
         showBoxDelete: (id: R) => void;
         
     }
@@ -181,17 +184,25 @@ namespace VC.Admin.Lists {
                     buttonClassName = "btn btn-success";
                     buttonIcon = "glyphicon glyphicon-floppy-disk";
                     break;
-                case BoxTypes.Delete:
-                    title = "Delete " + this.props.title;
-                    buttonTitle = "Delete";
-                    buttonClassName = "btn btn-danger";
-                    buttonIcon = "glyphicon glyphicon-trash";
-                    break;
+
                 case BoxTypes.Disable:
                     title = "Disable " + this.props.title;
                     buttonTitle = "Disable";
                     buttonClassName = "btn btn-warning";
                     buttonIcon = "glyphicon glyphicon-minus-sign";
+                    break;
+                case BoxTypes.Enable:
+                    title = "Enable " + this.props.title;
+                    buttonTitle = "Enable";
+                    buttonClassName = "btn btn-success";
+                    buttonIcon = "glyphicon glyphicon-plus-sign";
+                    break;
+
+                case BoxTypes.Delete:
+                    title = "Delete " + this.props.title;
+                    buttonTitle = "Delete";
+                    buttonClassName = "btn btn-danger";
+                    buttonIcon = "glyphicon glyphicon-trash";
                     break;
             }
 
@@ -434,12 +445,13 @@ namespace VC.Admin.Lists {
                 <tr key={d.id}>
                     {this.renderItemCols(d) }
                     <td style={{ textAlign: "right" }}>
-                        <button type="button" className="btn btn-sm btn-info" onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span> Edit</button>
+                        <button type="button" className="btn btn-sm btn-info"    onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span>Edit</button>
                         &nbsp;
-                        <button   style={{ display: "block" }} type="button" className="disableclass btn btn-sm btn-warning" onClick={ this.props.disableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span> Disable</button>
-                        &nbsp;
-                       
-                        <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.showBoxDelete(d.id) }><span className="glyphicon glyphicon-trash"></span> Delete</button>
+                        <button type="button" style={{ display: "none" }} className="showDisableClass btn btn-sm btn-warning" onClick={() => this.props.showDisableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span>Disable</button>
+                        &nbsp;  
+                        <button type="button" style={{ display: "none" }} className="showEnableClass btn btn-sm btn-success" onClick={() => this.props.showEnableClass(d.id) } ><span className="glyphicon glyphicon-plus-sign"></span>Enable</button>
+                        &nbsp;                        
+                        <button type="button" className="btn btn-sm btn-danger"  onClick={() => this.props.showBoxDelete(d.id) }><span className="glyphicon glyphicon-trash"></span>Delete</button>
                     </td>
                 </tr>
             );
@@ -506,7 +518,7 @@ namespace VC.Admin.Lists {
             }
         }
 
-        public disableClass(id: R): void {
+        public showDisableClass(id: R): void {
             let item: D = this.getItem(id);
             if (item !== null) {
                 let Box1: B = this.getBox();
@@ -514,7 +526,15 @@ namespace VC.Admin.Lists {
             }
         }
     
-        
+        public showEnableClass(id: R): void {
+            let item: D = this.getItem(id);
+            if (item !== null) {
+                let Box1: B = this.getBox();
+                Box1.open(BoxTypes.Enable, item);
+            }
+        }
+
+
         public showBoxDelete(id: R): void {
             let item: D = this.getItem(id);
             if (item !== null) {

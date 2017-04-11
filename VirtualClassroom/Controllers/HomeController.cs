@@ -17,6 +17,7 @@ namespace VirtualClassroom.Controllers
         {
             var q = from x in db.TblClassrooms
                     orderby x.Id
+                    where x.Status!=0
                     select new Classroom
                     {
                         id = x.Id,

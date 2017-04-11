@@ -38,7 +38,7 @@ namespace VC.Admin.Lists {
         render(): JSX.Element {
             return (
                 <div>
-                    <FeaturedsList ref={(ref: FeaturedsList) => this.list = ref} title="Featured computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadFeatureds" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) }  disableClass={this.disableClass.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                    <FeaturedsList ref={(ref: FeaturedsList) => this.list = ref} title="Featured computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadFeatureds" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) }  showDisableClass={this.showDisableClass.bind(this) }  showEnableClass={this.showEnableClass.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
                     <FeaturedsBox ref={(ref: FeaturedsBox) => this.box = ref} title="Featured computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
                     <FeaturedsImportBox ref={(ref: FeaturedsImportBox) => this.boxImport = ref} title="Import Featured computers" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></FeaturedsImportBox>
                 </div>

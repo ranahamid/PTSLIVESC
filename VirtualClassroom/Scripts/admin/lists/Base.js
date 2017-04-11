@@ -19,8 +19,9 @@ var VC;
             (function (BoxTypes) {
                 BoxTypes[BoxTypes["Create"] = 0] = "Create";
                 BoxTypes[BoxTypes["Edit"] = 1] = "Edit";
-                BoxTypes[BoxTypes["Delete"] = 2] = "Delete";
-                BoxTypes[BoxTypes["Disable"] = 3] = "Disable";
+                BoxTypes[BoxTypes["Disable"] = 2] = "Disable";
+                BoxTypes[BoxTypes["Delete"] = 3] = "Delete";
+                BoxTypes[BoxTypes["Enable"] = 4] = "Enable";
             })(Lists.BoxTypes || (Lists.BoxTypes = {}));
             var BoxTypes = Lists.BoxTypes;
             (function (BoxValidationStatus) {
@@ -113,17 +114,23 @@ var VC;
                             buttonClassName = "btn btn-success";
                             buttonIcon = "glyphicon glyphicon-floppy-disk";
                             break;
-                        case BoxTypes.Delete:
-                            title = "Delete " + this.props.title;
-                            buttonTitle = "Delete";
-                            buttonClassName = "btn btn-danger";
-                            buttonIcon = "glyphicon glyphicon-trash";
-                            break;
                         case BoxTypes.Disable:
                             title = "Disable " + this.props.title;
                             buttonTitle = "Disable";
                             buttonClassName = "btn btn-warning";
                             buttonIcon = "glyphicon glyphicon-minus-sign";
+                            break;
+                        case BoxTypes.Enable:
+                            title = "Enable " + this.props.title;
+                            buttonTitle = "Enable";
+                            buttonClassName = "btn btn-success";
+                            buttonIcon = "glyphicon glyphicon-plus-sign";
+                            break;
+                        case BoxTypes.Delete:
+                            title = "Delete " + this.props.title;
+                            buttonTitle = "Delete";
+                            buttonClassName = "btn btn-danger";
+                            buttonIcon = "glyphicon glyphicon-trash";
                             break;
                     }
                     return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: "modal fade", role: "dialog"}, React.createElement("div", {className: "modal-dialog"}, React.createElement("div", {className: "modal-content"}, React.createElement("div", {className: "modal-header"}, React.createElement("button", {type: "button", className: "close", "data-dismiss": "modal"}, "× "), React.createElement("h4", {className: "modal-title"}, title)), React.createElement("div", {className: "modal-body"}, this.renderForm()), React.createElement("div", {ref: (ref) => this.divButtons = ref, style: { display: "block" }, className: "modal-footer"}, React.createElement("button", {type: "button", className: buttonClassName, onClick: () => this.submitForm()}, React.createElement("span", {className: buttonIcon}), " ", buttonTitle), React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, "Close")), React.createElement("div", {ref: (ref) => this.divProcessing = ref, style: { display: "none" }, className: "modal-footer"}, React.createElement("span", null, "Processing ..."))))));
@@ -260,7 +267,7 @@ var VC;
                     return (React.createElement("div", {className: "panel-body"}, body));
                 }
                 renderItem(d) {
-                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), " Edit"), " ", React.createElement("button", {style: { display: "block" }, type: "button", className: "disableclass btn btn-sm btn-warning", onClick: this.props.disableClass(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-minus-sign"}), " Disable"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), " Delete"))));
+                    return (React.createElement("tr", {key: d.id}, this.renderItemCols(d), React.createElement("td", {style: { textAlign: "right" }}, React.createElement("button", {type: "button", className: "btn btn-sm btn-info", onClick: () => this.props.showBoxEdit(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-pencil"}), "Edit"), " ", React.createElement("button", {type: "button", style: { display: "none" }, className: "showDisableClass btn btn-sm btn-warning", onClick: () => this.props.showDisableClass(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-minus-sign"}), "Disable"), " ", React.createElement("button", {type: "button", style: { display: "none" }, className: "showEnableClass btn btn-sm btn-success", onClick: () => this.props.showEnableClass(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-plus-sign"}), "Enable"), " ", React.createElement("button", {type: "button", className: "btn btn-sm btn-danger", onClick: () => this.props.showBoxDelete(d.id)}, React.createElement("span", {className: "glyphicon glyphicon-trash"}), "Delete"))));
                 }
                 renderTable() {
                     let items = [];
@@ -293,11 +300,18 @@ var VC;
                         Box1.open(BoxTypes.Edit, item);
                     }
                 }
-                disableClass(id) {
+                showDisableClass(id) {
                     let item = this.getItem(id);
                     if (item !== null) {
                         let Box1 = this.getBox();
                         Box1.open(BoxTypes.Disable, item);
+                    }
+                }
+                showEnableClass(id) {
+                    let item = this.getItem(id);
+                    if (item !== null) {
+                        let Box1 = this.getBox();
+                        Box1.open(BoxTypes.Enable, item);
                     }
                 }
                 showBoxDelete(id) {

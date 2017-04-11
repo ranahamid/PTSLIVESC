@@ -30,9 +30,6 @@ namespace VirtualClassroom.Models
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertTblClassroom(TblClassroom instance);
-    partial void UpdateTblClassroom(TblClassroom instance);
-    partial void DeleteTblClassroom(TblClassroom instance);
     partial void InsertTblTC(TblTC instance);
     partial void UpdateTblTC(TblTC instance);
     partial void DeleteTblTC(TblTC instance);
@@ -54,6 +51,9 @@ namespace VirtualClassroom.Models
     partial void InsertTblPC(TblPC instance);
     partial void UpdateTblPC(TblPC instance);
     partial void DeleteTblPC(TblPC instance);
+    partial void InsertTblClassroom(TblClassroom instance);
+    partial void UpdateTblClassroom(TblClassroom instance);
+    partial void DeleteTblClassroom(TblClassroom instance);
     #endregion
 		
 		public VirtualClassroomDataContext() : 
@@ -84,14 +84,6 @@ namespace VirtualClassroom.Models
 				base(connection, mappingSource)
 		{
 			OnCreated();
-		}
-		
-		public System.Data.Linq.Table<TblClassroom> TblClassrooms
-		{
-			get
-			{
-				return this.GetTable<TblClassroom>();
-			}
 		}
 		
 		public System.Data.Linq.Table<TblTC> TblTCs
@@ -149,255 +141,13 @@ namespace VirtualClassroom.Models
 				return this.GetTable<TblPC>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblClassroom")]
-	public partial class TblClassroom : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private string _Id;
-		
-		private string _Name;
-		
-		private string _SessionId;
-		
-		private EntitySet<TblTC> _TblTCs;
-		
-		private EntitySet<TblFC> _TblFCs;
-		
-		private EntitySet<TblForm> _TblForms;
-		
-		private EntitySet<TblSC> _TblSCs;
-		
-		private EntitySet<TblPC> _TblPCs;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(string value);
-    partial void OnIdChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnSessionIdChanging(string value);
-    partial void OnSessionIdChanged();
-    #endregion
-		
-		public TblClassroom()
-		{
-			this._TblTCs = new EntitySet<TblTC>(new Action<TblTC>(this.attach_TblTCs), new Action<TblTC>(this.detach_TblTCs));
-			this._TblFCs = new EntitySet<TblFC>(new Action<TblFC>(this.attach_TblFCs), new Action<TblFC>(this.detach_TblFCs));
-			this._TblForms = new EntitySet<TblForm>(new Action<TblForm>(this.attach_TblForms), new Action<TblForm>(this.detach_TblForms));
-			this._TblSCs = new EntitySet<TblSC>(new Action<TblSC>(this.attach_TblSCs), new Action<TblSC>(this.detach_TblSCs));
-			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="VarChar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string Id
+		public System.Data.Linq.Table<TblClassroom> TblClassrooms
 		{
 			get
 			{
-				return this._Id;
+				return this.GetTable<TblClassroom>();
 			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(256) NOT NULL", CanBeNull=false)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SessionId", DbType="NVarChar(1024) NOT NULL", CanBeNull=false)]
-		public string SessionId
-		{
-			get
-			{
-				return this._SessionId;
-			}
-			set
-			{
-				if ((this._SessionId != value))
-				{
-					this.OnSessionIdChanging(value);
-					this.SendPropertyChanging();
-					this._SessionId = value;
-					this.SendPropertyChanged("SessionId");
-					this.OnSessionIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblTC", Storage="_TblTCs", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblTC> TblTCs
-		{
-			get
-			{
-				return this._TblTCs;
-			}
-			set
-			{
-				this._TblTCs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblFC", Storage="_TblFCs", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblFC> TblFCs
-		{
-			get
-			{
-				return this._TblFCs;
-			}
-			set
-			{
-				this._TblFCs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblForm", Storage="_TblForms", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblForm> TblForms
-		{
-			get
-			{
-				return this._TblForms;
-			}
-			set
-			{
-				this._TblForms.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblSC", Storage="_TblSCs", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblSC> TblSCs
-		{
-			get
-			{
-				return this._TblSCs;
-			}
-			set
-			{
-				this._TblSCs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblPCs", ThisKey="Id", OtherKey="ClassroomId")]
-		public EntitySet<TblPC> TblPCs
-		{
-			get
-			{
-				return this._TblPCs;
-			}
-			set
-			{
-				this._TblPCs.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_TblTCs(TblTC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = this;
-		}
-		
-		private void detach_TblTCs(TblTC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = null;
-		}
-		
-		private void attach_TblFCs(TblFC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = this;
-		}
-		
-		private void detach_TblFCs(TblFC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = null;
-		}
-		
-		private void attach_TblForms(TblForm entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = this;
-		}
-		
-		private void detach_TblForms(TblForm entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = null;
-		}
-		
-		private void attach_TblSCs(TblSC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = this;
-		}
-		
-		private void detach_TblSCs(TblSC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = null;
-		}
-		
-		private void attach_TblPCs(TblPC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = this;
-		}
-		
-		private void detach_TblPCs(TblPC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblClassroom = null;
 		}
 	}
 	
@@ -1869,11 +1619,11 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblFormAnswer> _TblFormAnswers;
 		
-		private EntityRef<TblClassroom> _TblClassroom;
-		
 		private EntityRef<TblSC> _TblSC;
 		
 		private EntityRef<TblTC> _TblTC;
+		
+		private EntityRef<TblClassroom> _TblClassroom;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1907,9 +1657,9 @@ namespace VirtualClassroom.Models
 		{
 			this._TblFCPCs = new EntitySet<TblFCPC>(new Action<TblFCPC>(this.attach_TblFCPCs), new Action<TblFCPC>(this.detach_TblFCPCs));
 			this._TblFormAnswers = new EntitySet<TblFormAnswer>(new Action<TblFormAnswer>(this.attach_TblFormAnswers), new Action<TblFormAnswer>(this.detach_TblFormAnswers));
-			this._TblClassroom = default(EntityRef<TblClassroom>);
 			this._TblSC = default(EntityRef<TblSC>);
 			this._TblTC = default(EntityRef<TblTC>);
+			this._TblClassroom = default(EntityRef<TblClassroom>);
 			OnCreated();
 		}
 		
@@ -2171,40 +1921,6 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
-		public TblClassroom TblClassroom
-		{
-			get
-			{
-				return this._TblClassroom.Entity;
-			}
-			set
-			{
-				TblClassroom previousValue = this._TblClassroom.Entity;
-				if (((previousValue != value) 
-							|| (this._TblClassroom.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TblClassroom.Entity = null;
-						previousValue.TblPCs.Remove(this);
-					}
-					this._TblClassroom.Entity = value;
-					if ((value != null))
-					{
-						value.TblPCs.Add(this);
-						this._ClassroomId = value.Id;
-					}
-					else
-					{
-						this._ClassroomId = default(string);
-					}
-					this.SendPropertyChanged("TblClassroom");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblPC", Storage="_TblSC", ThisKey="ScUid", OtherKey="Uid", IsForeignKey=true)]
 		public TblSC TblSC
 		{
@@ -2273,6 +1989,40 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
+		public TblClassroom TblClassroom
+		{
+			get
+			{
+				return this._TblClassroom.Entity;
+			}
+			set
+			{
+				TblClassroom previousValue = this._TblClassroom.Entity;
+				if (((previousValue != value) 
+							|| (this._TblClassroom.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblClassroom.Entity = null;
+						previousValue.TblPCs.Remove(this);
+					}
+					this._TblClassroom.Entity = value;
+					if ((value != null))
+					{
+						value.TblPCs.Add(this);
+						this._ClassroomId = value.Id;
+					}
+					else
+					{
+						this._ClassroomId = default(string);
+					}
+					this.SendPropertyChanged("TblClassroom");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -2315,6 +2065,280 @@ namespace VirtualClassroom.Models
 		{
 			this.SendPropertyChanging();
 			entity.TblPC = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblClassroom")]
+	public partial class TblClassroom : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Id;
+		
+		private string _Name;
+		
+		private string _SessionId;
+		
+		private System.Nullable<int> _Status;
+		
+		private EntitySet<TblTC> _TblTCs;
+		
+		private EntitySet<TblFC> _TblFCs;
+		
+		private EntitySet<TblForm> _TblForms;
+		
+		private EntitySet<TblSC> _TblSCs;
+		
+		private EntitySet<TblPC> _TblPCs;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(string value);
+    partial void OnIdChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnSessionIdChanging(string value);
+    partial void OnSessionIdChanged();
+    partial void OnStatusChanging(System.Nullable<int> value);
+    partial void OnStatusChanged();
+    #endregion
+		
+		public TblClassroom()
+		{
+			this._TblTCs = new EntitySet<TblTC>(new Action<TblTC>(this.attach_TblTCs), new Action<TblTC>(this.detach_TblTCs));
+			this._TblFCs = new EntitySet<TblFC>(new Action<TblFC>(this.attach_TblFCs), new Action<TblFC>(this.detach_TblFCs));
+			this._TblForms = new EntitySet<TblForm>(new Action<TblForm>(this.attach_TblForms), new Action<TblForm>(this.detach_TblForms));
+			this._TblSCs = new EntitySet<TblSC>(new Action<TblSC>(this.attach_TblSCs), new Action<TblSC>(this.detach_TblSCs));
+			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="VarChar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(256) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SessionId", DbType="NVarChar(1024) NOT NULL", CanBeNull=false)]
+		public string SessionId
+		{
+			get
+			{
+				return this._SessionId;
+			}
+			set
+			{
+				if ((this._SessionId != value))
+				{
+					this.OnSessionIdChanging(value);
+					this.SendPropertyChanging();
+					this._SessionId = value;
+					this.SendPropertyChanged("SessionId");
+					this.OnSessionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int")]
+		public System.Nullable<int> Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblTC", Storage="_TblTCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblTC> TblTCs
+		{
+			get
+			{
+				return this._TblTCs;
+			}
+			set
+			{
+				this._TblTCs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblFC", Storage="_TblFCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblFC> TblFCs
+		{
+			get
+			{
+				return this._TblFCs;
+			}
+			set
+			{
+				this._TblFCs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblForm", Storage="_TblForms", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblForm> TblForms
+		{
+			get
+			{
+				return this._TblForms;
+			}
+			set
+			{
+				this._TblForms.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblSC", Storage="_TblSCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblSC> TblSCs
+		{
+			get
+			{
+				return this._TblSCs;
+			}
+			set
+			{
+				this._TblSCs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblPC", Storage="_TblPCs", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblPC> TblPCs
+		{
+			get
+			{
+				return this._TblPCs;
+			}
+			set
+			{
+				this._TblPCs.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TblTCs(TblTC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblTCs(TblTC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblFCs(TblFC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblFCs(TblFC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblForms(TblForm entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblForms(TblForm entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblSCs(TblSC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblSCs(TblSC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblPCs(TblPC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblPCs(TblPC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
 		}
 	}
 }

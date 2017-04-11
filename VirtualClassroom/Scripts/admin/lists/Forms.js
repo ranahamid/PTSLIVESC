@@ -18,7 +18,7 @@ var VC;
                     return null;
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement(FormsList, {ref: (ref) => this.list = ref, title: "Survey", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadSurveys", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), disableClass: this.disableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Survey", formType: VC.Forms.FormType.Survey, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
+                    return (React.createElement("div", null, React.createElement(FormsList, {ref: (ref) => this.list = ref, title: "Survey", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadSurveys", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Survey", formType: VC.Forms.FormType.Survey, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
                 }
             }
             Lists.Surveys = Surveys;
@@ -33,7 +33,7 @@ var VC;
                     return null;
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement(FormsList, {ref: (ref) => this.list = ref, title: "Poll", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadPolls", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), disableClass: this.disableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Poll", formType: VC.Forms.FormType.Poll, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
+                    return (React.createElement("div", null, React.createElement(FormsList, {ref: (ref) => this.list = ref, title: "Poll", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadPolls", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Poll", formType: VC.Forms.FormType.Poll, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
                 }
             }
             Lists.Polls = Polls;

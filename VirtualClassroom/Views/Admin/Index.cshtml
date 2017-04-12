@@ -10,33 +10,32 @@
 @Scripts.Render("~/vc/admin")
 
 <script type="text/javascript">
-
-
-    $(document).ready(function () {
-   
+    $(document).ready(function () {   
         var a = new VC.Admin.InitAdministration('divTarget', '@Url.Action()');
-
-    });
-   
+    });   
 </script>
 
 <script>
-    $(document).ajaxComplete(function () {
-        console.log("ajaxComplete!");
-        $('.showDisableClass').show();
-        $('.showEnableClass').show();
-
+    $(document).ajaxComplete(function ()
+    {
         $('.table tbody tr').each(function (i, row) {
-            console.log(row);
+            var box = $(this).find("td:nth-child(3)").text();
+            
+            if (box == "1" || box == "True") {
+                    $(this).find('.showEnableClass').hide();
+                    $(this).find('.showDisableClass').show();
+                    $(this).find("td:nth-child(3)").text("True");
+                }
+
+                else {
+                    $(this).find('.showDisableClass').hide();
+                    $(this).find('.showEnableClass').show();
+                    $(this).find("td:nth-child(3)").text("False");
+                    }
+                });
         
-            var $row = $(row),
-                $tdStatus = $('#tdStatus_s');
-           
-
-
         });
-        
-    });
+
     
     
 </script>

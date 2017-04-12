@@ -20,7 +20,7 @@ namespace VirtualClassroom.Controllers
         public ActionResult Classroom(string classroomId)
         {
             var q = from x in db.TblClassrooms
-                    where x.Id.ToLower() == classroomId.ToLower()
+                    where x.Id.ToLower() == classroomId.ToLower() && x.Status != 0
                     select x;
 
             ComputerViewModel viewModel = new ComputerViewModel();

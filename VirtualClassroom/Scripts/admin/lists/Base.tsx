@@ -447,9 +447,9 @@ namespace VC.Admin.Lists {
                     <td style={{ textAlign: "right" }}>
                         <button type="button" className="btn btn-sm btn-info"    onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span>Edit</button>
                         &nbsp;
-                        <button type="button" id={"showDisableClass_" + d.id} style={{ display: "none" }} className="showDisableClass btn btn-sm btn-warning" onClick={() => this.props.showDisableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span>Disable</button>
+                        <button type="button" id="showDisableClass" style={{display: "none"}} className="showDisableClass btn btn-sm btn-warning" onClick={() => this.props.showDisableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span>Disable</button>
                         &nbsp;  
-                        <button type="button" id={"showEnableClass_" + d.id} style={{ display: "none" }} className="showEnableClass btn btn-sm btn-success" onClick={() => this.props.showEnableClass(d.id) } ><span className="glyphicon glyphicon-plus-sign"></span>Enable</button>
+                        <button type="button" id="showEnableClass" style={{display: "none"}} className="showEnableClass btn btn-sm btn-success" onClick={() => this.props.showEnableClass(d.id) } ><span className="glyphicon glyphicon-plus-sign"></span>Enable</button>
                         &nbsp;                        
                         <button type="button" className="btn btn-sm btn-danger"  onClick={() => this.props.showBoxDelete(d.id) }><span className="glyphicon glyphicon-trash"></span>Delete</button>
                     </td>

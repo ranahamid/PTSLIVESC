@@ -233,6 +233,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Interfaces\ApiControllerR.cs" />
     <Compile Include="Controllers\Interfaces\ControllerR.cs" />
+    <Compile Include="Controllers\ModeratorController.cs" />
     <Compile Include="Controllers\PCController.cs" />
     <Compile Include="Controllers\FCController.cs" />
     <Compile Include="Controllers\SCController.cs" />
@@ -436,6 +437,7 @@
     <Content Include="Scripts\app\global\Fce.js" />
     <Content Include="Scripts\app\global\Interfaces.js" />
     <Content Include="Scripts\app\global\Signaling.js" />
+    <Content Include="Scripts\app\Moderator.js" />
     <Content Include="Scripts\app\PC.js" />
     <Content Include="Scripts\app\pc\FormsPc.js" />
     <Content Include="Scripts\app\SC.js" />
@@ -477,6 +479,7 @@
     <Content Include="Scripts\react-dom.min.js" />
     <Content Include="Scripts\react.js" />
     <Content Include="Scripts\react.min.js" />
+    <Content Include="Scripts\app\Moderator.js.map" />
     <None Include="Scripts\_references.js" />
     <Content Include="System.Web.Optimization.React.dll" />
     <Content Include="Web.config">
@@ -561,6 +564,7 @@
     <Content Include="Scripts\global\Data.js.map" />
     <Content Include="Scripts\global\Interfaces.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Views\Moderator\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -597,6 +601,7 @@
     <TypeScriptCompile Include="Scripts\app\global\Fce.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Interfaces.ts" />
     <TypeScriptCompile Include="Scripts\app\global\Signaling.ts" />
+    <TypeScriptCompile Include="Scripts\app\Moderator.tsx" />
     <TypeScriptCompile Include="Scripts\app\PC.tsx" />
     <TypeScriptCompile Include="Scripts\app\pc\FormsPc.tsx" />
     <TypeScriptCompile Include="Scripts\app\SC.tsx" />

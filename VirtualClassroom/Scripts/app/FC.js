@@ -35,8 +35,25 @@ var VC;
                     if (tokenData.Role === App.Roles.PC) {
                         // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
-                        if (tokenData.Address != null)
-                            this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + tokenData.Address + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        let addressData;
+                        addressData = "";
+                        if (tokenData.Address1 != null) {
+                            addressData = tokenData.Address1;
+                        }
+                        if (tokenData.State != null) {
+                            addressData = addressData + ", " + tokenData.State;
+                        }
+                        if (tokenData.City != null) {
+                            addressData = addressData + ", " + tokenData.City;
+                        }
+                        if (tokenData.Country != null) {
+                            addressData = addressData + ", " + tokenData.Country;
+                        }
+                        if (tokenData.ZipCode != null) {
+                            addressData = addressData + "-" + tokenData.ZipCode + ".";
+                        }
+                        if (addressData != "")
+                            this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
                         else
                             this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
                         this.connectedStudents[groupComputer.Position - 1] = true;
@@ -217,8 +234,25 @@ var VC;
                                     this.boxSubscribers[i].subscribeVideo(this.session, stream);
                                 }
                                 let tokenData = App.Global.Fce.toTokenData(newStudentConnection.data);
-                                if (tokenData.Address != null)
-                                    this.label[i].setText(tokenData.Name + ", " + tokenData.Address + " connected.", App.Components.BoxLabelStyle.Connected);
+                                let addressData;
+                                addressData = "";
+                                if (tokenData.Address1 != null) {
+                                    addressData = tokenData.Address1;
+                                }
+                                if (tokenData.State != null) {
+                                    addressData = addressData + ", " + tokenData.State;
+                                }
+                                if (tokenData.City != null) {
+                                    addressData = addressData + ", " + tokenData.City;
+                                }
+                                if (tokenData.Country != null) {
+                                    addressData = addressData + ", " + tokenData.Country;
+                                }
+                                if (tokenData.ZipCode != null) {
+                                    addressData = addressData + "-" + tokenData.ZipCode + ".";
+                                }
+                                if (addressData != "")
+                                    this.label[i].setText(tokenData.Name + ", " + addressData + " connected.", App.Components.BoxLabelStyle.Connected);
                                 else
                                     this.label[i].setText(tokenData.Name + " connected.", App.Components.BoxLabelStyle.Connected);
                                 // send signal to add to group

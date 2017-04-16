@@ -31,9 +31,31 @@
                                         @{
                                             for (int i = 0; i < sc.students.Count; i++)
                                             {
-                                                if (sc.students[i].address != null)
+                                                var address = "";
+                                                if (sc.students[i].address1 != null)
                                                 {
-                                                    <li>@Html.ActionLink(sc.students[i].name + ", " + sc.students[i].address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                                    address = sc.students[i].address1;
+                                                }
+                                                if (sc.students[i].State != null)
+                                                {
+                                                    address = address+", "+sc.students[i].State;
+                                                }
+                                                if (sc.students[i].City != null)
+                                                {
+                                                    address = address + ", " + sc.students[i].City;
+                                                }
+                                                if (sc.students[i].Country != null)
+                                                {
+                                                    address = address + ", " + sc.students[i].Country;
+                                                }
+                                                if (sc.students[i].ZipCode != null)
+                                                {
+                                                    address = address + "-" + sc.students[i].ZipCode;
+                                                }
+                                                
+                                                if (address != "")
+                                                {
+                                                    <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
                                                 }
                                                 else
                                                 {

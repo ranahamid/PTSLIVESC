@@ -17,7 +17,7 @@ namespace VirtualClassroom.Controllers
         {
             var q = from x in db.TblClassrooms
                     orderby x.Id
-                    where x.Status!=0
+                    where x.IsActive!=0
                     select new Classroom
                     {
                         id = x.Id,
@@ -32,10 +32,14 @@ namespace VirtualClassroom.Controllers
                             {
                                 uid = z.Uid,
                                 id = z.Id,
-                                name = z.Name,
-                                address=z.Address,
+                                name = z.Name,                               
                                 position = z.Position,
-                                teacher = null
+                                teacher = null,
+                                 address1 = z.Address1,
+                                State = z.State,
+                                City = z.City,
+                                ZipCode = z.ZipCode,
+                                Country = z.Country
                             }).ToList()
                         }).ToList(),
 

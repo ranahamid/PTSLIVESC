@@ -19,7 +19,7 @@ namespace VirtualClassroom.Controllers
         public ActionResult Index(string classroomId)
         {
             var q = from x in db.TblClassrooms
-                    where x.Id.ToLower() == classroomId.ToLower() && x.Status!=0
+                    where x.Id.ToLower() == classroomId.ToLower() && x.IsActive != 0
                     
                     select x;
 

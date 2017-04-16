@@ -114,7 +114,7 @@ namespace VirtualClassroom.Controllers
             {
                 id = x.Id,
                 name = x.Name,
-                status=x.Status,
+                status=x.IsActive,
                 url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = x.Id })
             }).ToList();
 
@@ -142,7 +142,20 @@ namespace VirtualClassroom.Controllers
                 id = x.Id,
                 name = x.Name,
                 
-                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.Uid, id = z.TblPC.Id, name = z.TblPC.Name,address = z.TblPC.Address, position = z.Position, teacher = null }).ToList()
+                students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student()
+                {
+                    uid = z.Uid,
+                    id = z.TblPC.Id,
+                    name = z.TblPC.Name,
+                
+                    position = z.Position,
+                    teacher = null,
+                    address1 = z.TblPC.Address1,
+                    State =z.TblPC.State,
+                    City=z.TblPC.City,
+                    ZipCode=z.TblPC.ZipCode,
+                    Country=z.TblPC.Country
+                }).ToList()
             }).ToList();
 
           //  data= data.OrderBy(x=>x.position)
@@ -225,7 +238,7 @@ namespace VirtualClassroom.Controllers
                 Id = item.id,
                 Name = item.name,
                 SessionId = String.Empty,
-                Status=1
+                IsActive = 1
             });
 
             try
@@ -258,7 +271,7 @@ namespace VirtualClassroom.Controllers
                     db.SubmitChanges();
 
                     item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
-                    item.status =tblClassroom.Status;
+                    item.status =tblClassroom.IsActive;
                     return responseSuccess(item);
                 }
                 catch (ChangeConflictException ex)
@@ -283,7 +296,7 @@ namespace VirtualClassroom.Controllers
             if (q != null && q.Count() == 1)
             {
                 TblClassroom tblClassroom = q.Single();
-                tblClassroom.Status = 1;
+                tblClassroom.IsActive = 1;
 
                 try
                 {
@@ -314,7 +327,7 @@ namespace VirtualClassroom.Controllers
             if (q != null && q.Count() == 1)
             {
                 TblClassroom tblClassroom = q.Single();
-                tblClassroom.Status = 0;
+                tblClassroom.IsActive = 0;
 
                 try
                 {

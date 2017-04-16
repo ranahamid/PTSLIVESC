@@ -38,8 +38,13 @@ namespace VirtualClassroom.Models
         public Teacher teacher { get; set; }
         public string featuredpcname{get;set;}
         public Guid FcUid { get; set; }
-        public string address { get; set; }
+        public string address1 { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+        public string Country { get; set; }
     }
+
 
     [DataObject]
     public class Teacher : Computer

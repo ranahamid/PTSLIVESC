@@ -21,7 +21,7 @@ namespace VirtualClassroom.Controllers
         public ActionResult Index(string classroomId, string id)
         {
             var q = from x in db.TblPCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.Status != 0
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
                     select x;
 
             ComputerViewModel viewModel = new ComputerViewModel();
@@ -74,9 +74,13 @@ namespace VirtualClassroom.Controllers
                         {
                             Uid = pc.Uid,
                             Id = pc.Id,
-                            Name = pc.Name,
-                            Address  =pc.Address,
-                            Role = (int)VC.VcRoles.PC
+                            Name = pc.Name,                           
+                            Role = (int)VC.VcRoles.PC,
+                            Address1 = pc.Address1,
+                            State = pc.State,
+                            City = pc.City,
+                            ZipCode = pc.ZipCode,
+                            Country = pc.Country
                         });
                     cData.Group = TokBoxHelper.CreateGroup(pc);
 

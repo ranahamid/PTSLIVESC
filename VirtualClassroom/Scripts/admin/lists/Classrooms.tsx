@@ -9,7 +9,7 @@ namespace VC.Admin.Lists {
     interface IClassroomsListItem extends IDataItem<string> {
         name: string;
         url: string;
-        status: string;
+        isactive: string;
     }
 
     export class Classrooms extends Base<string, IClassroomsListItem, ClassroomsList, ClassroomsBox, ClassroomsImportBox> {
@@ -77,7 +77,7 @@ namespace VC.Admin.Lists {
             let l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}><a href={d.url}>{d.name}</a></td>);
-            l.push(<td value={d.status} id="tdStatus" key={"tdStatus_" + d.id}>{d.status}</td>);
+            l.push(<td value={d.isactive} id="tdStatus" key={"tdStatus_" + d.id}>{d.isactive}</td>);
             return l;
         }
         renderTableHeaderCols(): JSX.Element[] {
@@ -95,7 +95,7 @@ namespace VC.Admin.Lists {
     class ClassroomsBox extends Box<string, IClassroomsListItem, IClassroomsBoxProps, IClassroomsBoxState> {
 
         constructor(props: IClassroomsBoxProps) {
-            super({ id: "", name: "", status:"" } as IClassroomsListItem,
+            super({ id: "", name: "", isactive:"" } as IClassroomsListItem,
                 props);
         }
 

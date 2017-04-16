@@ -46,7 +46,7 @@ var VC;
                     let l = [];
                     l.push(React.createElement("td", {key: "tdId_" + d.id}, d.id));
                     l.push(React.createElement("td", {key: "tdName_" + d.id}, React.createElement("a", {href: d.url}, d.name)));
-                    l.push(React.createElement("td", {value: d.status, id: "tdStatus", key: "tdStatus_" + d.id}, d.status));
+                    l.push(React.createElement("td", {value: d.isactive, id: "tdStatus", key: "tdStatus_" + d.id}, d.isactive));
                     return l;
                 }
                 renderTableHeaderCols() {
@@ -59,7 +59,7 @@ var VC;
             }
             class ClassroomsBox extends Lists.Box {
                 constructor(props) {
-                    super({ id: "", name: "", status: "" }, props);
+                    super({ id: "", name: "", isactive: "" }, props);
                 }
                 boxWillShow() {
                     let tbId = this.refs[Lists.REF_FORM_TB + FORM_ID];

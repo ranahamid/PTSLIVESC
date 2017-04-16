@@ -39,8 +39,27 @@ namespace VC.App {
                 if (tokenData.Role === Roles.PC) {
                     // student
                     let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
-                    if (tokenData.Address!=null)
-                        this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + tokenData.Address + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
+                    let addressData: string;
+                    addressData = "";
+                    if (tokenData.Address1 != null) {
+                        addressData = tokenData.Address1;                       
+                    }
+                    if (tokenData.State != null) {
+                        addressData = addressData +", "+ tokenData.State;
+                    }
+                    if (tokenData.City  != null) {
+                        addressData = addressData + ", " + tokenData.City ;
+                    }
+                    
+                    if (tokenData.Country  != null) {
+                        addressData = addressData + ", " + tokenData.Country ;
+                    }
+                    if (tokenData.ZipCode != null) {
+                        addressData = addressData + "-" + tokenData.ZipCode;
+                    }
+
+                    if (addressData!="")
+                        this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
                     else
                         this.label[groupComputer.Position - 1].setText(tokenData.Name +" connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
                     this.connectedStudents[groupComputer.Position - 1] = true;
@@ -227,8 +246,27 @@ namespace VC.App {
                                 this.boxSubscribers[i].subscribeVideo(this.session, stream);
                             }
                             let tokenData: Global.TokenData = Global.Fce.toTokenData(newStudentConnection.data);
-                            if (tokenData.Address !=null)
-                                this.label[i].setText(tokenData.Name + ", " + tokenData.Address + " connected.", Components.BoxLabelStyle.Connected);
+                            let addressData: string;
+                            addressData = "";
+                            if (tokenData.Address1 != null) {
+                                addressData = tokenData.Address1;
+                            }
+                            if (tokenData.State != null) {
+                                addressData = addressData + ", " + tokenData.State;
+                            }
+                            if (tokenData.City != null) {
+                                addressData = addressData + ", " + tokenData.City;
+                            }
+
+                            if (tokenData.Country != null) {
+                                addressData = addressData + ", " + tokenData.Country;
+                            }
+                            if (tokenData.ZipCode != null) {
+                                addressData = addressData + "-" + tokenData.ZipCode;
+                            }
+
+                            if (addressData != "")                              
+                                this.label[i].setText(tokenData.Name + ", " + addressData + " connected.", Components.BoxLabelStyle.Connected);
                             else
                                 this.label[i].setText(tokenData.Name + " connected.", Components.BoxLabelStyle.Connected);
 

@@ -50,7 +50,7 @@ var VC;
                             addressData = addressData + ", " + tokenData.Country;
                         }
                         if (tokenData.ZipCode != null) {
-                            addressData = addressData + "-" + tokenData.ZipCode + ".";
+                            addressData = addressData + "-" + tokenData.ZipCode;
                         }
                         if (addressData != "")
                             this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
@@ -249,7 +249,7 @@ var VC;
                                     addressData = addressData + ", " + tokenData.Country;
                                 }
                                 if (tokenData.ZipCode != null) {
-                                    addressData = addressData + "-" + tokenData.ZipCode + ".";
+                                    addressData = addressData + "-" + tokenData.ZipCode;
                                 }
                                 if (addressData != "")
                                     this.label[i].setText(tokenData.Name + ", " + addressData + " connected.", App.Components.BoxLabelStyle.Connected);

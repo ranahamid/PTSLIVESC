@@ -22,6 +22,7 @@ namespace VirtualClassroom.Models
 
         public List<Seat> seats { get; set; }
         public List<Teacher> teachers { get; set; }
+        public List<Moderator> moderators { get; set; }
         public List<Featured> featureds { get; set; }
     }
 
@@ -45,6 +46,20 @@ namespace VirtualClassroom.Models
         public string Country { get; set; }
     }
 
+
+    [DataObject]
+    public class Moderator : Computer
+    {
+        public int position { get; set; }
+        public Teacher teacher { get; set; }
+        public string featuredpcname { get; set; }
+        public Guid FcUid { get; set; }
+        public string address1 { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+        public string Country { get; set; }
+    }
 
     [DataObject]
     public class Teacher : Computer

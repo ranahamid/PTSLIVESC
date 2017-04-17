@@ -35,6 +35,12 @@ namespace VirtualClassroom.Code
                 this.Video = pc.Video;
                 this.Volume = pc.Volume;
             }
+            public ComputerConfig(TblModerator moderator)
+            {
+                this.Audio  = moderator.Audio;
+                this.Video  = moderator.Video;
+                this.Volume = moderator.Volume;
+            }
             public ComputerConfig(TblSC sc)
             {
             }
@@ -249,6 +255,65 @@ namespace VirtualClassroom.Code
 
             return group;
         }
+
+
+        public static List<GroupComputer> CreateGroup(TblModerator pc)
+        {
+            List<GroupComputer> group = new List<GroupComputer>();
+
+            // seat computer
+            if (pc.ScUid.HasValue)
+            {
+                group.Add(new GroupComputer
+                {
+                    Uid = pc.TblSC.Uid,
+                    Id = pc.TblSC.Id,
+                    Role = (int)VC.VcRoles.SC,
+                    Position = 0
+                });
+            }
+
+            // students within the teacher
+            if (pc.TcUid.HasValue)
+            {
+                group.AddRange(
+                    pc.TblTC.TblPCs
+                        .Where(x => x.Uid != pc.Uid) // not me
+                        .Select(x => new GroupComputer
+                        {
+                            Uid = x.Uid,
+                            Id = x.Id,
+                            Role = (int)VC.VcRoles.PC,
+                            Position = x.Position
+                        }));
+            }
+
+            // teacher computer
+            if (pc.TcUid.HasValue)
+            {
+                group.Add(new GroupComputer
+                {
+                    Uid = pc.TblTC.Uid,
+                    Id = pc.TblTC.Id,
+                    Role = (int)VC.VcRoles.TC,
+                    Position = 0
+                });
+            }
+
+            // featured computer
+            //group.AddRange(
+            //    pc.TblFCPCs.Select(x =>
+            //        new GroupComputer
+            //        {
+            //            Uid = x.TblFC.Uid,
+            //            Id = x.TblFC.Id,
+            //            Role = (int)VC.VcRoles.FC,
+            //            Position = 0
+            //        }));
+
+            return group;
+        }
+
         public static List<GroupComputer> CreateGroup(TblSC sc)
         {
             List<GroupComputer> group = new List<GroupComputer>();

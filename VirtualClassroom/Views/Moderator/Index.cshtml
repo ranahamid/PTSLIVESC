@@ -1,7 +1,112 @@
-﻿
+﻿@model VirtualClassroom.Models.ComputerViewModel
+
+<style>
+    .panel-body {
+        background-color: #a09f9f;
+    }
+</style>
+<script>
+    //$("#Header1").css('display', 'none');
+    //$("#Footer1 hr").css('display', 'none');
+    //$(".divBody").css('margin-top', '20px');
+
+</script>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Moderator Computer";
+    //   ViewBag.Name = Model.Name;
+    ViewBag.Name = Model.Name;
 }
 
-<h2>Index</h2>
 
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+    <div id="targetDiv" class="targetContainer"></div>
+
+    @Scripts.RenderFormat("<script src=\"{0}\"></script>", "https://static.opentok.com/v2/js/opentok.min.js")
+
+    @Scripts.Render("~/bundles/react")
+    @Scripts.Render("~/vc/global")
+    @Scripts.Render("~/vc/app")
+    @Scripts.Render("~/vc/app/Moderator")
+
+
+    <script src="https://cdn.rawgit.com/eligrey/Blob.js/0cef2746414269b16834878a8abc52eb9d53e6bd/Blob.js"></script>
+    <script async="" src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var _c = new VC.App.InitModerator('targetDiv', '@Model.ClassroomId', '@Model.ActionUrl');
+        });
+
+
+        $(function ()
+        {
+            //Footer1
+        //    $("#Footer1 hr").css('display', 'none');
+         //   $("#Footer1 #copyright").text('C:TMONLINE');
+            //minimizechat
+            $("#minimizechat").css('float', 'right');
+            $("#minimizechat").css('margin-top', '3px');
+            $("#minimizechat").css('margin-right', '2px');
+            $("#minimizechat").css('color', '#fff');
+            //minimizevideo
+
+            $("#minimizevideo").css('margin-right', '2px');
+			$("#minimizevideo").css('margin-top', '3px');
+            $("#minimizevideo").css('float', 'right');
+            $("#minimizevideo").css('color', '#fff');
+
+            //header-button
+            $(".header-button").css('background-color', '#5cb85c');
+            $(".header-button").css('border-color', '#4cae4c');
+
+            //header-button2
+            $(".header-button2").css('background-color', '#5cb85c');
+            $(".header-button2").css('border-color', '#4cae4c');
+            $(".header-button2").css('height', '18px');
+
+            //exportchat
+            $("#exportchat").css('background-color', '#5cb85c');
+            $("#exportchat").css('border-color', '#4cae4c');
+           // $("#exportchat").css('color', '#fff');
+            $("#exportchat").css('color', '#0000ff');
+
+            $("#exportchat").click(function ()
+            {
+                var values = [];
+                var val="";
+
+                $(".item").each(function ()
+                {
+                    val = val + $(this).find(".itemName").text() ;
+                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
+                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';
+
+                });
+                var blob = new Blob([val], { type: "text/plain;charset=utf-8" });
+                saveAs(blob, "ChatReport.txt");
+
+            });
+
+            $("#minimizechat").click(function ()
+            {
+                $(".panel-heading").slideToggle();
+                $(".panel-body").slideToggle();
+                $(".panel-footer").slideToggle();
+
+            });
+
+
+            $("#minimizevideo").click(function () {
+                $(".cBoxP").slideToggle();
+            });
+
+        });
+
+    </script>
+
+}

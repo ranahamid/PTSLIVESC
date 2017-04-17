@@ -67,20 +67,38 @@
                                 </li>
                             </ul>
                         }
-
-                        @foreach (var tc in item.teachers)
+                        @if(item.teachers!=null)
                         {
-                            <ul>
-                                <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
-                            </ul>
+                            foreach (var tc in item.teachers)
+                            {
+                                <p>Teacher</p>
+                                <ul>
+                                    <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
+                                </ul>
+                            }
                         }
-
-                        @foreach (var fc in item.featureds)
+                        
+                        @if(item.moderators!=null)
                         {
-                            <ul>
-                                <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
-                            </ul>
+                            foreach (var moderator in item.moderators)
+                            {
+                                <p>Moderator</p>
+                                <ul>
+                                    <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
+                                </ul>
+                            }
                         }
+                        @if (item.featureds != null)
+                        {  
+                            <p>Fetured Computer</p>
+                            foreach (var fc in item.featureds)
+                            {
+                                <ul>
+                                    <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
+                                </ul>
+                            }
+                        }
+                      
                     </li>
                 </ul>
             </div>

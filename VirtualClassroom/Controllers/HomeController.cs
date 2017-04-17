@@ -50,12 +50,34 @@ namespace VirtualClassroom.Controllers
                             name = y.Name
                         }).ToList(),
 
+
+                        moderators = x.TblModerators.OrderBy(z => z.Position).Select(z => new Moderator()
+                        {
+                            uid = z.Uid,
+                            id = z.Id,
+                            name = z.Name,
+                            position = z.Position,
+                            teacher = null,
+                            address1 = z.Address1,
+                            State = z.State,
+                            City = z.City,
+                            ZipCode = z.ZipCode,
+                            Country = z.Country
+                        }).ToList(),
+
                         featureds = x.TblFCs.OrderBy(y => y.Id).Select(y => new Featured()
                         {
                             uid = y.Uid,
                             id = y.Id,
                             name = y.Name,
-                            students = y.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student() { uid = z.TblPC.Uid, id = z.TblPC.Id, name = z.TblPC.Name, position = z.Position, teacher = null }).ToList()
+                            students = y.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student()
+                            {
+                                uid = z.TblPC.Uid,
+                                id = z.TblPC.Id,
+                                name = z.TblPC.Name,
+                                position = z.Position,
+                                teacher = null
+                            }).ToList()
                         }).ToList()
                     };
 

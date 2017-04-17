@@ -17,6 +17,13 @@ namespace VirtualClassroom
             );
 
             routes.MapRoute(
+                name: "Moderator",
+                url: "Moderator/{classroomId}/{id}/{action}",
+                defaults: new { controller = "Moderator", action = "Index", classroomId = UrlParameter.Optional, id = UrlParameter.Optional },
+                constraints: new { classroomId = new RouteConstraints.StringConstraint(), id = new RouteConstraints.StringConstraint() }
+            );
+
+            routes.MapRoute(
                 name: "PC2",
                 url: "PC2/{classroomId}/{id}/{action}",
                 defaults: new { controller = "PC2", action = "Index", classroomId = UrlParameter.Optional, id = UrlParameter.Optional },

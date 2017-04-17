@@ -54,6 +54,9 @@ namespace VirtualClassroom.Models
     partial void InsertTblSC(TblSC instance);
     partial void UpdateTblSC(TblSC instance);
     partial void DeleteTblSC(TblSC instance);
+    partial void InsertTblModerator(TblModerator instance);
+    partial void UpdateTblModerator(TblModerator instance);
+    partial void DeleteTblModerator(TblModerator instance);
     #endregion
 		
 		public VirtualClassroomDataContext() : 
@@ -84,14 +87,6 @@ namespace VirtualClassroom.Models
 				base(connection, mappingSource)
 		{
 			OnCreated();
-		}
-		
-		public System.Data.Linq.Table<Moderator> Moderators
-		{
-			get
-			{
-				return this.GetTable<Moderator>();
-			}
 		}
 		
 		public System.Data.Linq.Table<TblTC> TblTCs
@@ -157,283 +152,12 @@ namespace VirtualClassroom.Models
 				return this.GetTable<TblSC>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Moderator")]
-	public partial class Moderator
-	{
 		
-		private System.Nullable<System.Guid> _Uid;
-		
-		private string _ClassroomId;
-		
-		private string _Id;
-		
-		private string _Name;
-		
-		private System.Nullable<System.Guid> _ScUid;
-		
-		private System.Nullable<System.Guid> _TcUid;
-		
-		private System.Nullable<int> _Position;
-		
-		private System.Nullable<bool> _Audio;
-		
-		private System.Nullable<bool> _Video;
-		
-		private System.Nullable<int> _Volume;
-		
-		private string _Address1;
-		
-		private string _State;
-		
-		private string _City;
-		
-		private string _ZipCode;
-		
-		private string _Country;
-		
-		public Moderator()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Uid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> Uid
+		public System.Data.Linq.Table<TblModerator> TblModerators
 		{
 			get
 			{
-				return this._Uid;
-			}
-			set
-			{
-				if ((this._Uid != value))
-				{
-					this._Uid = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassroomId", DbType="VarChar(20)")]
-		public string ClassroomId
-		{
-			get
-			{
-				return this._ClassroomId;
-			}
-			set
-			{
-				if ((this._ClassroomId != value))
-				{
-					this._ClassroomId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="VarChar(20)")]
-		public string Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this._Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(256)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ScUid
-		{
-			get
-			{
-				return this._ScUid;
-			}
-			set
-			{
-				if ((this._ScUid != value))
-				{
-					this._ScUid = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> TcUid
-		{
-			get
-			{
-				return this._TcUid;
-			}
-			set
-			{
-				if ((this._TcUid != value))
-				{
-					this._TcUid = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position", DbType="Int")]
-		public System.Nullable<int> Position
-		{
-			get
-			{
-				return this._Position;
-			}
-			set
-			{
-				if ((this._Position != value))
-				{
-					this._Position = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Audio", DbType="Bit")]
-		public System.Nullable<bool> Audio
-		{
-			get
-			{
-				return this._Audio;
-			}
-			set
-			{
-				if ((this._Audio != value))
-				{
-					this._Audio = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Video", DbType="Bit")]
-		public System.Nullable<bool> Video
-		{
-			get
-			{
-				return this._Video;
-			}
-			set
-			{
-				if ((this._Video != value))
-				{
-					this._Video = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int")]
-		public System.Nullable<int> Volume
-		{
-			get
-			{
-				return this._Volume;
-			}
-			set
-			{
-				if ((this._Volume != value))
-				{
-					this._Volume = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Address1", DbType="NVarChar(256)")]
-		public string Address1
-		{
-			get
-			{
-				return this._Address1;
-			}
-			set
-			{
-				if ((this._Address1 != value))
-				{
-					this._Address1 = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_State", DbType="NVarChar(50)")]
-		public string State
-		{
-			get
-			{
-				return this._State;
-			}
-			set
-			{
-				if ((this._State != value))
-				{
-					this._State = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_City", DbType="NVarChar(50)")]
-		public string City
-		{
-			get
-			{
-				return this._City;
-			}
-			set
-			{
-				if ((this._City != value))
-				{
-					this._City = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ZipCode", DbType="NVarChar(50)")]
-		public string ZipCode
-		{
-			get
-			{
-				return this._ZipCode;
-			}
-			set
-			{
-				if ((this._ZipCode != value))
-				{
-					this._ZipCode = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Country", DbType="NVarChar(100)")]
-		public string Country
-		{
-			get
-			{
-				return this._Country;
-			}
-			set
-			{
-				if ((this._Country != value))
-				{
-					this._Country = value;
-				}
+				return this.GetTable<TblModerator>();
 			}
 		}
 	}
@@ -460,6 +184,8 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblPC> _TblPCs;
 		
+		private EntitySet<TblModerator> _TblModerators;
+		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
     #region Extensibility Method Definitions
@@ -485,6 +211,7 @@ namespace VirtualClassroom.Models
 		public TblTC()
 		{
 			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
+			this._TblModerators = new EntitySet<TblModerator>(new Action<TblModerator>(this.attach_TblModerators), new Action<TblModerator>(this.detach_TblModerators));
 			this._TblClassroom = default(EntityRef<TblClassroom>);
 			OnCreated();
 		}
@@ -646,6 +373,19 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblModerator", Storage="_TblModerators", ThisKey="Uid", OtherKey="TcUid")]
+		public EntitySet<TblModerator> TblModerators
+		{
+			get
+			{
+				return this._TblModerators;
+			}
+			set
+			{
+				this._TblModerators.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblTC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
@@ -711,6 +451,18 @@ namespace VirtualClassroom.Models
 			this.SendPropertyChanging();
 			entity.TblTC = null;
 		}
+		
+		private void attach_TblModerators(TblModerator entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblTC = this;
+		}
+		
+		private void detach_TblModerators(TblModerator entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblTC = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblClassroom")]
@@ -737,6 +489,8 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblSC> _TblSCs;
 		
+		private EntitySet<TblModerator> _TblModerators;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -758,6 +512,7 @@ namespace VirtualClassroom.Models
 			this._TblForms = new EntitySet<TblForm>(new Action<TblForm>(this.attach_TblForms), new Action<TblForm>(this.detach_TblForms));
 			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
 			this._TblSCs = new EntitySet<TblSC>(new Action<TblSC>(this.attach_TblSCs), new Action<TblSC>(this.detach_TblSCs));
+			this._TblModerators = new EntitySet<TblModerator>(new Action<TblModerator>(this.attach_TblModerators), new Action<TblModerator>(this.detach_TblModerators));
 			OnCreated();
 		}
 		
@@ -906,6 +661,19 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblModerator", Storage="_TblModerators", ThisKey="Id", OtherKey="ClassroomId")]
+		public EntitySet<TblModerator> TblModerators
+		{
+			get
+			{
+				return this._TblModerators;
+			}
+			set
+			{
+				this._TblModerators.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -981,6 +749,18 @@ namespace VirtualClassroom.Models
 		}
 		
 		private void detach_TblSCs(TblSC entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = null;
+		}
+		
+		private void attach_TblModerators(TblModerator entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblClassroom = this;
+		}
+		
+		private void detach_TblModerators(TblModerator entity)
 		{
 			this.SendPropertyChanging();
 			entity.TblClassroom = null;
@@ -2538,6 +2318,8 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblPC> _TblPCs;
 		
+		private EntitySet<TblModerator> _TblModerators;
+		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
     #region Extensibility Method Definitions
@@ -2557,6 +2339,7 @@ namespace VirtualClassroom.Models
 		public TblSC()
 		{
 			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
+			this._TblModerators = new EntitySet<TblModerator>(new Action<TblModerator>(this.attach_TblModerators), new Action<TblModerator>(this.detach_TblModerators));
 			this._TblClassroom = default(EntityRef<TblClassroom>);
 			OnCreated();
 		}
@@ -2658,6 +2441,19 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblModerator", Storage="_TblModerators", ThisKey="Uid", OtherKey="ScUid")]
+		public EntitySet<TblModerator> TblModerators
+		{
+			get
+			{
+				return this._TblModerators;
+			}
+			set
+			{
+				this._TblModerators.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblSC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
@@ -2722,6 +2518,539 @@ namespace VirtualClassroom.Models
 		{
 			this.SendPropertyChanging();
 			entity.TblSC = null;
+		}
+		
+		private void attach_TblModerators(TblModerator entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblSC = this;
+		}
+		
+		private void detach_TblModerators(TblModerator entity)
+		{
+			this.SendPropertyChanging();
+			entity.TblSC = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblModerator")]
+	public partial class TblModerator : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _Uid;
+		
+		private string _ClassroomId;
+		
+		private string _Id;
+		
+		private string _Name;
+		
+		private System.Nullable<System.Guid> _ScUid;
+		
+		private System.Nullable<System.Guid> _TcUid;
+		
+		private int _Position;
+		
+		private bool _Audio;
+		
+		private bool _Video;
+		
+		private int _Volume;
+		
+		private string _Address1;
+		
+		private string _State;
+		
+		private string _City;
+		
+		private string _ZipCode;
+		
+		private string _Country;
+		
+		private EntityRef<TblClassroom> _TblClassroom;
+		
+		private EntityRef<TblSC> _TblSC;
+		
+		private EntityRef<TblTC> _TblTC;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUidChanging(System.Guid value);
+    partial void OnUidChanged();
+    partial void OnClassroomIdChanging(string value);
+    partial void OnClassroomIdChanged();
+    partial void OnIdChanging(string value);
+    partial void OnIdChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnScUidChanging(System.Nullable<System.Guid> value);
+    partial void OnScUidChanged();
+    partial void OnTcUidChanging(System.Nullable<System.Guid> value);
+    partial void OnTcUidChanged();
+    partial void OnPositionChanging(int value);
+    partial void OnPositionChanged();
+    partial void OnAudioChanging(bool value);
+    partial void OnAudioChanged();
+    partial void OnVideoChanging(bool value);
+    partial void OnVideoChanged();
+    partial void OnVolumeChanging(int value);
+    partial void OnVolumeChanged();
+    partial void OnAddress1Changing(string value);
+    partial void OnAddress1Changed();
+    partial void OnStateChanging(string value);
+    partial void OnStateChanged();
+    partial void OnCityChanging(string value);
+    partial void OnCityChanged();
+    partial void OnZipCodeChanging(string value);
+    partial void OnZipCodeChanged();
+    partial void OnCountryChanging(string value);
+    partial void OnCountryChanged();
+    #endregion
+		
+		public TblModerator()
+		{
+			this._TblClassroom = default(EntityRef<TblClassroom>);
+			this._TblSC = default(EntityRef<TblSC>);
+			this._TblTC = default(EntityRef<TblTC>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Uid", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid Uid
+		{
+			get
+			{
+				return this._Uid;
+			}
+			set
+			{
+				if ((this._Uid != value))
+				{
+					this.OnUidChanging(value);
+					this.SendPropertyChanging();
+					this._Uid = value;
+					this.SendPropertyChanged("Uid");
+					this.OnUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassroomId", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
+		public string ClassroomId
+		{
+			get
+			{
+				return this._ClassroomId;
+			}
+			set
+			{
+				if ((this._ClassroomId != value))
+				{
+					if (this._TblClassroom.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClassroomIdChanging(value);
+					this.SendPropertyChanging();
+					this._ClassroomId = value;
+					this.SendPropertyChanged("ClassroomId");
+					this.OnClassroomIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
+		public string Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(256) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScUid", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ScUid
+		{
+			get
+			{
+				return this._ScUid;
+			}
+			set
+			{
+				if ((this._ScUid != value))
+				{
+					if (this._TblSC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnScUidChanging(value);
+					this.SendPropertyChanging();
+					this._ScUid = value;
+					this.SendPropertyChanged("ScUid");
+					this.OnScUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> TcUid
+		{
+			get
+			{
+				return this._TcUid;
+			}
+			set
+			{
+				if ((this._TcUid != value))
+				{
+					if (this._TblTC.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTcUidChanging(value);
+					this.SendPropertyChanging();
+					this._TcUid = value;
+					this.SendPropertyChanged("TcUid");
+					this.OnTcUidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Position", DbType="Int NOT NULL")]
+		public int Position
+		{
+			get
+			{
+				return this._Position;
+			}
+			set
+			{
+				if ((this._Position != value))
+				{
+					this.OnPositionChanging(value);
+					this.SendPropertyChanging();
+					this._Position = value;
+					this.SendPropertyChanged("Position");
+					this.OnPositionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Audio", DbType="Bit NOT NULL")]
+		public bool Audio
+		{
+			get
+			{
+				return this._Audio;
+			}
+			set
+			{
+				if ((this._Audio != value))
+				{
+					this.OnAudioChanging(value);
+					this.SendPropertyChanging();
+					this._Audio = value;
+					this.SendPropertyChanged("Audio");
+					this.OnAudioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Video", DbType="Bit NOT NULL")]
+		public bool Video
+		{
+			get
+			{
+				return this._Video;
+			}
+			set
+			{
+				if ((this._Video != value))
+				{
+					this.OnVideoChanging(value);
+					this.SendPropertyChanging();
+					this._Video = value;
+					this.SendPropertyChanged("Video");
+					this.OnVideoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Int NOT NULL")]
+		public int Volume
+		{
+			get
+			{
+				return this._Volume;
+			}
+			set
+			{
+				if ((this._Volume != value))
+				{
+					this.OnVolumeChanging(value);
+					this.SendPropertyChanging();
+					this._Volume = value;
+					this.SendPropertyChanged("Volume");
+					this.OnVolumeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Address1", DbType="NVarChar(256)")]
+		public string Address1
+		{
+			get
+			{
+				return this._Address1;
+			}
+			set
+			{
+				if ((this._Address1 != value))
+				{
+					this.OnAddress1Changing(value);
+					this.SendPropertyChanging();
+					this._Address1 = value;
+					this.SendPropertyChanged("Address1");
+					this.OnAddress1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_State", DbType="NVarChar(50)")]
+		public string State
+		{
+			get
+			{
+				return this._State;
+			}
+			set
+			{
+				if ((this._State != value))
+				{
+					this.OnStateChanging(value);
+					this.SendPropertyChanging();
+					this._State = value;
+					this.SendPropertyChanged("State");
+					this.OnStateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_City", DbType="NVarChar(50)")]
+		public string City
+		{
+			get
+			{
+				return this._City;
+			}
+			set
+			{
+				if ((this._City != value))
+				{
+					this.OnCityChanging(value);
+					this.SendPropertyChanging();
+					this._City = value;
+					this.SendPropertyChanged("City");
+					this.OnCityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ZipCode", DbType="NVarChar(50)")]
+		public string ZipCode
+		{
+			get
+			{
+				return this._ZipCode;
+			}
+			set
+			{
+				if ((this._ZipCode != value))
+				{
+					this.OnZipCodeChanging(value);
+					this.SendPropertyChanging();
+					this._ZipCode = value;
+					this.SendPropertyChanged("ZipCode");
+					this.OnZipCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Country", DbType="NVarChar(100)")]
+		public string Country
+		{
+			get
+			{
+				return this._Country;
+			}
+			set
+			{
+				if ((this._Country != value))
+				{
+					this.OnCountryChanging(value);
+					this.SendPropertyChanging();
+					this._Country = value;
+					this.SendPropertyChanged("Country");
+					this.OnCountryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblModerator", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
+		public TblClassroom TblClassroom
+		{
+			get
+			{
+				return this._TblClassroom.Entity;
+			}
+			set
+			{
+				TblClassroom previousValue = this._TblClassroom.Entity;
+				if (((previousValue != value) 
+							|| (this._TblClassroom.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblClassroom.Entity = null;
+						previousValue.TblModerators.Remove(this);
+					}
+					this._TblClassroom.Entity = value;
+					if ((value != null))
+					{
+						value.TblModerators.Add(this);
+						this._ClassroomId = value.Id;
+					}
+					else
+					{
+						this._ClassroomId = default(string);
+					}
+					this.SendPropertyChanged("TblClassroom");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblModerator", Storage="_TblSC", ThisKey="ScUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblSC TblSC
+		{
+			get
+			{
+				return this._TblSC.Entity;
+			}
+			set
+			{
+				TblSC previousValue = this._TblSC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblSC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblSC.Entity = null;
+						previousValue.TblModerators.Remove(this);
+					}
+					this._TblSC.Entity = value;
+					if ((value != null))
+					{
+						value.TblModerators.Add(this);
+						this._ScUid = value.Uid;
+					}
+					else
+					{
+						this._ScUid = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("TblSC");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblModerator", Storage="_TblTC", ThisKey="TcUid", OtherKey="Uid", IsForeignKey=true)]
+		public TblTC TblTC
+		{
+			get
+			{
+				return this._TblTC.Entity;
+			}
+			set
+			{
+				TblTC previousValue = this._TblTC.Entity;
+				if (((previousValue != value) 
+							|| (this._TblTC.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TblTC.Entity = null;
+						previousValue.TblModerators.Remove(this);
+					}
+					this._TblTC.Entity = value;
+					if ((value != null))
+					{
+						value.TblModerators.Add(this);
+						this._TcUid = value.Uid;
+					}
+					else
+					{
+						this._TcUid = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("TblTC");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

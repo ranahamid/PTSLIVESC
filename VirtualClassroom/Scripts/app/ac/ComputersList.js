@@ -153,6 +153,9 @@ var VC;
                         case App.Roles.FC:
                             notFoundText = notFoundText.replace("@0", "Featured");
                             break;
+                        case App.Roles.Moderator:
+                            notFoundText = notFoundText.replace("@0", "Moderator");
+                            break;
                     }
                     return (React.createElement("table", {className: "table", align: "center"}, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {className: "text-muted"}, notFoundText))))));
                 }

@@ -9,7 +9,7 @@ var VC;
         "use strict";
         class PC extends App.XC {
             constructor(props) {
-                super(props, App.Roles.PC);
+                super(props, App.Roles.Moderator);
                 this.singleBoxVisible = false;
                 this.studentsAudio = new App.Components.Audio();
             }
@@ -79,7 +79,7 @@ var VC;
                             });
                         }
                     }
-                    else if (tokenData.Role === App.Roles.PC) {
+                    else if (tokenData.Role === App.Roles.PC || tokenData.Role === App.Roles.Moderator) {
                         // send signal to subscribe to my audio
                         if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
                             App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.AudioPublish, {
@@ -132,7 +132,7 @@ var VC;
                         // teacher computer
                         this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
                     }
-                    else if (tokenData.Role === App.Roles.PC) {
+                    else if (tokenData.Role === App.Roles.Moderator) {
                     }
                 }
             }
@@ -146,7 +146,7 @@ var VC;
                         // teacher computer
                         this.boxSubscriber.unsubscribe(this.session);
                     }
-                    else if (tokenData.Role === App.Roles.PC) {
+                    else if (tokenData.Role === App.Roles.Moderator) {
                         // student computer
                         this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                     }
@@ -183,7 +183,7 @@ var VC;
             }
             turnAvSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.role === undefined || data.role === App.Roles.PC) {
+                if (data.role === undefined || data.role === App.Roles.Moderator) {
                     if (data.audio !== null) {
                         this.dataResponse.ComputerSetting.Audio = data.audio;
                         this.boxPublisher.audio(data.audio);
@@ -206,7 +206,7 @@ var VC;
             }
             turnOffSignalReceived(event) {
                 let data = JSON.parse(event.data);
-                if (data.role === undefined || data.role === App.Roles.PC) {
+                if (data.role === undefined || data.role === App.Roles.Moderator) {
                     this.disconnect();
                 }
             }

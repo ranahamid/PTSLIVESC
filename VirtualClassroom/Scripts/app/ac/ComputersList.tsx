@@ -175,6 +175,7 @@ namespace VC.App.AC {
                 case Roles.SC: notFoundText = notFoundText.replace("@0", "Seat"); break;
                 case Roles.TC: notFoundText = notFoundText.replace("@0", "Teacher"); break;
                 case Roles.FC: notFoundText = notFoundText.replace("@0", "Featured"); break;
+                case Roles.Moderator: notFoundText = notFoundText.replace("@0", "Moderator"); break;
             }
             return (
                 <table className="table" align="center">

@@ -78,7 +78,7 @@ namespace VirtualClassroom.Controllers
                             Uid = pc.Uid,
                             Id = pc.Id,
                             Name = pc.Name,
-                            Role = (int)VC.VcRoles.PC,
+                            Role = (int)VC.VcRoles.Moderator,
                             Address1 = pc.Address1,
                             State = pc.State,
                             City = pc.City,

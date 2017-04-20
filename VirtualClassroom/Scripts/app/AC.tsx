@@ -216,6 +216,8 @@ namespace VC.App {
             let badgePC: number = 0;
             let badgeTC: number = 0;
             let badgeFC: number = 0;
+            let badgeModerator: number = 0;
+            
 
             this.connections.forEach((item: any) => {
                 let d: Global.TokenData = Global.Fce.toTokenData(item.data);
@@ -227,6 +229,7 @@ namespace VC.App {
                     case Roles.SC: badgeSC++; break;
                     case Roles.TC: badgeTC++; break;
                     case Roles.FC: badgeFC++; break;
+                    case Roles.Moderator: badgeModerator++; break;
                 }
             });
 
@@ -234,7 +237,8 @@ namespace VC.App {
                 { id: Roles.SC, title: "Seat computers", onClick: this.tabOnClick.bind(this), badge: badgeSC, active: true },
                 { id: Roles.PC, title: "Student computers", onClick: this.tabOnClick.bind(this), badge: badgePC, active: false },
                 { id: Roles.TC, title: "Teacher computers", onClick: this.tabOnClick.bind(this), badge: badgeTC, active: false },
-                { id: Roles.FC, title: "Featured computers", onClick: this.tabOnClick.bind(this), badge: badgeFC, active: false }
+                { id: Roles.FC, title: "Featured computers", onClick: this.tabOnClick.bind(this), badge: badgeFC, active: false },
+                { id: Roles.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), badge: badgeModerator, active: false }
             ];
 
             let statusClasses: Array<string> = [

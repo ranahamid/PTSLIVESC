@@ -5,97 +5,71 @@ namespace VC.Admin.Lists {
 
     const FORM_ID: string = "Id";
     const FORM_NAME: string = "Name";
+    const FORM_TEACHER: string = "Teacher";
 
-    interface IClassroomsListItem extends IDataItem<string> {
+    export interface IModeratorListItem extends IDataItem<string> {
+        uid: string;
         name: string;
-        url: string;
-        IsActive: string;
+        featuredpcname: string;
+        position: number;
+        teacher: ITeachersListItem;
     }
 
-    export class Classrooms extends Base<string, IClassroomsListItem, ClassroomsList, ClassroomsBox, ClassroomsImportBox> {
-        private tabs: Global.Components.Tabs;
-        private list: ClassroomsList;
-        private box: ClassroomsBox;
-        private boxImport: ClassroomsImportBox;
+    export class Moderators extends Base<string, IModeratorListItem, ModeratorList, ModeratorBox, ModeratormportBox> {
+        private list: ModeratorList;
+        private box: ModeratorBox;
+        private boxImport: ModeratormportBox;
 
-        private tabOnClick(id: number): void {
-            this.tabs.selectItem(id);
-
-            if (id === -2) {
-                // back to Home
-                top.location = "/" as any;
-            } else if (id === -1) {
-                // classrooms
-                top.location = "/Admin/" as any;
-            }
-        }
-
-        public getList(): ClassroomsList {
+        public getList(): ModeratorList {
             return this.list;
         }
-        public getBox(): ClassroomsBox {
+        public getBox(): ModeratorBox {
             return this.box;
         }
-        public getImportBox(): ClassroomsImportBox {
+        public getImportBox(): ModeratormportBox {
             return this.boxImport;
         }
 
-        componentDidMount(): void {
-            this.init();
-        }
-
         render(): JSX.Element {
-            let tabItems: Array<Global.Components.ITabItemProps> = [
-                { id: -2, title: "Home", onClick: this.tabOnClick.bind(this), active: false },
-                { id: -1, title: "Classrooms", onClick: this.tabOnClick.bind(this), active: true }
-            ];
-
             return (
                 <div>
-                    <div>
-                        <Global.Components.Tabs ref={(ref: Global.Components.Tabs) => this.tabs = ref} items={tabItems} className="cTabs" />
-                    </div>
-                    <div>
-                        <ClassroomsList ref={(ref: ClassroomsList) => this.list = ref} title="Classroom" actionUrl={this.props.actionUrl} loadMethod="Load" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) }  showEnableClass={this.showEnableClass.bind(this) }   showBoxEdit={this.showBoxEdit.bind(this) } showDisableClass={this.showDisableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
-                        <ClassroomsBox ref={(ref: ClassroomsBox) => this.box = ref} title="Classroom" actionUrl={this.props.actionUrl} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
-                        <ClassroomsImportBox ref={(ref: ClassroomsImportBox) => this.boxImport = ref} title="Import Classrooms" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></ClassroomsImportBox>
-                        
-                    </div>
-                    
+                    <ModeratorList ref={(ref: ModeratorList) => this.list = ref} title="Moderator computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} loadMethod="LoadStudents" showBoxImport={() => this.showBoxImport() } showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) }  showEnableClass={this.showEnableClass.bind(this) }  showDisableClass={this.showDisableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                    <ModeratorBox ref={(ref: ModeratorBox) => this.box = ref} title="Moderator computer" actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } />
+                    <ModeratormportBox ref={(ref: ModeratormportBox) => this.boxImport = ref} title="Import Moderator computers" classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) }></ModeratormportBox>
                 </div>
-               
             );
         }
     }
 
-    interface IClassroomsListProps extends IListProps<string> { }
-    interface IClassroomsListState extends IListState<IClassroomsListItem> { }
+    interface IModeratorListProps extends IListProps<string> { }
+    interface IModeratorListState extends IListState<IModeratorListItem> { }
 
-    class ClassroomsList extends List<string, IClassroomsListItem, IClassroomsListProps, IClassroomsListState> {
+    class ModeratorList extends List<string, IModeratorListItem, IModeratorListProps, IModeratorListState> {
 
-        renderItemCols(d: IClassroomsListItem): JSX.Element[] {
+        renderItemCols(d: IModeratorListItem): JSX.Element[] {
             let l: Array<JSX.Element> = [];
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
-            l.push(<td key={"tdName_" + d.id}><a href={d.url}>{d.name}</a></td>);
-            l.push(<td value={d.IsActive} id="tdStatus" key={"tdStatus_" + d.id}>{d.IsActive}</td>);
+            l.push(<td key={"tdName_" + d.id}>{d.name}</td>);
+            l.push(<td key={"tdTeacher_" + d.id}>{d.teacher === null ? "-" : d.teacher.name}</td>);
             return l;
         }
         renderTableHeaderCols(): JSX.Element[] {
             let l: Array<JSX.Element> = [];
             l.push(<th key={"thId"}>ID</th>);
-            l.push(<th key={"tdName"}>Classname</th>);
-            l.push(<th key={"tdstatus"}>Status</th>);
+            l.push(<th key={"thStudent"}>Moderator computer</th>);
+         
+            l.push(<th key={"thTeacher"}>Teacher computer</th>);
             return l;
         }
     }
 
-    interface IClassroomsBoxProps extends IBoxProps<IClassroomsListItem> { }
-    interface IClassroomsBoxState extends IBoxState<IClassroomsListItem> { }
+    interface IModeratorBoxProps extends IBoxProps<IModeratorListItem> { }
+    interface IModeratorBoxState extends IBoxState<IModeratorListItem> { }
 
-    class ClassroomsBox extends Box<string, IClassroomsListItem, IClassroomsBoxProps, IClassroomsBoxState> {
+    class ModeratorBox extends Box<string, IModeratorListItem, IModeratorBoxProps, IModeratorBoxState> {
 
-        constructor(props: IClassroomsBoxProps) {
-            super({ id: "", name: "", IsActive:"" } as IClassroomsListItem,
+        constructor(props: IModeratorBoxProps) {
+            super({ id: "", name: "", teacher: null } as IModeratorListItem,
                 props);
         }
 
@@ -107,6 +81,9 @@ namespace VC.Admin.Lists {
 
             this.setValidationStatus(FORM_ID, BoxValidationStatus.None, "");
             this.setValidationStatus(FORM_NAME, BoxValidationStatus.None, "");
+
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
+            tbTeacher.init(this.state.item.teacher !== null ? this.state.item.teacher.id : null);
         }
         boxDidShow(): void {
             if (this.state.type === BoxTypes.Create) {
@@ -145,7 +122,7 @@ namespace VC.Admin.Lists {
                 if (this.isIdValid(idVal)) {
                     this.setValidationStatus(FORM_ID, BoxValidationStatus.Success, "");
                 } else {
-                    this.setValidationStatus(FORM_ID, BoxValidationStatus.Error, "Classroom Id cannot be empty. It must be unique and contains only alphanumeric characters.");
+                    this.setValidationStatus(FORM_ID, BoxValidationStatus.Error, "Moderator computer Id cannot be empty. It must be unique and contains only alphanumeric characters.");
                     if (focusOnError) {
                         $(tbId).focus();
                     }
@@ -165,7 +142,7 @@ namespace VC.Admin.Lists {
                 if (this.isNameValid(nameVal)) {
                     this.setValidationStatus(FORM_NAME, BoxValidationStatus.Success, "");
                 } else {
-                    this.setValidationStatus(FORM_NAME, BoxValidationStatus.Error, "Classroom name cannot be empty.");
+                    this.setValidationStatus(FORM_NAME, BoxValidationStatus.Error, "Moderator computer name cannot be empty.");
                     if (focusOnError) {
                         $(tbName).focus();
                     }
@@ -209,7 +186,7 @@ namespace VC.Admin.Lists {
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/api/Classroom/" + id + "/IsExists",
+                url: "/api/Classroom/" + this.props.classroomId + "/IsStudentExists/" + id,
                 data: JSON.stringify(excludeId),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<boolean>): void => {
@@ -245,17 +222,7 @@ namespace VC.Admin.Lists {
                 } else if (this.state.type === BoxTypes.Edit) {
                     // edit
                     this.doUpdate();
-                }
-                else if (this.state.type === BoxTypes.Disable)
-                {
-                    // edit
-                    this.doDisable();
-                }
-                else if (this.state.type === BoxTypes.Enable) {
-                    // edit
-                    this.doEnable();
-                }
-                else {
+                } else {
                     // delete
                     this.doDelete();
                 }
@@ -268,7 +235,7 @@ namespace VC.Admin.Lists {
                 this.divButtons.style.display = "block";
                 this.divProcessing.style.display = "none";
 
-                this.setValidationStatus(FORM_ID, BoxValidationStatus.Error, "Classroom Id already exists.");
+                this.setValidationStatus(FORM_ID, BoxValidationStatus.Error, "Moderator computer Id already exists.");
                 $(tbId).focus();
             } else {
                 // create
@@ -282,17 +249,24 @@ namespace VC.Admin.Lists {
             let idVal: string = $(tbId).val();
             let nameVal: string = $(tbName).val();
 
+            let teacher: ITeachersListItem = null;
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
+            let selectedTeacher: string = tbTeacher.getSelectedValue();
+            if (selectedTeacher !== "") {
+                teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
+            }
+
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/api/Classroom/Create",
-                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
+                url: "/api/Classroom/" + this.props.classroomId + "/CreateStudent",
+                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher } as IModeratorListItem),
                 contentType: "application/json",
-                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
+                success: (r: Global.Data.IDataResponse<IModeratorListItem>): void => {
                     this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // add to list
-                        let d: Array<IClassroomsListItem> = this.props.getListItems();
+                        let d: Array<IModeratorListItem> = this.props.getListItems();
                         d.push(r.data);
                         this.props.setListItems(d);
                     } else {
@@ -307,24 +281,30 @@ namespace VC.Admin.Lists {
                 }
             });
         }
-
-
         doUpdate(): void {
             let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
             let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
             let idVal: string = $(tbId).val();
             let nameVal: string = $(tbName).val();
 
+            let teacher: ITeachersListItem = null;
+            let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
+            let selectedTeacher: string = tbTeacher.getSelectedValue();
+            if (selectedTeacher !== "") {
+                teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
+            }
+
             $.ajax({
+                cache: false,
                 type: "POST",
-                url: "/api/Classroom/Update",
-                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
+                url: "/api/Classroom/" + this.props.classroomId + "/UpdateStudent",
+                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher } as IModeratorListItem),
                 contentType: "application/json",
-                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
+                success: (r: Global.Data.IDataResponse<IModeratorListItem>): void => {
                     this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // update list
-                        let d: Array<IClassroomsListItem> = this.props.getListItems();
+                        let d: Array<IModeratorListItem> = this.props.getListItems();
                         for (let i: number = 0; i < d.length; i++) {
                             if (d[i].id === this.state.item.id) {
                                 d[i] = r.data;
@@ -343,94 +323,19 @@ namespace VC.Admin.Lists {
                 }
             });
         }
-
-        
-        doDisable(): void {
-            let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
-            let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
-            let idVal: string = $(tbId).val();
-            let nameVal: string = $(tbName).val();
-
-            $.ajax({
-                type: "POST",
-                url: "/api/Classroom/Disable",
-                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
-                contentType: "application/json",
-                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
-                    this.close();
-                    if (r.status === Global.Data.RESPONSE_SUCCESS) {
-                        // update list
-                        let d: Array<IClassroomsListItem> = this.props.getListItems();
-                        for (let i: number = 0; i < d.length; i++) {
-                            if (d[i].id === this.state.item.id) {
-                                d[i] = r.data;
-                            }
-                        }
-                        this.props.setListItems(d);
-                    } else {
-                        // error
-                        alert("ERROR: " + r.message);
-                    }
-                },
-                error: (xhr: JQueryXHR, status: string, error: string): void => {
-                    // error
-                    alert("ERROR: " + error);
-                    this.close();
-                }
-            });
-        }
-
-
-        doEnable(): void {
-            let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
-            let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
-            let idVal: string = $(tbId).val();
-            let nameVal: string = $(tbName).val();
-
-            $.ajax({
-                type: "POST",
-                url: "/api/Classroom/Enable",
-                data: JSON.stringify({ id: idVal, name: nameVal, url: null } as IClassroomsListItem),
-                contentType: "application/json",
-                success: (r: Global.Data.IDataResponse<IClassroomsListItem>): void => {
-                    this.close();
-                    if (r.status === Global.Data.RESPONSE_SUCCESS) {
-                        // update list
-                        let d: Array<IClassroomsListItem> = this.props.getListItems();
-                        for (let i: number = 0; i < d.length; i++) {
-                            if (d[i].id === this.state.item.id) {
-                                d[i] = r.data;
-                            }
-                        }
-                        this.props.setListItems(d);
-                    } else {
-                        // error
-                        alert("ERROR: " + r.message);
-                    }
-                },
-                error: (xhr: JQueryXHR, status: string, error: string): void => {
-                    // error
-                    alert("ERROR: " + error);
-                    this.close();
-                }
-            });
-        }
-
-       
-
         doDelete(): void {
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/api/Classroom/Delete",
+                url: "/api/Classroom/" + this.props.classroomId + "/DeleteStudent",
                 data: JSON.stringify(this.state.item.id),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<string>): void => {
                     this.close();
                     if (r.status === Global.Data.RESPONSE_SUCCESS) {
                         // remove from list
-                        let d: Array<IClassroomsListItem> = this.props.getListItems();
-                        let _d: Array<IClassroomsListItem> = [];
+                        let d: Array<IModeratorListItem> = this.props.getListItems();
+                        let _d: Array<IModeratorListItem> = [];
                         for (let i: number = 0; i < d.length; i++) {
                             if (d[i].id !== this.state.item.id) {
                                 _d.push(d[i]);
@@ -450,50 +355,60 @@ namespace VC.Admin.Lists {
             });
         }
 
+        onSelectedTeacherChanged(): void {
+            // implement when need
+        }
+
         renderForm(): JSX.Element {
             return (
                 <form className="form-horizontal" role="form">
                     <div ref={REF_FORM_DIV + FORM_ID} className="form-group">
                         <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_ID}>Id: </label>
                         <div className="col-sm-10">
-                            <input ref={REF_FORM_TB + FORM_ID} type="text" className="form-control" disabled={this.state.type !== BoxTypes.Create} placeholder="Classroom Id" maxLength="25" onPaste={() => this.validateId(false) } onCut={() => this.validateId(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressId(e) } />
+                            <input ref={REF_FORM_TB + FORM_ID} type="text" className="form-control" disabled={this.state.type !== BoxTypes.Create} placeholder="Moderator computer Id" maxLength="25" onPaste={() => this.validateId(false) } onCut={() => this.validateId(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressId(e) } />
                             <span ref={REF_FORM_ICON + FORM_ID} style={{ display: "none" }}></span>
                         </div>
                     </div>
                     <div ref={REF_FORM_DIV + FORM_NAME} className="form-group">
                         <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_NAME}>Name: </label>
                         <div className="col-sm-10">
-                            <input ref={REF_FORM_TB + FORM_NAME} type="text" className="form-control" disabled={this.state.type === BoxTypes.Delete} placeholder="Classroom name" maxLength="150" onPaste={() => this.validateName(false) } onCut={() => this.validateName(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressName(e) } />
+                            <input ref={REF_FORM_TB + FORM_NAME} type="text" className="form-control" disabled={this.state.type === BoxTypes.Delete} placeholder="Moderator computer name" maxLength="150" onPaste={() => this.validateName(false) } onCut={() => this.validateName(false) } onKeyUp={(e: KeyboardEvent) => this.onKeyPressName(e) } />
                             <span ref={REF_FORM_ICON + FORM_NAME} style={{ display: "none" }}></span>
                         </div>
                     </div>
-                    
+                    <div ref={REF_FORM_DIV + FORM_TEACHER} className="form-group">
+                        <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_TEACHER}>Teacher: </label>
+                        <div className="col-sm-10">
+                            <Global.Components.Selector ref={REF_FORM_TB + FORM_TEACHER} classroomId={this.props.classroomId} loadAction="GetAvailableTeachers" defaultName="Select Teacher computer" onSelectedItemChanged={this.onSelectedTeacherChanged.bind(this) } className="form-control" />
+                            <span ref={REF_FORM_ICON + FORM_TEACHER} style={{ display: "none" }}></span>
+                        </div>
+                    </div>
                 </form>
             );
         }
     }
 
-    interface IClassroomsImportBoxProps extends IImportBoxProps<IClassroomsListItem> { }
-    interface IClassroomsImportBoxState extends IImportBoxState<IClassroomsListItem> { }
+    interface IModeratormportBoxProps extends IImportBoxProps<IModeratorListItem> { }
+    interface IModeratormportBoxState extends IImportBoxState<IModeratorListItem> { }
 
-    class ClassroomsImportBox extends ImportBox<string, IClassroomsListItem, IClassroomsImportBoxProps, IClassroomsImportBoxState> {
-        constructor(props: IClassroomsImportBoxProps) {
+    class ModeratormportBox extends ImportBox<string, IModeratorListItem, IModeratormportBoxProps, IModeratormportBoxState> {
+        constructor(props: IModeratormportBoxProps) {
             super(props);
         }
 
         renderHelp(): JSX.Element {
             return (
                 <div className="text-muted">
-                    EXAMPLE:<br />
-                    ID1, "Classroom Name"<br />
-                    ID2, "Classroom Name"<br />
-                    ID3, "Classroom Name"<br />
+                    EXAMPLE: <br />
+                    ID1, "Moderator Name"<br />
+                    ID2, "Moderator Name"<br />
+                    ID3, "Moderator Name"<br />
                 </div>
             );
         }
 
         placeholder(): string {
-            return "ID1, \"Classroom Name\"\nID2, \"Classroom Name\"\nID3, \"Classroom Name\"";
+            return "ID1, \"Moderator Name\"\nID2, \"Moderator Name\"\nID3, \"Moderator Name\"";
         }
 
         import(): void {
@@ -510,16 +425,16 @@ namespace VC.Admin.Lists {
                 $.ajax({
                     cache: false,
                     type: "POST",
-                    url: "/api/Classroom/Import",
+                    url: "/api/Classroom/" + this.props.classroomId + "/ImportStudents",
                     data: JSON.stringify(data),
                     contentType: "application/json",
-                    success: (r: Global.Data.IDataResponse<Array<IClassroomsListItem>>): void => {
+                    success: (r: Global.Data.IDataResponse<Array<IModeratorListItem>>): void => {
                         if (r.status === Global.Data.RESPONSE_SUCCESS) {
                             this.tb.value = "";
                             this.close();
                             // add to list
-                            let d: Array<IClassroomsListItem> = this.props.getListItems();
-                            r.data.forEach((item: IClassroomsListItem) => {
+                            let d: Array<IModeratorListItem> = this.props.getListItems();
+                            r.data.forEach((item: IModeratorListItem) => {
                                 d.push(item);
                             });
                             this.props.setListItems(d);
@@ -538,6 +453,4 @@ namespace VC.Admin.Lists {
             }
         }
     }
-
 }
-

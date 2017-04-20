@@ -584,6 +584,7 @@
     <TypeScriptCompile Include="Scripts\admin\lists\Classrooms.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Featureds.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Forms.tsx" />
+    <TypeScriptCompile Include="Scripts\admin\lists\Moderators.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Seats.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Students.tsx" />
     <TypeScriptCompile Include="Scripts\admin\lists\Teachers.tsx" />

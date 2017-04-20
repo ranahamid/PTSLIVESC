@@ -9,7 +9,8 @@ namespace VC.Admin {
         Teachers = 2,
         Featureds = 3,
         Surveys = 4,
-        Polls = 5
+        Polls = 5,
+        Moderator=6,
     }
 
     interface IProps {
@@ -112,6 +113,7 @@ namespace VC.Admin {
                 { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Teachers, title: "Teacher computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Featureds, title: "Featured computers", onClick: this.tabOnClick.bind(this), active: false },
+                { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Surveys, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Polls, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
             ];

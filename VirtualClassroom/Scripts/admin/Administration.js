@@ -12,6 +12,7 @@ var VC;
             Menu[Menu["Featureds"] = 3] = "Featureds";
             Menu[Menu["Surveys"] = 4] = "Surveys";
             Menu[Menu["Polls"] = 5] = "Polls";
+            Menu[Menu["Moderator"] = 6] = "Moderator";
         })(Menu || (Menu = {}));
         class Administration extends React.Component {
             constructor(props) {
@@ -83,6 +84,7 @@ var VC;
                     { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Teachers, title: "Teacher computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Featureds, title: "Featured computers", onClick: this.tabOnClick.bind(this), active: false },
+                    { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Surveys, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Polls, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
                 ];

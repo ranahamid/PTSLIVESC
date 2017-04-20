@@ -114,7 +114,7 @@ namespace VirtualClassroom.Controllers
             {
                 id = x.Id,
                 name = x.Name,
-                status=x.IsActive,
+                IsActive = x.IsActive,
                 url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = x.Id })
             }).ToList();
 
@@ -244,7 +244,7 @@ namespace VirtualClassroom.Controllers
             try
             {
                 db.SubmitChanges();
-                item.status =1;
+                item.IsActive = 1;
                 item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
 
                 return responseSuccess(item);
@@ -271,7 +271,7 @@ namespace VirtualClassroom.Controllers
                     db.SubmitChanges();
 
                     item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
-                    item.status =tblClassroom.IsActive;
+                    item.IsActive = tblClassroom.IsActive;
                     return responseSuccess(item);
                 }
                 catch (ChangeConflictException ex)
@@ -302,7 +302,7 @@ namespace VirtualClassroom.Controllers
                 {
                     db.SubmitChanges();
                     item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
-                    item.status = 1;
+                    item.IsActive = 1;
                     return responseSuccess(item);
 
                 }
@@ -333,7 +333,7 @@ namespace VirtualClassroom.Controllers
                 {
                     db.SubmitChanges();
                     item.url = this.Url.Link("AdminClassroom", new { controller = "Admin", action = "Classroom", classroomId = item.id });
-                    item.status = 0;
+                    item.IsActive = 0;
                     return responseSuccess(item);
 
                 }

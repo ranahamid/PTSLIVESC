@@ -68,7 +68,8 @@ namespace VirtualClassroom
                 "~/Scripts/admin/lists/Featureds.js",
                 "~/Scripts/admin/lists/Students.js",
                 "~/Scripts/admin/lists/Forms.js",
-                "~/Scripts/admin/Administration.js"
+                "~/Scripts/admin/Administration.js",
+                 "~/Scripts/admin/Moderators.js"
                 ));
 
             // app scripts

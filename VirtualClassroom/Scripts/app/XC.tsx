@@ -17,7 +17,8 @@ namespace VC.App {
         SC = 2,
         TC = 3,
         FC = 4,
-        AC = 5
+        AC = 5,
+        Moderator=6,
     }
     export enum PublishSources {
         Camera = 1,

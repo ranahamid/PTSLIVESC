@@ -25,7 +25,7 @@ namespace VC.App {
         public singleBoxVisible: boolean = false;
 
         constructor(props: IProps) {
-            super(props, Roles.PC);
+            super(props, Roles.Moderator);
             this.studentsAudio = new Components.Audio();
         }
 
@@ -98,7 +98,7 @@ namespace VC.App {
                             audionOn: true
                         } as Global.ISignalAudioPublish);
                     }
-                } else if (tokenData.Role === Roles.PC) {
+                } else if (tokenData.Role === Roles.PC || tokenData.Role === Roles.Moderator) {
                     // send signal to subscribe to my audio
                     if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
                         Global.Signaling.sendSignal<Global.ISignalAudioPublish>(this.session, connection, Global.SignalTypes.AudioPublish, {
@@ -151,7 +151,7 @@ namespace VC.App {
                 if (tokenData.Role === Roles.TC) {
                     // teacher computer
                     this.boxSubscriber.subscribe(this.session, stream, this.dataResponse.ComputerSetting.Volume);
-                } else if (tokenData.Role === Roles.PC) {
+                } else if (tokenData.Role === Roles.Moderator) {
                     // student computer
                     // connect to audio .. auto subscribe, we are going to do signal based subscribing, to do not subsribe automatically to everyone
                     // this.studentsAudio.subscribe(tokenData.Uid, this.session, stream, this.dataResponse.ComputerSetting.Volume);
@@ -167,7 +167,7 @@ namespace VC.App {
                 if (tokenData.Role === Roles.TC) {
                     // teacher computer
                     this.boxSubscriber.unsubscribe(this.session);
-                } else if (tokenData.Role === Roles.PC) {
+                } else if (tokenData.Role === Roles.Moderator) {
                     // student computer
                     this.studentsAudio.unsubscribe(tokenData.Uid, this.session, stream);
                 }
@@ -205,7 +205,7 @@ namespace VC.App {
         }
         private turnAvSignalReceived(event: any): void {
             let data: Global.ISignalTurnAvData = JSON.parse(event.data) as Global.ISignalTurnAvData;
-            if (data.role === undefined || data.role === Roles.PC) {
+            if (data.role === undefined || data.role === Roles.Moderator) {
                 if (data.audio !== null) {
                     this.dataResponse.ComputerSetting.Audio = data.audio;
                     this.boxPublisher.audio(data.audio);
@@ -228,7 +228,7 @@ namespace VC.App {
         }
         private turnOffSignalReceived(event: any): void {
             let data: Global.ISignalTurnOffData = JSON.parse(event.data) as Global.ISignalTurnOffData;
-            if (data.role === undefined || data.role === Roles.PC) {
+            if (data.role === undefined || data.role === Roles.Moderator) {
                 this.disconnect();
             }
         }

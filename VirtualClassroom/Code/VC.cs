@@ -13,6 +13,7 @@ namespace VirtualClassroom.Code
             TC = 3,
             FC = 4,
             AC = 5,
+            Moderator = 6,
         }
 
         public const string RESPONSE_SUCCESS = "success";

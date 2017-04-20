@@ -67,29 +67,31 @@
                                 </li>
                             </ul>
                         }
-                        @if(item.teachers!=null)
+                        @if (item.teachers.Count > 0)
                         {
+                            <p>Teacher</p>
                             foreach (var tc in item.teachers)
                             {
-                                <p>Teacher</p>
+
                                 <ul>
                                     <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
                                 </ul>
                             }
                         }
                         
-                        @if(item.moderators!=null)
-                        {
+                        @if (item.moderators.Count>0)
+                        { 
+                            <p>Moderator</p>
                             foreach (var moderator in item.moderators)
                             {
-                                <p>Moderator</p>
+
                                 <ul>
                                     <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
                                 </ul>
                             }
                         }
-                        @if (item.featureds != null)
-                        {  
+                        @if (item.featureds.Count > 0)
+                        {
                             <p>Fetured Computer</p>
                             foreach (var fc in item.featureds)
                             {

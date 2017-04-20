@@ -10,6 +10,7 @@ var VC;
             Roles[Roles["TC"] = 3] = "TC";
             Roles[Roles["FC"] = 4] = "FC";
             Roles[Roles["AC"] = 5] = "AC";
+            Roles[Roles["Moderator"] = 6] = "Moderator";
         })(App.Roles || (App.Roles = {}));
         var Roles = App.Roles;
         (function (PublishSources) {

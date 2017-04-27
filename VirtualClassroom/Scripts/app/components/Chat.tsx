@@ -46,7 +46,12 @@ namespace VC.App.Components {
             return (
                 <div>
                     <div className="row">
-                        <div className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
+                      
+
+                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp;</span>{this.props.item.userName}</div></div>                                     
+                        <div style={{ display: (this.props.item.userRole == Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
+              
+                        
                         <div className="col-sm-6"><div ref={(ref: HTMLDivElement) => this.divTime = ref} className="itemTime">{this.getItemTimeString() }</div></div>
                         <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
                     </div>

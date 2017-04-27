@@ -56,7 +56,8 @@ namespace VC.App.Components {
                         <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
                     </div>
                     <div className="row">
-                        <div className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>
+                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }}  className="col-sm-12"><div className="itemMessage blueText">{this.props.item.message}</div></div>
+                        <div style={{ display: (this.props.item.userRole == Roles.Moderator ? "none" : "block") }}  className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>
                     </div>
                 </div>
             );

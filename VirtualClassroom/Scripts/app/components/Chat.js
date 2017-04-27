@@ -24,7 +24,7 @@ var VC;
                     return ms;
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, React.createElement("span", null, "[Moderator] "), this.props.item.userName)), React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)), React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString())), React.createElement("div", {className: "col-sm-6", style: { display: 'none' }}, React.createElement("div", {ref: (ref) => this.divTime2 = ref, className: "itemTimechat"}, this.getItemTimeString2()))), React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage blueText"}, this.props.item.message)), React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)))));
+                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)), React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, React.createElement("span", null, "[Moderator]  "), this.props.item.userName)), React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString())), React.createElement("div", {className: "col-sm-6", style: { display: 'none' }}, React.createElement("div", {ref: (ref) => this.divTime2 = ref, className: "itemTimechat"}, this.getItemTimeString2()))), React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage blueText"}, this.props.item.message)), React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)))));
                 }
             }
             class ChatList extends React.Component {
@@ -155,7 +155,7 @@ var VC;
             class Chat extends React.Component {
                 constructor(props) {
                     super(props);
-                    this.state = { uid: "", name: "", role: null, height: null };
+                    this.state = { uid: "", name: "", role: null, height: null, };
                 }
                 setChatUser(state) {
                     this.state = state;
@@ -208,6 +208,12 @@ var VC;
                 fitTbHeight() {
                     this.chatBox.fitTbHeight();
                 }
+                onButtonClicked() {
+                    //1
+                    //    let message: string ="9 minutes remaining on break";
+                    //   this.onSubmit(message);
+                    //   this.fitTbHeight();
+                }
                 renderHeading() {
                     if (this.props.onChatClosed === undefined) {
                         return (React.createElement("div", {className: "panel-heading", ref: (ref) => this.divHeader = ref}, React.createElement("h4", null, this.props.title)));
@@ -217,7 +223,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})))));
+                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {class: "col-md-12", style: { display: 'none' }, className: "ModeratorTimeAlert"}, React.createElement("div", {class: "input-group"}, React.createElement("input", {type: "text", style: { width: '85%' }, id: "remainingMinutetxt", class: "form-control", placeholder: "remaining minute..."}), React.createElement("span", {class: "input-group-btn"}, React.createElement("button", {class: "btn btn-secondary", onClick: this.onButtonClicked, id: "remainingMinutebtn", type: "button"}, "Go!"))))))));
                 }
             }
             Components.Chat = Chat;

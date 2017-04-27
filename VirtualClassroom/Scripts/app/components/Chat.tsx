@@ -46,11 +46,9 @@ namespace VC.App.Components {
             return (
                 <div>
                     <div className="row">
-                      
 
-                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp;</span>{this.props.item.userName}</div></div>                                     
                         <div style={{ display: (this.props.item.userRole == Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
-              
+                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp; </span>{this.props.item.userName}</div></div>                                     
                         
                         <div className="col-sm-6"><div ref={(ref: HTMLDivElement) => this.divTime = ref} className="itemTime">{this.getItemTimeString() }</div></div>
                         <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
@@ -161,20 +159,24 @@ namespace VC.App.Components {
     interface IChatBoxProps {
         onSubmit: (text: string) => void;
         fixedHeight: boolean;
+   
     }
     interface IChatBoxState {
     }
-
+    
+   
     class ChatBox extends React.Component<IChatBoxProps, IChatBoxState> {
         private maxLength: number = 500;
         private tb: HTMLTextAreaElement;
 
         constructor(props: IChatBoxProps) {
             super(props);
+            
         }
 
         public fitTbHeight(): void {
             if (!this.props.fixedHeight) {
+                    
                 this.tb.style.height = "0px";
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }
@@ -228,7 +230,7 @@ namespace VC.App.Components {
         render(): JSX.Element {
             return (
                 <div className="box">
-                    <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
+                    <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>                  
                 </div>
             );
         }
@@ -239,12 +241,14 @@ namespace VC.App.Components {
         title: string;
         onItemSubmitted: (item: IChatListItem) => void;
         fixedHeight: boolean;
+    
         onChatClosed?: () => void;
     }
     export interface IChatState {
         uid: string;
         name: string;
         role: Roles;
+      
         height: number;
     }
 
@@ -257,12 +261,13 @@ namespace VC.App.Components {
 
         constructor(props: IChatProps) {
             super(props);
-            this.state = { uid: "", name: "", role: null, height: null } as IChatState;
+            this.state = { uid: "", name: "", role: null, height: null, } as IChatState;
         }
 
         public setChatUser(state: IChatState): void {
             this.state = state;
             this.chatBox.fitTbHeight();
+            
         }
 
         public setHeight(height: number): void {
@@ -295,10 +300,12 @@ namespace VC.App.Components {
                 userName: this.state.name,
                 userRole: this.state.role,
                 message: message,
+           
                 me: true
             } as IChatListItem;
 
             this.addItem(item);
+            
             this.props.onItemSubmitted(item);
         }
 
@@ -321,11 +328,19 @@ namespace VC.App.Components {
             this.chatBox.fitTbHeight();
         }
 
+        private onButtonClicked(): void {
+            //1
+        //    let message: string ="9 minutes remaining on break";
+         //   this.onSubmit(message);
+         //   this.fitTbHeight();
+        }
+
         renderHeading(): JSX.Element {
             if (this.props.onChatClosed === undefined) {
                 return (
                     <div className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <h4>{this.props.title}</h4>
+                        
                     </div>
                 );
             } else {
@@ -356,9 +371,18 @@ namespace VC.App.Components {
 
                         <div className="panel-footer" ref={(ref: HTMLDivElement) => this.divFooter = ref}>
                             <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
+
+
+                            <div class="col-md-12"  style={{ display: 'none'}} className="ModeratorTimeAlert" >
+                                <div class="input-group">
+                                    <input type="text"  style={{ width: '85%' }} id="remainingMinutetxt" class="form-control" placeholder="remaining minute..." />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" onClick={this.onButtonClicked}  id="remainingMinutebtn" type="button">Go!</button>
+                                    </span>
+                                </div>
+                            </div>                            
                         </div>
-
-
+                        
                     </div>
                 </div>
             );

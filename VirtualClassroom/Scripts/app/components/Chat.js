@@ -24,7 +24,21 @@ var VC;
                     return ms;
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)), React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, React.createElement("span", null, "[Moderator]  "), this.props.item.userName)), React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString())), React.createElement("div", {className: "col-sm-6", style: { display: 'none' }}, React.createElement("div", {ref: (ref) => this.divTime2 = ref, className: "itemTimechat"}, this.getItemTimeString2()))), React.createElement("div", {className: "row"}, React.createElement("div", {style: { display: (this.props.item.userRole != App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage blueText"}, this.props.item.message)), React.createElement("div", {style: { display: (this.props.item.userRole == App.Roles.Moderator ? "none" : "block") }, className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)))));
+                    let userNameMessage;
+                    if (this.props.item.userRole == App.Roles.Moderator) {
+                        userNameMessage = (React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, React.createElement("span", null, "[Moderator]  "), this.props.item.userName)));
+                    }
+                    else {
+                        userNameMessage = (React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {className: "itemName"}, this.props.item.userName)));
+                    }
+                    let itemMessage;
+                    if (this.props.item.userRole == App.Roles.Moderator) {
+                        itemMessage = (React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage blueText"}, this.props.item.message)));
+                    }
+                    else {
+                        itemMessage = (React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)));
+                    }
+                    return (React.createElement("div", null, React.createElement("div", {className: "row"}, userNameMessage, React.createElement("div", {className: "col-sm-6"}, React.createElement("div", {ref: (ref) => this.divTime = ref, className: "itemTime"}, this.getItemTimeString())), React.createElement("div", {className: "col-sm-6", style: { display: 'none' }}, React.createElement("div", {ref: (ref) => this.divTime2 = ref, className: "itemTimechat"}, this.getItemTimeString2()))), React.createElement("div", {className: "row"}, itemMessage)));
                 }
             }
             class ChatList extends React.Component {
@@ -94,6 +108,73 @@ var VC;
                 }
             }
             Components.ChatList = ChatList;
+            class TimeBox extends React.Component {
+                constructor(props) {
+                    super(props);
+                    this.maxLength = 500;
+                }
+                fitTbHeight() {
+                    if (!this.props.fixedHeight) {
+                        this.tb.style.height = "0px";
+                        this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
+                    }
+                }
+                onKeyDown(e) {
+                    // if enter
+                    let message = this.tb.value;
+                    let remainingMin;
+                    let fullMsg;
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        if (!(message.length === 0 || !message.trim())) {
+                            remainingMin = parseInt(message, 10);
+                            if (remainingMin > 0) {
+                                fullMsg = remainingMin + " minutes remaining on break.";
+                                this.props.onSubmit(fullMsg);
+                            }
+                            else {
+                            }
+                            this.tb.value = "";
+                        }
+                    }
+                    else {
+                        let message = this.tb.value;
+                        if (message.length >= this.maxLength) {
+                            // allow: backspace, delete, tab, escape, and enter
+                            if (e.keyCode === 46 || e.keyCode === 8 || e.keyCode === 9 || e.keyCode === 27 || e.keyCode === 13 ||
+                                // allow: Ctrl+A
+                                (e.keyCode === 65 && e.ctrlKey === true) ||
+                                // allow: home, end, left, right, top, bottom
+                                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                            }
+                            else {
+                                e.preventDefault();
+                            }
+                            let caret = this.tb.selectionStart;
+                            $(this.tb).val($(this.tb).val().substr(0, this.maxLength));
+                            this.tb.selectionStart = caret;
+                        }
+                    }
+                    this.fitTbHeight();
+                }
+                onPaste(e) {
+                    // paste disabled
+                    e.preventDefault();
+                }
+                focus() {
+                    this.tb.focus();
+                }
+                componentDidMount() {
+                    if (!this.props.fixedHeight) {
+                        $(window).resize((e) => this.fitTbHeight());
+                        this.fitTbHeight();
+                    }
+                }
+                render() {
+                    return (React.createElement("div", {className: "box"}, React.createElement("div", {class: "col-md-12", style: { display: 'none' }, className: "ModeratorTimeAlert"}, React.createElement("div", {class: "input-group"}, React.createElement("textarea", {rows: "1", ref: (ref) => this.tb = ref, className: "form-control", placeholder: "remaining minute...", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)})))));
+                }
+            }
+            //chatbox
             class ChatBox extends React.Component {
                 constructor(props) {
                     super(props);
@@ -160,6 +241,7 @@ var VC;
                 setChatUser(state) {
                     this.state = state;
                     this.chatBox.fitTbHeight();
+                    this.timeBox.fitTbHeight();
                 }
                 setHeight(height) {
                     // solution with fixed padding
@@ -207,12 +289,16 @@ var VC;
                 }
                 fitTbHeight() {
                     this.chatBox.fitTbHeight();
+                    this.timeBox.fitTbHeight();
                 }
                 onButtonClicked() {
                     //1
-                    //    let message: string ="9 minutes remaining on break";
-                    //   this.onSubmit(message);
-                    //   this.fitTbHeight();
+                    let message;
+                    message = "9 minutes remaining on break";
+                    //this.onSubmit(message);
+                    // this.addItem(item);
+                    //this.props.onItemSubmitted(item);
+                    this.fitTbHeight();
                 }
                 renderHeading() {
                     if (this.props.onChatClosed === undefined) {
@@ -223,7 +309,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {class: "col-md-12", style: { display: 'none' }, className: "ModeratorTimeAlert"}, React.createElement("div", {class: "input-group"}, React.createElement("input", {type: "text", style: { width: '85%' }, id: "remainingMinutetxt", class: "form-control", placeholder: "remaining minute..."}), React.createElement("span", {class: "input-group-btn"}, React.createElement("button", {class: "btn btn-secondary", onClick: this.onButtonClicked, id: "remainingMinutebtn", type: "button"}, "Go!"))))))));
+                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {className: "panel-time"}, React.createElement(TimeBox, {ref: (ref) => this.timeBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}))))));
                 }
             }
             Components.Chat = Chat;

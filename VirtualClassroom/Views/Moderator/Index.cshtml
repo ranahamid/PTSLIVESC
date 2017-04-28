@@ -88,10 +88,13 @@ else
 
                 $(".item").each(function ()
                 {
-                    val = val + $(this).find(".itemName").text() ;
-                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
-                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';
+                        //val = val + $(this).find(".itemName").text() ;
+                        val = val + $(this).find(".itemName:nth-child(1)").text();
+//                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
+  //                  val = val + $(this).find(".itemMessage").text() + '\n' + '\n';
 
+                        val = val + " [" + $(this).find(".itemTimechat:nth-child(1)").text() + " ]" + '\n';
+                        val = val + $(this).find(".itemMessage:nth-child(1)").text() + '\n' + '\n';
                 });
                 var blob = new Blob([val], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, "ChatReport.txt");

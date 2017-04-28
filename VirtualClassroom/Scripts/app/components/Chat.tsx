@@ -42,20 +42,52 @@ namespace VC.App.Components {
             var ms: string = this.props.item.timestamp.toUTCString();
             return ms;
         }
+
         render(): JSX.Element {
+
+            let userNameMessage;
+            if (this.props.item.userRole == Roles.Moderator )
+            {
+                userNameMessage = (
+                    <div className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp; </span>{this.props.item.userName}</div></div>                                     
+                )
+            }
+            else
+            {
+                userNameMessage = (
+                    <div  className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
+                )
+            }
+
+
+
+
+            let itemMessage;
+            if (this.props.item.userRole == Roles.Moderator) {
+                itemMessage = (
+                    <div   className="col-sm-12"><div className="itemMessage blueText">{this.props.item.message}</div></div>
+                )
+            }
+            else {
+                itemMessage = (
+                    <div className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>
+                )
+            }
+
+
+
             return (
                 <div>
                     <div className="row">
 
-                        <div style={{ display: (this.props.item.userRole == Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
-                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }} className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp; </span>{this.props.item.userName}</div></div>                                     
-                        
+                        { userNameMessage }
+
+
                         <div className="col-sm-6"><div ref={(ref: HTMLDivElement) => this.divTime = ref} className="itemTime">{this.getItemTimeString() }</div></div>
                         <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
                     </div>
                     <div className="row">
-                        <div style={{ display: (this.props.item.userRole != Roles.Moderator ? "none" : "block") }}  className="col-sm-12"><div className="itemMessage blueText">{this.props.item.message}</div></div>
-                        <div style={{ display: (this.props.item.userRole == Roles.Moderator ? "none" : "block") }}  className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>
+                         {itemMessage}                                         
                     </div>
                 </div>
             );
@@ -165,11 +197,20 @@ namespace VC.App.Components {
     }
     
    
-    class ChatBox extends React.Component<IChatBoxProps, IChatBoxState> {
+    //TimeBox
+    interface ITimeBoxProps {
+        onSubmit: (text: string) => void;
+        fixedHeight: boolean;
+
+    }
+    interface ITimeBoxState {
+    }
+
+    class TimeBox extends React.Component<ITimeBoxProps, ITimeBoxState> {
         private maxLength: number = 500;
         private tb: HTMLTextAreaElement;
 
-        constructor(props: IChatBoxProps) {
+        constructor(props: ITimeBoxProps) {
             super(props);
             
         }
@@ -177,6 +218,103 @@ namespace VC.App.Components {
         public fitTbHeight(): void {
             if (!this.props.fixedHeight) {
                     
+                this.tb.style.height = "0px";
+                this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
+            }
+        }
+        private onKeyDown(e: KeyboardEvent): void {
+            // if enter
+            let message: string = this.tb.value;
+            let remainingMin: number;
+            let fullMsg: string;
+            if (e.which === 13)
+            {
+                e.preventDefault();
+                if (!(message.length === 0 || !message.trim()))
+                { // not empty or white spaces
+
+                    remainingMin = parseInt(message, 10);
+                    if (remainingMin > 0)
+                    {
+                        fullMsg = remainingMin + " minutes remaining on break.";
+                        this.props.onSubmit(fullMsg);
+                    }
+                    else
+                    {
+                        //nothing
+                    }
+                 
+                    this.tb.value = "";
+                }
+            }
+            else
+            {
+                let message: string = this.tb.value;
+                if (message.length >= this.maxLength)
+                { // max message length
+                    // allow: backspace, delete, tab, escape, and enter
+                    if (e.keyCode === 46 || e.keyCode === 8 || e.keyCode === 9 || e.keyCode === 27 || e.keyCode === 13 ||
+                        // allow: Ctrl+A
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        // allow: home, end, left, right, top, bottom
+                        (e.keyCode >= 35 && e.keyCode <= 40))
+                        {
+                            // let it happen, don"t do anything
+                        }
+                    else
+                    {
+                        e.preventDefault();
+                    }
+                    let caret: number = this.tb.selectionStart;
+                    $(this.tb).val($(this.tb).val().substr(0, this.maxLength));
+                    this.tb.selectionStart = caret;
+                }
+            }
+            this.fitTbHeight();
+        }
+        private onPaste(e: ClipboardEvent): void {
+            // paste disabled
+            e.preventDefault();
+        }
+
+        public focus(): void {
+            this.tb.focus();
+        }
+
+        componentDidMount(): void {
+            if (!this.props.fixedHeight) {
+                $(window).resize((e: JQueryEventObject) => this.fitTbHeight());
+                this.fitTbHeight();
+            }
+        }
+
+        render(): JSX.Element {
+            return (
+                <div className="box">                    
+                    <div class="col-md-12"  style={{ display: 'none' }} className="ModeratorTimeAlert" >
+                        <div class="input-group">
+                            <textarea rows="1" ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="remaining minute..." onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>                                              
+                        </div>
+                    </div>                   
+                </div>
+            );
+        }
+    }
+
+
+//chatbox
+    class ChatBox extends React.Component<IChatBoxProps, IChatBoxState> {
+        private maxLength: number = 500;
+        private tb: HTMLTextAreaElement;
+
+        constructor(props: IChatBoxProps) {
+            super(props);
+
+        }
+
+        public fitTbHeight(): void {
+            if (!this.props.fixedHeight) {
+
                 this.tb.style.height = "0px";
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }
@@ -230,12 +368,11 @@ namespace VC.App.Components {
         render(): JSX.Element {
             return (
                 <div className="box">
-                    <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>                  
+                    <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
                 </div>
             );
         }
     }
-
 
     interface IChatProps {
         title: string;
@@ -252,9 +389,16 @@ namespace VC.App.Components {
         height: number;
     }
 
+
+
+
+
     export class Chat extends React.Component<IChatProps, IChatState> {
         private chatList: ChatList;
         private chatBox: ChatBox;
+        private timeBox: TimeBox;
+        
+
         private divChat: HTMLDivElement;
         private divFooter: HTMLDivElement;
         private divHeader: HTMLDivElement;
@@ -267,7 +411,7 @@ namespace VC.App.Components {
         public setChatUser(state: IChatState): void {
             this.state = state;
             this.chatBox.fitTbHeight();
-            
+            this.timeBox.fitTbHeight();
         }
 
         public setHeight(height: number): void {
@@ -326,13 +470,22 @@ namespace VC.App.Components {
 
         public fitTbHeight(): void {
             this.chatBox.fitTbHeight();
+            this.timeBox.fitTbHeight();
         }
 
         private onButtonClicked(): void {
             //1
-        //    let message: string ="9 minutes remaining on break";
-         //   this.onSubmit(message);
-         //   this.fitTbHeight();
+            let message: string;
+            message = "9 minutes remaining on break";
+            //this.onSubmit(message);
+            
+           // this.addItem(item);
+            
+
+            //this.props.onItemSubmitted(item);
+
+
+            this.fitTbHeight();
         }
 
         renderHeading(): JSX.Element {
@@ -371,16 +524,9 @@ namespace VC.App.Components {
 
                         <div className="panel-footer" ref={(ref: HTMLDivElement) => this.divFooter = ref}>
                             <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
-
-
-                            <div class="col-md-12"  style={{ display: 'none'}} className="ModeratorTimeAlert" >
-                                <div class="input-group">
-                                    <input type="text"  style={{ width: '85%' }} id="remainingMinutetxt" class="form-control" placeholder="remaining minute..." />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-secondary" onClick={this.onButtonClicked}  id="remainingMinutebtn" type="button">Go!</button>
-                                    </span>
-                                </div>
-                            </div>                            
+                            <div className="panel-time">
+                                <TimeBox ref={(ref: TimeBox) => this.timeBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
+                            </div>
                         </div>
                         
                     </div>

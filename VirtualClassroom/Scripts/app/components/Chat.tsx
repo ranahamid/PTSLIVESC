@@ -198,11 +198,13 @@ namespace VC.App.Components {
     
    
     //TimeBox
-    interface ITimeBoxProps {
+    interface ITimeBoxProps
+    {
         onSubmit: (text: string) => void;
         fixedHeight: boolean;
 
     }
+
     interface ITimeBoxState {
     }
 
@@ -222,47 +224,76 @@ namespace VC.App.Components {
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }
         }
-        private onKeyDown(e: KeyboardEvent): void {
+
+        /* Temp */
+            
+
+        /* End Temp*/
+
+        
+        private sendRepeatWarning(fullMsg: string): void
+        {           
+            this.props.onSubmit(fullMsg);              
+        }
+
+        private myFunction(): void
+        {
+            //temp
+            alert('Hello');
+         }
+
+        private onKeyDown(e: KeyboardEvent): void
+        {         
             // if enter
             let message: string = this.tb.value;
             let remainingMin: number;
+            let countDownMin: number;
+            
             let fullMsg: string;
             if (e.which === 13)
             {
                 e.preventDefault();
                 if (!(message.length === 0 || !message.trim()))
-                { // not empty or white spaces
-
+                {                  
                     remainingMin = parseInt(message, 10);
+                    countDownMin = 1;
+
                     if (remainingMin > 0)
                     {
                         fullMsg = remainingMin + " minutes remaining on break.";
                         this.props.onSubmit(fullMsg);
+
+                        if (remainingMin >= 2)
+                        {
+                            for (var i = remainingMin-1; i >=1;i--)
+                            {
+                                fullMsg = i + " minutes remaining on break.";                                
+                                //setTimeout(  this.sendRepeatWarning(fullMsg), (countDownMin * 10000) );                               
+                                setTimeout(function () { this.sendRepeatWarning(fullMsg) }, countDownMin * 10000);
+                                countDownMin = countDownMin + 1;
+                            }                              
+                        }                     
                     }
                     else
                     {
                         //nothing
                     }
-                 
+
                     this.tb.value = "";
                 }
             }
-            else
-            {
+            else {
                 let message: string = this.tb.value;
-                if (message.length >= this.maxLength)
-                { // max message length
+                if (message.length >= this.maxLength) { // max message length
                     // allow: backspace, delete, tab, escape, and enter
                     if (e.keyCode === 46 || e.keyCode === 8 || e.keyCode === 9 || e.keyCode === 27 || e.keyCode === 13 ||
                         // allow: Ctrl+A
                         (e.keyCode === 65 && e.ctrlKey === true) ||
                         // allow: home, end, left, right, top, bottom
-                        (e.keyCode >= 35 && e.keyCode <= 40))
-                        {
-                            // let it happen, don"t do anything
-                        }
-                    else
-                    {
+                        (e.keyCode >= 35 && e.keyCode <= 40)) {
+                        // let it happen, don"t do anything
+                    }
+                    else {
                         e.preventDefault();
                     }
                     let caret: number = this.tb.selectionStart;
@@ -272,6 +303,7 @@ namespace VC.App.Components {
             }
             this.fitTbHeight();
         }
+
         private onPaste(e: ClipboardEvent): void {
             // paste disabled
             e.preventDefault();
@@ -437,19 +469,19 @@ namespace VC.App.Components {
             this.chatList.setHeight(listHeight);
         }
 
-        private onSubmit(message: string): void {
-            let item: IChatListItem = {
+        private onSubmit(message: string): void
+        {
+            let item: IChatListItem =
+            {
                 timestamp: new Date(),
                 userUid: this.state.uid,
                 userName: this.state.name,
                 userRole: this.state.role,
-                message: message,
-           
+                message: message,           
                 me: true
             } as IChatListItem;
 
-            this.addItem(item);
-            
+            this.addItem(item);            
             this.props.onItemSubmitted(item);
         }
 
@@ -457,9 +489,11 @@ namespace VC.App.Components {
             this.chatBox.focus();
         }
 
-        public addItem(item: IChatListItem): void {
+        public addItem(item: IChatListItem): void
+        {
             // avoid double item from signaling
-            if (item.me || item.userUid !== this.state.uid) {
+            if (item.me || item.userUid !== this.state.uid)
+            {
                 this.chatList.addItem(item);
             }
         }
@@ -473,20 +507,11 @@ namespace VC.App.Components {
             this.timeBox.fitTbHeight();
         }
 
-        private onButtonClicked(): void {
-            //1
-            let message: string;
-            message = "9 minutes remaining on break";
-            //this.onSubmit(message);
-            
-           // this.addItem(item);
-            
-
-            //this.props.onItemSubmitted(item);
-
-
-            this.fitTbHeight();
-        }
+        //private onButtonClicked(): void {
+        //    let message: string;
+        //    message = "9 minutes remaining on break";
+        //    this.fitTbHeight();
+        //}
 
         renderHeading(): JSX.Element {
             if (this.props.onChatClosed === undefined) {

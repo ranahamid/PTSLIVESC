@@ -119,18 +119,40 @@ var VC;
                         this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
                     }
                 }
+                MsgSendMin() {
+                    this.tb.focus();
+                }
+                /* Temp */
+                /* End Temp*/
+                sendRepeatWarning(fullMsg) {
+                    this.props.onSubmit(fullMsg);
+                }
+                myFunction() {
+                    //temp
+                    alert('Hello');
+                }
                 onKeyDown(e) {
                     // if enter
                     let message = this.tb.value;
                     let remainingMin;
+                    let countDownMin;
                     let fullMsg;
                     if (e.which === 13) {
                         e.preventDefault();
                         if (!(message.length === 0 || !message.trim())) {
                             remainingMin = parseInt(message, 10);
+                            countDownMin = 1;
                             if (remainingMin > 0) {
                                 fullMsg = remainingMin + " minutes remaining on break.";
                                 this.props.onSubmit(fullMsg);
+                                if (remainingMin >= 2) {
+                                    for (var i = remainingMin - 1; i >= 1; i--) {
+                                        fullMsg = i + " minutes remaining on break.";
+                                        //setTimeout(  this.sendRepeatWarning(fullMsg), (countDownMin * 10000) );                               
+                                        setTimeout(function () { alert("Hello"); }, countDownMin * 10000);
+                                        countDownMin = countDownMin + 1;
+                                    }
+                                }
                             }
                             else {
                             }
@@ -291,15 +313,11 @@ var VC;
                     this.chatBox.fitTbHeight();
                     this.timeBox.fitTbHeight();
                 }
-                onButtonClicked() {
-                    //1
-                    let message;
-                    message = "9 minutes remaining on break";
-                    //this.onSubmit(message);
-                    // this.addItem(item);
-                    //this.props.onItemSubmitted(item);
-                    this.fitTbHeight();
-                }
+                //private onButtonClicked(): void {
+                //    let message: string;
+                //    message = "9 minutes remaining on break";
+                //    this.fitTbHeight();
+                //}
                 renderHeading() {
                     if (this.props.onChatClosed === undefined) {
                         return (React.createElement("div", {className: "panel-heading", ref: (ref) => this.divHeader = ref}, React.createElement("h4", null, this.props.title)));

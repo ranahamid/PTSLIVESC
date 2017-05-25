@@ -35,6 +35,9 @@ var VC;
                     if (this.props.item.userRole == App.Roles.Moderator) {
                         itemMessage = (React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage blueText"}, this.props.item.message)));
                     }
+                    else if (this.props.item.userRole == App.Roles.ModeratorWarning) {
+                        itemMessage = (React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage RedText"}, this.props.item.message)));
+                    }
                     else {
                         itemMessage = (React.createElement("div", {className: "col-sm-12"}, React.createElement("div", {className: "itemMessage"}, this.props.item.message)));
                     }
@@ -298,7 +301,8 @@ var VC;
                         timestamp: new Date(),
                         userUid: this.state.uid,
                         userName: this.state.name,
-                        userRole: this.state.role,
+                        //userRole: this.state.role,
+                        userRole: App.Roles.ModeratorWarning,
                         message: message,
                         me: true
                     };

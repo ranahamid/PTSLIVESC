@@ -67,6 +67,11 @@ namespace VC.App.Components {
                     <div   className="col-sm-12"><div className="itemMessage blueText">{this.props.item.message}</div></div>
                 )
             }
+            else if (this.props.item.userRole == Roles.ModeratorWarning) {
+                itemMessage = (
+                    <div   className="col-sm-12"><div className="itemMessage RedText">{this.props.item.message}</div></div>
+                )
+            }
             else {
                 itemMessage = (
                     <div className="col-sm-12"><div className="itemMessage">{this.props.item.message}</div></div>
@@ -485,8 +490,8 @@ namespace VC.App.Components {
                     timestamp: new Date(),
                     userUid: this.state.uid,
                     userName: this.state.name,
-                 
-                    userRole: this.state.role,
+                    //userRole: this.state.role,
+                    userRole: Roles.ModeratorWarning,
                     message: message,
                     me: true
                 } as IChatListItem;

@@ -119,23 +119,15 @@ var VC;
                         this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
                     }
                 }
-                MsgSendMin() {
-                    this.tb.focus();
-                }
-                /* Temp */
-                /* End Temp*/
                 sendRepeatWarning(fullMsg) {
-                    this.props.onSubmit(fullMsg);
-                }
-                myFunction() {
-                    //temp
-                    alert('Hello');
+                    this.props.onSubmit2(fullMsg);
                 }
                 onKeyDown(e) {
                     // if enter
                     let message = this.tb.value;
                     let remainingMin;
                     let countDownMin;
+                    let countdown;
                     let fullMsg;
                     if (e.which === 13) {
                         e.preventDefault();
@@ -144,12 +136,16 @@ var VC;
                             countDownMin = 1;
                             if (remainingMin > 0) {
                                 fullMsg = remainingMin + " minutes remaining on break.";
-                                this.props.onSubmit(fullMsg);
+                                this.props.onSubmit2(fullMsg);
+                                countdown = remainingMin;
                                 if (remainingMin >= 2) {
                                     for (var i = remainingMin - 1; i >= 1; i--) {
-                                        fullMsg = i + " minutes remaining on break.";
-                                        //setTimeout(  this.sendRepeatWarning(fullMsg), (countDownMin * 10000) );                               
-                                        setTimeout(function () { alert("Hello"); }, countDownMin * 10000);
+                                        setTimeout(() => {
+                                            countdown = countdown - 1;
+                                            fullMsg = countdown + " minutes remaining on break.";
+                                            console.log(fullMsg);
+                                            this.sendRepeatWarning(fullMsg);
+                                        }, countDownMin * 60000);
                                         countDownMin = countDownMin + 1;
                                     }
                                 }
@@ -297,6 +293,24 @@ var VC;
                     this.addItem(item);
                     this.props.onItemSubmitted(item);
                 }
+                onSubmit2(message) {
+                    let item = {
+                        timestamp: new Date(),
+                        userUid: this.state.uid,
+                        userName: this.state.name,
+                        userRole: this.state.role,
+                        message: message,
+                        me: true
+                    };
+                    this.addItem2(item);
+                    this.props.onItemSubmitted(item);
+                }
+                addItem2(item) {
+                    // avoid double item from signaling
+                    if (item.me || item.userUid !== this.state.uid) {
+                        this.chatList.addItem(item);
+                    }
+                }
                 setFocus() {
                     this.chatBox.focus();
                 }
@@ -327,7 +341,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {className: "panel-time"}, React.createElement(TimeBox, {ref: (ref) => this.timeBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}))))));
+                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {className: "panel-time"}, React.createElement(TimeBox, {ref: (ref) => this.timeBox = ref, fixedHeight: this.props.fixedHeight, onSubmit2: (message) => this.onSubmit2(message)}))))));
                 }
             }
             Components.Chat = Chat;

@@ -194,6 +194,22 @@ namespace VirtualClassroom.Controllers
 
             return responseSuccess(data);
         }
+
+        [HttpGet]
+        public DataResponse<List<Moderator>> LoadModerators(string classroomId)
+        {
+            List<Moderator> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Moderator()
+            {
+                uid = x.Uid,
+                id = x.Id,
+                name = x.Name
+            }).ToList();
+
+            return responseSuccess(data);
+        }
+
+
+
         [HttpGet]
         public DataResponse<List<Form>> LoadSurveys(string classroomId)
         {

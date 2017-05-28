@@ -108,6 +108,7 @@ namespace VirtualClassroom
                 "~/Scripts/app/TC.js"
                 ));
             bundles.Add(new BabelBundle("~/vc/app/FC").Include("~/Scripts/app/FC.js"));
+
             bundles.Add(new BabelBundle("~/vc/app/AC").Include(
                 "~/Scripts/app/ac/ComputersList.js",
                 "~/Scripts/app/ac/FeaturedBox.js",

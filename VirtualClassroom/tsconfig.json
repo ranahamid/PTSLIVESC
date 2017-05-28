@@ -5,6 +5,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
+   
     "jsx": "react"
   },
   "exclude": [

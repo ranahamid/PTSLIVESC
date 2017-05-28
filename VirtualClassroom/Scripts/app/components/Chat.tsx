@@ -219,8 +219,7 @@ namespace VC.App.Components {
         }
 
         public fitTbHeight(): void {
-            if (!this.props.fixedHeight) {
-                    
+            if (!this.props.fixedHeight) {                    
                 this.tb.style.height = "0px";
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }

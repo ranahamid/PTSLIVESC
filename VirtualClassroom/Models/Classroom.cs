@@ -65,7 +65,7 @@ namespace VirtualClassroom.Models
     public class Teacher : Computer
     {
     }
-
+   
     [DataObject]
     public class Featured : Computer
     {

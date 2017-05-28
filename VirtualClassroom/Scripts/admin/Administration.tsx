@@ -10,7 +10,7 @@ namespace VC.Admin {
         Featureds = 3,
         Surveys = 4,
         Polls = 5,
-        Moderator=6,
+        Moderator=6, 
     }
 
     interface IProps {
@@ -40,12 +40,17 @@ namespace VC.Admin {
         private divStudents: HTMLDivElement;
         private divTeachers: HTMLDivElement;
         private divFeatureds: HTMLDivElement;
+
+        private divModerators: HTMLDivElement;
         private divSurveys: HTMLDivElement;
         private divPolls: HTMLDivElement;
         private seats: Lists.Seats;
         private students: Lists.Students;
         private teachers: Lists.Teachers;
         private featureds: Lists.Featureds;
+
+        private moderators: Lists.Moderators; 
+
         private surveys: Lists.Surveys;
         private polls: Lists.Polls;
 
@@ -68,6 +73,9 @@ namespace VC.Admin {
                 this.divStudents.style.display = "none";
                 this.divTeachers.style.display = "none";
                 this.divFeatureds.style.display = "none";
+
+                this.divModerators.style.display = "none"; 
+
                 this.divSurveys.style.display = "none";
                 this.divPolls.style.display = "none";
 
@@ -88,6 +96,12 @@ namespace VC.Admin {
                         this.featureds.init();
                         this.divFeatureds.style.display = "block";
                         break;
+
+                    case Menu.Moderator:                            
+                        this.moderators.init();
+                        this.divModerators.style.display = "block";
+                        break;
+
                     case Menu.Surveys:
                         this.surveys.init();
                         this.divSurveys.style.display = "block";
@@ -113,7 +127,7 @@ namespace VC.Admin {
                 { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Teachers, title: "Teacher computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Featureds, title: "Featured computers", onClick: this.tabOnClick.bind(this), active: false },
-                { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false },
+                { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false }, 
                 { id: Menu.Surveys, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Polls, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
             ];
@@ -135,6 +149,12 @@ namespace VC.Admin {
                     <div ref={(ref: HTMLDivElement) => this.divFeatureds = ref} style={{ display: "none" }}>
                         <Lists.Featureds ref={(ref: Lists.Featureds) => this.featureds = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
                     </div>
+
+                    <div ref={(ref: HTMLDivElement) => this.divModerators = ref} style={{ display: "none" }}>
+                        <Lists.Moderators ref={(ref: Lists.Teachers) => this.moderators = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
+                    </div>
+                    
+
                     <div ref={(ref: HTMLDivElement) => this.divSurveys = ref} style={{ display: "none" }}>
                         <Lists.Surveys ref={(ref: Lists.Surveys) => this.surveys = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
                     </div>

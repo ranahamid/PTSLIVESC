@@ -18,7 +18,7 @@ var VC;
                     return null;
                 }
                 render() {
-                    return (React.createElement("div", null, React.createElement(ModeratorList, {ref: (ref) => this.list = ref, title: "Moderator", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadModerators", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)})));
+                    return (React.createElement("div", null, React.createElement(ModeratorList, {ref: (ref) => this.list = ref, title: "Moderator", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadModerators", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Moderator", formType: VC.Forms.FormType.Survey, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
                 }
             }
             Lists.Moderators = Moderators;

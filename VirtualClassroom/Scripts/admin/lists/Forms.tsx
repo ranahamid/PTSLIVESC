@@ -33,7 +33,7 @@ namespace VC.Admin.Lists {
             return (
                 <div>
                     <ModeratorList ref={(ref: ModeratorList) => this.list = ref} title="Moderator" actionUrl={this.props.actionUrl}  classroomId={this.props.classroomId} loadMethod="LoadModerators" showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) }  showEnableClass={this.showEnableClass.bind(this) }  showDisableClass={this.showDisableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
-                    {/*  <FormsBox ref={(ref: FormsBox) => this.box = ref} title="Moderator" formType={VC.Forms.FormType.Survey} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } /> */}
+                    <FormsBox ref={(ref: FormsBox) => this.box = ref} title="Moderator" formType={VC.Forms.FormType.Survey} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } /> 
 
                 </div>
             );

@@ -200,12 +200,17 @@ namespace VirtualClassroom.Controllers
         {
             List<Moderator> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Moderator()
             {
+                title=x.Name,
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name
             }).ToList();
 
+
+            //  List<Form> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower() && x.Type == (int)Forms.FormType.Survey).OrderBy(x => x.Title).Select(x => new Form(x, null)).ToList();
+
             return responseSuccess(data);
+
         }
 
 

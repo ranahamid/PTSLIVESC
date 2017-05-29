@@ -10,7 +10,7 @@ namespace VC.Admin {
         Featureds = 3,
         Surveys = 4,
         Polls = 5,
-        Moderator=6, 
+        Moderators=6, 
     }
 
     interface IProps {
@@ -97,7 +97,7 @@ namespace VC.Admin {
                         this.divFeatureds.style.display = "block";
                         break;
 
-                    case Menu.Moderator:                            
+                    case Menu.Moderators:                            
                         this.moderators.init();
                         this.divModerators.style.display = "block";
                         break;
@@ -127,7 +127,7 @@ namespace VC.Admin {
                 { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Teachers, title: "Teacher computers", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Featureds, title: "Featured computers", onClick: this.tabOnClick.bind(this), active: false },
-                { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false }, 
+                { id: Menu.Moderators, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false }, 
                 { id: Menu.Surveys, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
                 { id: Menu.Polls, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
             ];
@@ -150,8 +150,9 @@ namespace VC.Admin {
                         <Lists.Featureds ref={(ref: Lists.Featureds) => this.featureds = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
                     </div>
 
+
                     <div ref={(ref: HTMLDivElement) => this.divModerators = ref} style={{ display: "none" }}>
-                        <Lists.Moderators ref={(ref: Lists.Teachers) => this.moderators = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
+                        <Lists.Moderators ref={(ref: Lists.Moderators) => this.moderators = ref} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} />
                     </div>
                     
 

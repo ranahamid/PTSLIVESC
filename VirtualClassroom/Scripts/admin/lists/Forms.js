@@ -7,6 +7,21 @@ var VC;
         (function (Lists) {
             "use strict";
             const FORM_TITLE = "Title";
+            class Moderators extends Lists.Base {
+                getList() {
+                    return this.list;
+                }
+                getBox() {
+                    return this.box;
+                }
+                getImportBox() {
+                    return null;
+                }
+                render() {
+                    return (React.createElement("div", null, React.createElement(ModeratorList, {ref: (ref) => this.list = ref, title: "Moderator", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadModerators", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)})));
+                }
+            }
+            Lists.Moderators = Moderators;
             class Surveys extends Lists.Base {
                 getList() {
                     return this.list;
@@ -46,6 +61,18 @@ var VC;
                 renderTableHeaderCols() {
                     let l = [];
                     l.push(React.createElement("th", {key: "thTitle"}, "Title"));
+                    return l;
+                }
+            }
+            class ModeratorList extends Lists.List {
+                renderItemCols(d) {
+                    let l = [];
+                    l.push(React.createElement("td", {key: "tdTitle_" + d.id}, d.title));
+                    return l;
+                }
+                renderTableHeaderCols() {
+                    let l = [];
+                    l.push(React.createElement("th", {key: "thTitle"}, "Moderator Computer"));
                     return l;
                 }
             }

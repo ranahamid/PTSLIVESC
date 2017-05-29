@@ -12,7 +12,7 @@ var VC;
             Menu[Menu["Featureds"] = 3] = "Featureds";
             Menu[Menu["Surveys"] = 4] = "Surveys";
             Menu[Menu["Polls"] = 5] = "Polls";
-            Menu[Menu["Moderator"] = 6] = "Moderator";
+            Menu[Menu["Moderators"] = 6] = "Moderators";
         })(Menu || (Menu = {}));
         class Administration extends React.Component {
             constructor(props) {
@@ -62,7 +62,7 @@ var VC;
                             this.featureds.init();
                             this.divFeatureds.style.display = "block";
                             break;
-                        case Menu.Moderator:
+                        case Menu.Moderators:
                             this.moderators.init();
                             this.divModerators.style.display = "block";
                             break;
@@ -89,11 +89,11 @@ var VC;
                     { id: Menu.Students, title: "Student computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Teachers, title: "Teacher computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Featureds, title: "Featured computers", onClick: this.tabOnClick.bind(this), active: false },
-                    { id: Menu.Moderator, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false },
+                    { id: Menu.Moderators, title: "Moderator computers", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Surveys, title: "Surveys", onClick: this.tabOnClick.bind(this), active: false },
                     { id: Menu.Polls, title: "Polls", onClick: this.tabOnClick.bind(this), active: false }
                 ];
-                return (React.createElement("div", null, React.createElement("div", null, React.createElement(VC.Global.Components.Tabs, { ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs" })), React.createElement("div", { ref: (ref) => this.divSeats = ref, style: { display: "block" } }, React.createElement(Admin.Lists.Seats, { ref: (ref) => this.seats = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divStudents = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Students, { ref: (ref) => this.students = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divTeachers = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Teachers, { ref: (ref) => this.teachers = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divFeatureds = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Featureds, { ref: (ref) => this.featureds = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divModerators = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Teachers, { ref: (ref) => this.moderators = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divSurveys = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Surveys, { ref: (ref) => this.surveys = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId })), React.createElement("div", { ref: (ref) => this.divPolls = ref, style: { display: "none" } }, React.createElement(Admin.Lists.Polls, { ref: (ref) => this.polls = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId }))));
+                return (React.createElement("div", null, React.createElement("div", null, React.createElement(VC.Global.Components.Tabs, {ref: (ref) => this.tabs = ref, items: tabItems, className: "cTabs"})), React.createElement("div", {ref: (ref) => this.divSeats = ref, style: { display: "block" }}, React.createElement(Admin.Lists.Seats, {ref: (ref) => this.seats = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divStudents = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Students, {ref: (ref) => this.students = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divTeachers = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Teachers, {ref: (ref) => this.teachers = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divFeatureds = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Featureds, {ref: (ref) => this.featureds = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divModerators = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Moderators, {ref: (ref) => this.moderators = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divSurveys = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Surveys, {ref: (ref) => this.surveys = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId})), React.createElement("div", {ref: (ref) => this.divPolls = ref, style: { display: "none" }}, React.createElement(Admin.Lists.Polls, {ref: (ref) => this.polls = ref, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId}))));
             }
         }
         class InitAdministration {

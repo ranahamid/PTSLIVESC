@@ -50,6 +50,7 @@ namespace VirtualClassroom.Models
     [DataObject]
     public class Moderator : Computer
     {
+        public string title { get; set; }
         public int position { get; set; }
         public Teacher teacher { get; set; }
         public string featuredpcname { get; set; }
@@ -81,6 +82,7 @@ namespace VirtualClassroom.Models
         public int pendingCount { get; set; }
         public int answeredCount { get; set; }
         public int declinedCount { get; set; }
+
 
         public Form(TblForm form, Guid? tcUid)
         {

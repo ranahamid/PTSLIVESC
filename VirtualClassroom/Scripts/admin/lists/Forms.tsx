@@ -13,6 +13,33 @@ namespace VC.Admin.Lists {
         declinedCount: number;
     }
 
+    
+
+    export class Moderators extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
+        private list: FormsList;
+        private box: FormsBox;
+
+        public getList(): FormsList {
+            return this.list;
+        }
+        public getBox(): FormsBox {
+            return this.box;
+        }
+        public getImportBox(): any {
+            return null;
+        }
+
+        render(): JSX.Element {
+            return (
+                <div>
+                    <ModeratorList ref={(ref: ModeratorList) => this.list = ref} title="Moderator" actionUrl={this.props.actionUrl}  classroomId={this.props.classroomId} loadMethod="LoadModerators" showBoxNew={this.showBoxNew.bind(this) } showBoxEdit={this.showBoxEdit.bind(this) }  showEnableClass={this.showEnableClass.bind(this) }  showDisableClass={this.showDisableClass.bind(this) } showBoxDelete={this.showBoxDelete.bind(this) } />
+                    {/*  <FormsBox ref={(ref: FormsBox) => this.box = ref} title="Moderator" formType={VC.Forms.FormType.Survey} actionUrl={this.props.actionUrl} classroomId={this.props.classroomId} getListItems={this.getListItems.bind(this) } setListItems={this.setListItems.bind(this) } /> */}
+
+                </div>
+            );
+        }
+    }
+
     export class Surveys extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
         private list: FormsList;
         private box: FormsBox;
@@ -74,6 +101,20 @@ namespace VC.Admin.Lists {
         renderTableHeaderCols(): JSX.Element[] {
             let l: Array<JSX.Element> = [];
             l.push(<th key={"thTitle"}>Title</th>);
+            return l;
+        }
+    }
+
+    class ModeratorList extends List<string, IFormsListItem, IFormsListProps, IFormsListState> {
+
+        renderItemCols(d: IFormsListItem): JSX.Element[] {
+            let l: Array<JSX.Element> = [];
+            l.push(<td key={"tdTitle_" + d.id}>{d.title}</td>);
+            return l;
+        }
+        renderTableHeaderCols(): JSX.Element[] {
+            let l: Array<JSX.Element> = [];
+            l.push(<th key={"thTitle"}>Moderator Computer</th>);
             return l;
         }
     }

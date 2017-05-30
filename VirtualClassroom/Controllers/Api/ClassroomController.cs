@@ -195,10 +195,6 @@ namespace VirtualClassroom.Controllers
             return responseSuccess(data);
         }
 
-      
-   
-
-
 
         [HttpGet]
         public DataResponse<List<Form>> LoadSurveys(string classroomId)
@@ -1579,6 +1575,7 @@ namespace VirtualClassroom.Controllers
 
 
         #region Moderators
+
         /// <summary>
         /// Load Moderators data
         /// </summary>
@@ -1597,6 +1594,7 @@ namespace VirtualClassroom.Controllers
 
             return responseSuccess(data);
         }
+
 
         /// <summary>
         /// Import Moderators data
@@ -1697,7 +1695,8 @@ namespace VirtualClassroom.Controllers
                             State = string.Empty,
                             City = string.Empty,
                             ZipCode = string.Empty,
-                            Country = string.Empty
+                            Country = string.Empty,
+                          
 
                         });
 
@@ -1724,6 +1723,7 @@ namespace VirtualClassroom.Controllers
             }
         }
 
+
         /// <summary>
         /// Check is Moderators Exists
         /// </summary>
@@ -1742,6 +1742,7 @@ namespace VirtualClassroom.Controllers
 
             return responseSuccess(exists);
         }
+
 
         /// <summary>
         /// Create Moderator data
@@ -1783,6 +1784,7 @@ namespace VirtualClassroom.Controllers
                 return responseError<Moderator>(ex.Message);
             }
         }
+
 
         /// <summary>
         /// Update Moderator data
@@ -1864,9 +1866,16 @@ namespace VirtualClassroom.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Check moderator ID exist
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool isModeratorIdExists(string classroomId, string id)
         {
-            var q = from x in db.TblTCs
+            var q = from x in db.TblModerators
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                     select x;
 

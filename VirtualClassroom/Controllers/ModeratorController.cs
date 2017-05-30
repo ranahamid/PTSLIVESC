@@ -33,17 +33,12 @@ namespace VirtualClassroom.Controllers
             {
                 TblModerator pc = q.Single();
 
-                if (pc.ScUid.HasValue || pc.TcUid.HasValue)
-                {
-                    viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
-                    viewModel.ClassroomId = pc.TblClassroom.Id;
-                    viewModel.ActionUrl = Url.Action();
-                }
-                else
-                {
-                    viewModel.Name = "Virtual Classroom - Personal computer";
-                    viewModel.ErrorMessage = "No seat or teacher computer assigned.";
-                }
+                //if (pc.ScUid.HasValue || pc.TcUid.HasValue)
+               
+                viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
+                viewModel.ClassroomId = pc.TblClassroom.Id;
+                viewModel.ActionUrl = Url.Action();
+                
             }
             else
             {
@@ -64,8 +59,8 @@ namespace VirtualClassroom.Controllers
             {
                 TblModerator pc = q.Single();
 
-                if (pc.ScUid.HasValue || pc.TcUid.HasValue)
-                {
+                //if (pc.ScUid.HasValue || pc.TcUid.HasValue)
+                
                     TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
                     cData.Uid = pc.Uid;
@@ -88,12 +83,8 @@ namespace VirtualClassroom.Controllers
                     cData.Group = TokBoxHelper.CreateGroup(pc);
 
                     return responseSuccess(cData);
-                }
-                else
-                {
-                    // error
-                    return responseError("No seat or teacher computer assigned.");
-                }
+                
+              
             }
             else
             {
@@ -143,13 +134,6 @@ namespace VirtualClassroom.Controllers
             }
             base.Dispose(disposing);
         }
-
-
-
-
-
-
-
 
     }
 }

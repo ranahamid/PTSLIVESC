@@ -7,7 +7,7 @@ var VC;
         (function (Lists) {
             "use strict";
             const FORM_TITLE = "Title";
-            class Moderators extends Lists.Base {
+            class ModeratorsTest extends Lists.Base {
                 getList() {
                     return this.list;
                 }
@@ -21,7 +21,19 @@ var VC;
                     return (React.createElement("div", null, React.createElement(ModeratorList, {ref: (ref) => this.list = ref, title: "Moderator", actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, loadMethod: "LoadModerators", showBoxNew: this.showBoxNew.bind(this), showBoxEdit: this.showBoxEdit.bind(this), showEnableClass: this.showEnableClass.bind(this), showDisableClass: this.showDisableClass.bind(this), showBoxDelete: this.showBoxDelete.bind(this)}), React.createElement(FormsBox, {ref: (ref) => this.box = ref, title: "Moderator", formType: VC.Forms.FormType.Survey, actionUrl: this.props.actionUrl, classroomId: this.props.classroomId, getListItems: this.getListItems.bind(this), setListItems: this.setListItems.bind(this)})));
                 }
             }
-            Lists.Moderators = Moderators;
+            Lists.ModeratorsTest = ModeratorsTest;
+            class ModeratorList extends Lists.List {
+                renderItemCols(d) {
+                    let l = [];
+                    l.push(React.createElement("td", {key: "tdTitle_" + d.id}, d.title));
+                    return l;
+                }
+                renderTableHeaderCols() {
+                    let l = [];
+                    l.push(React.createElement("th", {key: "thTitle"}, "Moderator Computer"));
+                    return l;
+                }
+            }
             class Surveys extends Lists.Base {
                 getList() {
                     return this.list;
@@ -61,18 +73,6 @@ var VC;
                 renderTableHeaderCols() {
                     let l = [];
                     l.push(React.createElement("th", {key: "thTitle"}, "Title"));
-                    return l;
-                }
-            }
-            class ModeratorList extends Lists.List {
-                renderItemCols(d) {
-                    let l = [];
-                    l.push(React.createElement("td", {key: "tdTitle_" + d.id}, d.title));
-                    return l;
-                }
-                renderTableHeaderCols() {
-                    let l = [];
-                    l.push(React.createElement("th", {key: "thTitle"}, "Moderator Computer"));
                     return l;
                 }
             }

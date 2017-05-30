@@ -15,7 +15,7 @@ namespace VC.Admin.Lists {
 
     
 
-    export class Moderators extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
+    export class ModeratorsTest extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
         private list: FormsList;
         private box: FormsBox;
 
@@ -39,6 +39,22 @@ namespace VC.Admin.Lists {
             );
         }
     }
+
+    class ModeratorList extends List<string, IFormsListItem, IFormsListProps, IFormsListState> {
+
+        renderItemCols(d: IFormsListItem): JSX.Element[] {
+            let l: Array<JSX.Element> = [];
+            l.push(<td key={"tdTitle_" + d.id}>{d.title}</td>);
+            return l;
+        }
+        renderTableHeaderCols(): JSX.Element[] {
+            let l: Array<JSX.Element> = [];
+            l.push(<th key={"thTitle"}>Moderator Computer</th>);
+            return l;
+        }
+    }
+
+
 
     export class Surveys extends Base<string, IFormsListItem, FormsList, FormsBox, any> {
         private list: FormsList;
@@ -105,19 +121,7 @@ namespace VC.Admin.Lists {
         }
     }
 
-    class ModeratorList extends List<string, IFormsListItem, IFormsListProps, IFormsListState> {
-
-        renderItemCols(d: IFormsListItem): JSX.Element[] {
-            let l: Array<JSX.Element> = [];
-            l.push(<td key={"tdTitle_" + d.id}>{d.title}</td>);
-            return l;
-        }
-        renderTableHeaderCols(): JSX.Element[] {
-            let l: Array<JSX.Element> = [];
-            l.push(<th key={"thTitle"}>Moderator Computer</th>);
-            return l;
-        }
-    }
+  
 
     interface IFormsBoxProps extends IBoxProps<IFormsListItem> {
         formType: VC.Forms.FormType;

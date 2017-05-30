@@ -195,23 +195,8 @@ namespace VirtualClassroom.Controllers
             return responseSuccess(data);
         }
 
-        [HttpGet]
-        public DataResponse<List<Moderator>> LoadModerators(string classroomId)
-        {
-            List<Moderator> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Moderator()
-            {
-                title=x.Name,
-                uid = x.Uid,
-                id = x.Id,
-                name = x.Name
-            }).ToList();
-
-
-            //  List<Form> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower() && x.Type == (int)Forms.FormType.Survey).OrderBy(x => x.Title).Select(x => new Form(x, null)).ToList();
-
-            return responseSuccess(data);
-
-        }
+      
+   
 
 
 
@@ -1519,7 +1504,7 @@ namespace VirtualClassroom.Controllers
                         {
                             error = "[Row: " + (i + 1) + "] ID max length is 20";
                         }
-                        else if (isTeacherIdExists(classroomId, id))
+                        else if (isModeratorIdExists(classroomId, id))
                         {
                             error = "[Row: " + (i + 1) + "] ID already exists";
                         }
@@ -1591,6 +1576,307 @@ namespace VirtualClassroom.Controllers
                 return responseError<List<Teacher>>(error);
             }
         }
+
+
+        #region Moderators
+        /// <summary>
+        /// Load Moderators data
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public DataResponse<List<Moderator>> LoadModerators(string classroomId)
+        {
+            List<Moderator> data = db.TblModerators.Where(x => x.ClassroomId.ToLower() == classroomId.ToLower()).OrderBy(x => x.Id).Select(x => new Moderator()
+            {
+                title = x.Name,
+                uid = x.Uid,
+                id = x.Id,
+                name = x.Name
+            }).ToList();
+
+            return responseSuccess(data);
+        }
+
+        /// <summary>
+        /// Import Moderators data
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public DataResponse<List<Moderator>> ImportModerators(string classroomId, [FromBody] string data)
+        {
+            List<Moderator> importedModerators = new List<Moderator>();
+            string error = String.Empty;
+
+            // split rows
+            string[] datas = data.Split('\n');
+
+            // enumerate rows
+            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
+            {
+                if (!String.IsNullOrEmpty(datas[i]))
+                {
+                    string[] row = datas[i].Split(',');
+
+                    // validate row
+                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing ID";
+                    }
+                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
+                    {
+                        error = "[Row: " + (i + 1) + "] Missing Name";
+                    }
+
+                    if (String.IsNullOrEmpty(error))
+                    {
+                        string id = row[0].Trim().Replace("\"", "");
+                        string name = row[1].Trim().Replace("\"", "");
+
+                        // validate ID & name
+                        if (!isValidId(id))
+                        {
+                            error = "[Row: " + (i + 1) + "] Invalid ID";
+                        }
+                        else if (id.Length > 20)
+                        {
+                            error = "[Row: " + (i + 1) + "] ID max length is 20";
+                        }
+                        else if (isModeratorIdExists(classroomId, id))
+                        {
+                            error = "[Row: " + (i + 1) + "] ID already exists";
+                        }
+                        else if (name.Length == 0)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name is empty";
+                        }
+                        else if (name.Length > 256)
+                        {
+                            error = "[Row: " + (i + 1) + "] Name max length is 256";
+                        }
+
+                        if (String.IsNullOrEmpty(error))
+                        {
+                            // can be imported
+                            importedModerators.Add(new Moderator()
+                            {
+                                id = id,
+                                name = name
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(error))
+            {
+                if (importedModerators.Count == 0)
+                {
+                    return responseError<List<Moderator>>("Nothing to import");
+                }
+                else
+                {
+                    // import to DB
+                    List<TblModerator> tModerator = new List<TblModerator>();
+                    foreach (Moderator moderator in importedModerators)
+                    {
+                        Guid newModeratorUid = Guid.NewGuid();
+
+                        tModerator.Add(new TblModerator
+                        {
+                            Uid = newModeratorUid,
+                            Id = moderator.id,
+                            ClassroomId = classroomId,
+                            Name = moderator.name,
+                            Audio = true,
+                            Video = true,
+                            Volume=100,
+                            Address1=string.Empty,
+                            State = string.Empty,
+                            City = string.Empty,
+                            ZipCode = string.Empty,
+                            Country = string.Empty
+
+                        });
+
+                        moderator.uid = newModeratorUid;
+                    }
+
+                    db.TblModerators.InsertAllOnSubmit(tModerator);
+
+                    try
+                    {
+                        db.SubmitChanges();
+
+                        return responseSuccess(importedModerators);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError<List<Moderator>>(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return responseError<List<Moderator>>(error);
+            }
+        }
+
+        /// <summary>
+        /// Check is Moderators Exists
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="id"></param>
+        /// <param name="excludeId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public DataResponse<bool> IsModeratorExists(string classroomId, string id, [FromBody] string excludeId)
+        {
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.Id.ToLower() != excludeId.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return responseSuccess(exists);
+        }
+
+        /// <summary>
+        /// Create Moderator data
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public DataResponse<Moderator> CreateModerator(string classroomId, [FromBody] Moderator item)
+        {
+            Guid tcUid = Guid.NewGuid();
+
+            db.TblModerators.InsertOnSubmit(new TblModerator
+            {
+                Uid = tcUid,
+                Id = item.id,
+                ClassroomId = classroomId,
+                Name = item.name,
+                Audio = true,
+                Video = true,
+                Volume = 100,
+                Address1 = string.Empty,
+                State = string.Empty,
+                City = string.Empty,
+                ZipCode = string.Empty,
+                Country = string.Empty
+            });
+
+            try
+            {
+                db.SubmitChanges();
+
+                item.uid = tcUid;
+
+                return responseSuccess(item);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError<Moderator>(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update Moderator data
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public DataResponse<Moderator> UpdateModerator(string classroomId, [FromBody] Moderator item)
+        {
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblModerator tblModerator = q.Single();
+                tblModerator.Name = item.name;
+
+                try
+                {
+                    db.SubmitChanges();
+
+                    return responseSuccess(item);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<Moderator>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<Moderator>("Moderator Id not found.");
+            }
+        }
+
+        /// <summary>
+        /// Delete Moderator data
+        /// </summary>
+        /// <param name="classroomId"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public DataResponse<string> DeleteModerator(string classroomId, [FromBody] string id)
+        {
+            string loweredId = id.ToLower();
+
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblModerator tblModerator = q.Single();
+
+               // Guid tcUid = tblModerator.Uid;
+
+                //foreach (TblPC tblPC in db.TblPCs.Where(x => x.TcUid.HasValue && x.TcUid == tcUid).Select(x => x))
+                //{
+                //    tblPC.TcUid = null;
+                //}
+
+                db.TblModerators.DeleteOnSubmit(tblModerator);
+
+                try
+                {
+                    db.SubmitChanges();
+
+                    return responseSuccess(id);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError<string>(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError<string>("Moderator Id not found.");
+            }
+        }
+
+        private bool isModeratorIdExists(string classroomId, string id)
+        {
+            var q = from x in db.TblTCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    select x;
+
+            bool exists = q.Count() > 0;
+
+            return exists;
+        }
+
+        #endregion
+
 
         // dispose
         protected override void Dispose(bool disposing)

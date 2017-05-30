@@ -184,8 +184,6 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblPC> _TblPCs;
 		
-		private EntitySet<TblModerator> _TblModerators;
-		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
     #region Extensibility Method Definitions
@@ -211,7 +209,6 @@ namespace VirtualClassroom.Models
 		public TblTC()
 		{
 			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
-			this._TblModerators = new EntitySet<TblModerator>(new Action<TblModerator>(this.attach_TblModerators), new Action<TblModerator>(this.detach_TblModerators));
 			this._TblClassroom = default(EntityRef<TblClassroom>);
 			OnCreated();
 		}
@@ -373,19 +370,6 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblModerator", Storage="_TblModerators", ThisKey="Uid", OtherKey="TcUid")]
-		public EntitySet<TblModerator> TblModerators
-		{
-			get
-			{
-				return this._TblModerators;
-			}
-			set
-			{
-				this._TblModerators.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblTC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
@@ -447,18 +431,6 @@ namespace VirtualClassroom.Models
 		}
 		
 		private void detach_TblPCs(TblPC entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblTC = null;
-		}
-		
-		private void attach_TblModerators(TblModerator entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblTC = this;
-		}
-		
-		private void detach_TblModerators(TblModerator entity)
 		{
 			this.SendPropertyChanging();
 			entity.TblTC = null;
@@ -2318,8 +2290,6 @@ namespace VirtualClassroom.Models
 		
 		private EntitySet<TblPC> _TblPCs;
 		
-		private EntitySet<TblModerator> _TblModerators;
-		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
     #region Extensibility Method Definitions
@@ -2339,7 +2309,6 @@ namespace VirtualClassroom.Models
 		public TblSC()
 		{
 			this._TblPCs = new EntitySet<TblPC>(new Action<TblPC>(this.attach_TblPCs), new Action<TblPC>(this.detach_TblPCs));
-			this._TblModerators = new EntitySet<TblModerator>(new Action<TblModerator>(this.attach_TblModerators), new Action<TblModerator>(this.detach_TblModerators));
 			this._TblClassroom = default(EntityRef<TblClassroom>);
 			OnCreated();
 		}
@@ -2441,19 +2410,6 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblModerator", Storage="_TblModerators", ThisKey="Uid", OtherKey="ScUid")]
-		public EntitySet<TblModerator> TblModerators
-		{
-			get
-			{
-				return this._TblModerators;
-			}
-			set
-			{
-				this._TblModerators.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblSC", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
@@ -2519,18 +2475,6 @@ namespace VirtualClassroom.Models
 			this.SendPropertyChanging();
 			entity.TblSC = null;
 		}
-		
-		private void attach_TblModerators(TblModerator entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblSC = this;
-		}
-		
-		private void detach_TblModerators(TblModerator entity)
-		{
-			this.SendPropertyChanging();
-			entity.TblSC = null;
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblModerator")]
@@ -2546,10 +2490,6 @@ namespace VirtualClassroom.Models
 		private string _Id;
 		
 		private string _Name;
-		
-		private System.Nullable<System.Guid> _ScUid;
-		
-		private System.Nullable<System.Guid> _TcUid;
 		
 		private int _Position;
 		
@@ -2571,10 +2511,6 @@ namespace VirtualClassroom.Models
 		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
-		private EntityRef<TblSC> _TblSC;
-		
-		private EntityRef<TblTC> _TblTC;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2587,10 +2523,6 @@ namespace VirtualClassroom.Models
     partial void OnIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnScUidChanging(System.Nullable<System.Guid> value);
-    partial void OnScUidChanged();
-    partial void OnTcUidChanging(System.Nullable<System.Guid> value);
-    partial void OnTcUidChanged();
     partial void OnPositionChanging(int value);
     partial void OnPositionChanged();
     partial void OnAudioChanging(bool value);
@@ -2614,8 +2546,6 @@ namespace VirtualClassroom.Models
 		public TblModerator()
 		{
 			this._TblClassroom = default(EntityRef<TblClassroom>);
-			this._TblSC = default(EntityRef<TblSC>);
-			this._TblTC = default(EntityRef<TblTC>);
 			OnCreated();
 		}
 		
@@ -2699,54 +2629,6 @@ namespace VirtualClassroom.Models
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ScUid
-		{
-			get
-			{
-				return this._ScUid;
-			}
-			set
-			{
-				if ((this._ScUid != value))
-				{
-					if (this._TblSC.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnScUidChanging(value);
-					this.SendPropertyChanging();
-					this._ScUid = value;
-					this.SendPropertyChanged("ScUid");
-					this.OnScUidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> TcUid
-		{
-			get
-			{
-				return this._TcUid;
-			}
-			set
-			{
-				if ((this._TcUid != value))
-				{
-					if (this._TblTC.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTcUidChanging(value);
-					this.SendPropertyChanging();
-					this._TcUid = value;
-					this.SendPropertyChanged("TcUid");
-					this.OnTcUidChanged();
 				}
 			}
 		}
@@ -2961,74 +2843,6 @@ namespace VirtualClassroom.Models
 						this._ClassroomId = default(string);
 					}
 					this.SendPropertyChanged("TblClassroom");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblSC_TblModerator", Storage="_TblSC", ThisKey="ScUid", OtherKey="Uid", IsForeignKey=true)]
-		public TblSC TblSC
-		{
-			get
-			{
-				return this._TblSC.Entity;
-			}
-			set
-			{
-				TblSC previousValue = this._TblSC.Entity;
-				if (((previousValue != value) 
-							|| (this._TblSC.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TblSC.Entity = null;
-						previousValue.TblModerators.Remove(this);
-					}
-					this._TblSC.Entity = value;
-					if ((value != null))
-					{
-						value.TblModerators.Add(this);
-						this._ScUid = value.Uid;
-					}
-					else
-					{
-						this._ScUid = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TblSC");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblTC_TblModerator", Storage="_TblTC", ThisKey="TcUid", OtherKey="Uid", IsForeignKey=true)]
-		public TblTC TblTC
-		{
-			get
-			{
-				return this._TblTC.Entity;
-			}
-			set
-			{
-				TblTC previousValue = this._TblTC.Entity;
-				if (((previousValue != value) 
-							|| (this._TblTC.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TblTC.Entity = null;
-						previousValue.TblModerators.Remove(this);
-					}
-					this._TblTC.Entity = value;
-					if ((value != null))
-					{
-						value.TblModerators.Add(this);
-						this._TcUid = value.Uid;
-					}
-					else
-					{
-						this._TcUid = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TblTC");
 				}
 			}
 		}

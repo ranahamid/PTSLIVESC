@@ -6,7 +6,8 @@ namespace VC.App.Components {
     export enum BoxLabelStyle {
         NotConnected = 0,
         Connected = 1,
-        HandRaised = 2
+        HandRaised = 2,
+        Nothing=3
     }
 
     interface IBoxLabelProps {
@@ -63,6 +64,9 @@ namespace VC.App.Components {
                     break;
                 case BoxLabelStyle.HandRaised:
                     icon = "glyphicon glyphicon-hand-up";
+                    break;
+                case BoxLabelStyle.Nothing:
+                    icon= "";
                     break;
             }
             return icon;

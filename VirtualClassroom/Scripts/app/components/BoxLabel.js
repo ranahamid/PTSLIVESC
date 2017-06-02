@@ -10,6 +10,7 @@ var VC;
                 BoxLabelStyle[BoxLabelStyle["NotConnected"] = 0] = "NotConnected";
                 BoxLabelStyle[BoxLabelStyle["Connected"] = 1] = "Connected";
                 BoxLabelStyle[BoxLabelStyle["HandRaised"] = 2] = "HandRaised";
+                BoxLabelStyle[BoxLabelStyle["Nothing"] = 3] = "Nothing";
             })(Components.BoxLabelStyle || (Components.BoxLabelStyle = {}));
             var BoxLabelStyle = Components.BoxLabelStyle;
             class BoxLabel extends React.Component {
@@ -48,6 +49,9 @@ var VC;
                             break;
                         case BoxLabelStyle.HandRaised:
                             icon = "glyphicon glyphicon-hand-up";
+                            break;
+                        case BoxLabelStyle.Nothing:
+                            icon = "";
                             break;
                     }
                     return icon;

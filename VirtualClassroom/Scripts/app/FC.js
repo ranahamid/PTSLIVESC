@@ -236,21 +236,21 @@ var VC;
                                 let tokenData = App.Global.Fce.toTokenData(newStudentConnection.data);
                                 let addressData;
                                 addressData = "";
-                                if (tokenData.Address1 != null) {
-                                    addressData = tokenData.Address1;
-                                }
-                                if (tokenData.State != null) {
-                                    addressData = addressData + ", " + tokenData.State;
-                                }
-                                if (tokenData.City != null) {
-                                    addressData = addressData + ", " + tokenData.City;
-                                }
                                 if (tokenData.Country != null) {
                                     addressData = addressData + ", " + tokenData.Country;
                                 }
-                                if (tokenData.ZipCode != null) {
-                                    addressData = addressData + "-" + tokenData.ZipCode;
+                                else if (tokenData.City != null) {
+                                    addressData = addressData + ", " + tokenData.City;
                                 }
+                                else if (tokenData.State != null) {
+                                    addressData = addressData + ", " + tokenData.State;
+                                }
+                                else if (tokenData.Address1 != null) {
+                                    addressData = tokenData.Address1;
+                                }
+                                //if (tokenData.ZipCode != null) {
+                                //    addressData = addressData + "-" + tokenData.ZipCode;
+                                //}
                                 if (addressData != "")
                                     this.label[i].setText(tokenData.Name + ", " + addressData + " connected.", App.Components.BoxLabelStyle.Connected);
                                 else
@@ -310,23 +310,20 @@ var VC;
                 });
                 return connectedStudentsCount;
             }
-            getLayoutSize() {
-                let layout = 1;
-                let connectedStudentsCount = this.getCountOfConnectedStudents();
-                if (connectedStudentsCount > 6) {
-                    layout = 8;
-                }
-                else if (connectedStudentsCount > 4) {
-                    layout = 6;
-                }
-                else if (connectedStudentsCount > 2) {
-                    layout = 4;
-                }
-                else if (connectedStudentsCount > 1) {
-                    layout = 2;
-                }
-                return layout;
-            }
+            //private getLayoutSize(): number {
+            //    let layout: number = 1;
+            //    let connectedStudentsCount: number = this.getCountOfConnectedStudents();
+            //    if (connectedStudentsCount > 6) {
+            //        layout = 8;
+            //    } else if (connectedStudentsCount > 4) {
+            //        layout = 6;
+            //    } else if (connectedStudentsCount > 2) {
+            //        layout = 4;
+            //    } else if (connectedStudentsCount > 1) {
+            //        layout = 2;
+            //    }
+            //    return layout;
+            //}
             fitLayout() {
                 let windowHeight = $(window).innerHeight();
                 let windowWidth = $(window).innerWidth();
@@ -334,7 +331,7 @@ var VC;
             }
             fitLayerSizes(windowWidth, windowHeight) {
                 let connectedStudentsCount = this.getCountOfConnectedStudents();
-                let layout = this.getLayoutSize();
+                //  let layout: number = this.getLayoutSize();
                 let countOfVisibleBoxes = 0;
                 // visibility of boxes + labels + floating chat divs
                 for (let i = 0; i < 8; i++) {
@@ -355,45 +352,48 @@ var VC;
                     }
                 }
                 // show boxes left
-                for (let i = 7; i >= 0 && countOfVisibleBoxes < layout; i++) {
-                    if (!this.connectedStudents[i]) {
-                        this.boxSubscribers[i].setVisibility(true);
-                        this.label[i].setVisibility(true);
-                        if (this.divFloatingChat[i].style.display === "none") {
-                            this.divFloatingChat[i].style.display = "block";
-                        }
-                        countOfVisibleBoxes++;
-                    }
-                }
+                //for (let i: number = 7; i >= 0 && countOfVisibleBoxes < layout; i++) {
+                //    if (!this.connectedStudents[i])
+                //    {
+                //        this.boxSubscribers[i].setVisibility(true);
+                //        this.label[i].setVisibility(true);
+                //        if (this.divFloatingChat[i].style.display === "none") {
+                //            this.divFloatingChat[i].style.display = "block";
+                //        }
+                //        countOfVisibleBoxes++;
+                //    }
+                //}
+                // console.log(connectedStudentsCount);
                 // sizes and position of boxes + labels + floating chat divs
-                if (layout > 6) {
+                //0
+                if (connectedStudentsCount == 0) {
                     for (let i = 0; i < 8; i++) {
-                        $(this.boxSubscribers[i].getBox())
-                            .css("width", "25%")
-                            .css("height", windowHeight / 2 + "px"); // 8
-                        $(this.label[i].getParentDiv()).css("width", "25%");
-                        $(this.divFloatingChat[i]).css("width", "25%");
+                        if (!this.connectedStudents[i]) {
+                            this.boxSubscribers[i].setVisibility(true);
+                            this.label[i].setVisibility(true);
+                            if (this.divFloatingChat[i].style.display === "none") {
+                                this.divFloatingChat[i].style.display = "block";
+                            }
+                            $(this.boxSubscribers[i].getBox())
+                                .css("width", "100%")
+                                .css("height", windowHeight + "px"); //1
+                            $(this.label[i].getParentDiv()).css("width", "100%");
+                            $(this.divFloatingChat[i]).css("width", "100%");
+                            break;
+                        }
                     }
                 }
-                else if (layout > 4) {
+                //1
+                if (connectedStudentsCount == 1) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
-                            .css("width", "33.33%")
-                            .css("height", windowHeight / 2 + "px"); // 6
-                        $(this.label[i].getParentDiv()).css("width", "33.33%");
-                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                            .css("width", "100%")
+                            .css("height", windowHeight + "px"); // 1
+                        $(this.label[i].getParentDiv()).css("width", "100%");
+                        $(this.divFloatingChat[i]).css("width", "100%");
                     }
                 }
-                else if (layout > 2) {
-                    for (let i = 0; i < 8; i++) {
-                        $(this.boxSubscribers[i].getBox())
-                            .css("width", "50%")
-                            .css("height", windowHeight / 2 + "px"); // 4
-                        $(this.label[i].getParentDiv()).css("width", "50%");
-                        $(this.divFloatingChat[i]).css("width", "50%");
-                    }
-                }
-                else if (layout > 1) {
+                else if (connectedStudentsCount == 2) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "50%")
@@ -402,13 +402,72 @@ var VC;
                         $(this.divFloatingChat[i]).css("width", "50%");
                     }
                 }
-                else {
+                else if (connectedStudentsCount == 3) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
-                            .css("width", "100%")
-                            .css("height", windowHeight + "px"); // 1
-                        $(this.label[i].getParentDiv()).css("width", "100%");
-                        $(this.divFloatingChat[i]).css("width", "100%");
+                            .css("width", "33.33%")
+                            .css("height", windowHeight + "px"); // 2
+                        $(this.label[i].getParentDiv()).css("width", "33.33%");
+                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                    }
+                }
+                else if (connectedStudentsCount == 4) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "25%")
+                            .css("height", windowHeight + "px"); // 4
+                        $(this.label[i].getParentDiv()).css("width", "25%");
+                        $(this.divFloatingChat[i]).css("width", "25%");
+                    }
+                }
+                else if (connectedStudentsCount == 5) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "20%")
+                            .css("height", windowHeight + "px"); // 4
+                        $(this.label[i].getParentDiv()).css("width", "20%");
+                        $(this.divFloatingChat[i]).css("width", "20%");
+                    }
+                }
+                else if (connectedStudentsCount == 6) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "33.33%")
+                            .css("height", windowHeight / 2 + "px"); // 6
+                        $(this.label[i].getParentDiv()).css("width", "33.33%");
+                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                    }
+                }
+                else if (connectedStudentsCount == 7) {
+                    let countConnectStudent = 0;
+                    for (let i = 0; i < 8; i++) {
+                        if (this.connectedStudents[i]) {
+                            countConnectStudent++;
+                            if (countConnectStudent <= 4) {
+                                $(this.boxSubscribers[i].getBox())
+                                    .css("width", "25%")
+                                    .css("height", windowHeight / 2 + "px");
+                                $(this.label[i].getParentDiv()).css("width", "25%");
+                                $(this.divFloatingChat[i]).css("width", "25%");
+                            }
+                            else {
+                                $(this.boxSubscribers[i].getBox())
+                                    .css("width", "33.33%")
+                                    .css("height", windowHeight / 2 + "px");
+                                $(this.label[i].getParentDiv()).css("width", "33.33%");
+                                $(this.divFloatingChat[i]).css("width", "33.33%");
+                            }
+                        }
+                    }
+                }
+                //8
+                if (connectedStudentsCount >= 8) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "25%")
+                            .css("height", windowHeight / 2 + "px"); // 8
+                        $(this.label[i].getParentDiv()).css("width", "25%");
+                        $(this.divFloatingChat[i]).css("width", "25%");
                     }
                 }
                 // labels

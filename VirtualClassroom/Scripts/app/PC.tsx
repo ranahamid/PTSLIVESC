@@ -464,7 +464,8 @@ namespace VC.App {
                                             <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="" textOff="" classOn="btn btn-success " classOff="btn btn-danger " iconOn="glyphicon rise-hand-on" iconOff="glyphicon rise-hand-off" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>                                           
                                         </div>
 
-                                        <div className='header-button2'>                                           
+                                        <div className='header-button2'>      
+                                            <span id="video-text">Video</span>                                     
                                             <button id='minimizevideo'>
                                                 <i class="fa fa-window-minimize" aria-hidden="true"></i>
                                             </button>

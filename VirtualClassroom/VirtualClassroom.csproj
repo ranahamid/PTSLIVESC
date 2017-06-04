@@ -258,6 +258,7 @@
   <ItemGroup>
     <Content Include="App_Data\DbScript.Update.1.0.0.-1.0.1.sql" />
     <Content Include="App_Data\DbScript.1.0.0.sql" />
+    <Content Include="Content\animate.css" />
     <Content Include="Content\CTMShared\CTM-Camera-Off.png" />
     <Content Include="Content\CTMShared\CTM-Camera-On.png" />
     <Content Include="Content\CTMShared\CTM-Mic-Off.png" />

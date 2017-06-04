@@ -55,6 +55,7 @@ namespace VirtualClassroom.Controllers
         {
             var q = from x in db.TblPCs
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                    orderby x.Name
                     select x;
 
              if (q!=null && q.Count() == 1)
@@ -155,20 +156,6 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student Id.");
             }
         }
-
-        //public ActionResult SaveTextFile(string content)
-        //{
-
-        //    var builder = new StringBuilder();
-        //    //this is probably a loop...
-        //    builder.AppendFormat("1,2{0}", "Envrionment.NewLine");
-        //    builder.AppendFormat("3,4{0}", "Envrionment.NewLine");
-
-        //    ///   content = content.Replace("~","\n");
-        //    return File(new System.Text.UTF8Encoding().GetBytes(builder.ToString()), "text/plain",
-        //             "ChatReport.txt");
-        //}
-
 
 
         // dispose

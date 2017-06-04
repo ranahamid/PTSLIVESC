@@ -41,22 +41,25 @@ namespace VC.App {
                     let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
                     let addressData: string;
                     addressData = "";
-                    if (tokenData.Address1 != null) {
-                        addressData = tokenData.Address1;
-                    }
-                    if (tokenData.State != null) {
-                        addressData = addressData + ", " + tokenData.State;
-                    }
-                    if (tokenData.City != null) {
-                        addressData = addressData + ", " + tokenData.City;
-                    }
+
 
                     if (tokenData.Country != null) {
                         addressData = addressData + ", " + tokenData.Country;
                     }
-                    if (tokenData.ZipCode != null) {
-                        addressData = addressData + "-" + tokenData.ZipCode;
+                    else if (tokenData.City != null) {
+                        addressData = addressData + ", " + tokenData.City;
                     }
+                    else if (tokenData.State != null) {
+                        addressData = addressData + ", " + tokenData.State;
+                    }
+                    else if (tokenData.Address1 != null) {
+                        addressData = tokenData.Address1;
+                    }
+
+                    //if (tokenData.ZipCode != null) {
+                    //    addressData = addressData + "-" + tokenData.ZipCode;
+                    //}
+
 
                     if (addressData != "")
                         this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
@@ -209,17 +212,22 @@ namespace VC.App {
                 }
             });
         }
-        private featuredStudentsChanged(data: Global.IComputerData): void {
+        private featuredStudentsChanged(data: Global.IComputerData): void
+        {
             // go thru current layout and unsubscribe from students that doesn't match their position anymore
-            for (let i: number = 0; i < 8; i++) {
-                if (this.connectedStudents[i]) {
+            for (let i: number = 0; i < 8; i++)
+            {
+                if (this.connectedStudents[i])
+                {
                     let newStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, data);
                     let currentStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, this.dataResponse);
                     if (!this.compareGroupComputers(newStudent, currentStudent)) {
                         let connection: any = this.getConnectionByUid(currentStudent.Uid);
-                        if (connection !== null) {
+                        if (connection !== null)
+                        {
                             // unsubscribe
-                            if (this.boxSubscribers[i].isConnected) {
+                            if (this.boxSubscribers[i].isConnected)
+                            {
                                 this.boxSubscribers[i].unsubscribe(this.session);
                             }
                             this.label[i].setText("Student PC not connected.", Components.BoxLabelStyle.NotConnected);
@@ -234,13 +242,17 @@ namespace VC.App {
             }
 
             // subscribe to new students
-            for (let i: number = 0; i < 8; i++) {
-                if (!this.connectedStudents[i]) {
+            for (let i: number = 0; i < 8; i++)
+            {
+                if (!this.connectedStudents[i])
+                {
                     let newStudent: Global.GroupComputer = this.getGroupStudentComputerByPosition(i + 1, data);
-                    if (newStudent !== null) {
+                    if (newStudent !== null)
+                    {
                         // label
                         let newStudentConnection: any = this.getConnectionByUid(newStudent.Uid);
-                        if (newStudentConnection !== null) {
+                        if (newStudentConnection !== null)
+                        {
                             // try to get stream
                             let stream: any = this.getStream(newStudent.Uid);
                             if (stream !== null) {
@@ -288,11 +300,14 @@ namespace VC.App {
             this.dataResponse = data;
             this.fitLayout();
         }
+
         private getGroupStudentComputerByPosition(position: number, data: Global.IComputerData): Global.GroupComputer {
             let iUser: Global.GroupComputer = null;
-            for (let i: number = 0; i < data.Group.length && iUser === null; i++) {
+            for (let i: number = 0; i < data.Group.length && iUser === null; i++)
+            {
                 //if (data.Group[i].Role === VC.App.Roles.PC && data.Group[i].Position === position) {
-                if (data.Group[i].Role === VC.App.Roles.PC) {
+                if (data.Group[i].Role === VC.App.Roles.PC)
+                {
                     iUser = data.Group[i];
                 }
             }
@@ -370,18 +385,43 @@ namespace VC.App {
 
             // visibility of boxes + labels + floating chat divs
             for (let i: number = 0; i < 8; i++) {
-                if (this.connectedStudents[i]) {
+                if (this.connectedStudents[i])
+                {
+
                     this.boxSubscribers[i].setVisibility(true);
+
+                    //animated
+                   //   $(this.boxSubscribers[i]).addClass(" animated rollIn ");
+                    
                     this.label[i].setVisibility(true);
-                    if (this.divFloatingChat[i].style.display === "none") {
-                        this.divFloatingChat[i].style.display = "block";
+                    //animated
+                    $(this.label[i].getParentDiv()).addClass(" animated rollIn ");
+
+                    if (this.divFloatingChat[i].style.display === "none")
+                    {
+                        this.divFloatingChat[i].style.display = "block";  
+                        //animated
+                        //floatingChat  
+                        //this.divFloatingChat[i].className = "floatingChat animated rollIn";
+                       // $(this.divFloatingChat[i]).removeClass(" animated rollIn ");
                     }
                     countOfVisibleBoxes++;
-                } else {
+                }
+                else {
                     this.boxSubscribers[i].setVisibility(false);
+                    //animated
+                   // $(this.boxSubscribers[i]).removeClass(" animated rollOut ");
+
+
                     this.label[i].setVisibility(false);
-                    if (this.divFloatingChat[i].style.display === "block") {
+                    //animated
+                    $(this.label[i].getParentDiv()).removeClass(" animated rollOut ");
+                    if (this.divFloatingChat[i].style.display === "block")
+                    {
                         this.divFloatingChat[i].style.display = "none";
+                        //animated
+                       // this.divFloatingChat[i].className = "floatingChat animated rollIn";
+                        // $(this.divFloatingChat[i]).removeClass(" animated rollIn ");
                     }
                 }
             }

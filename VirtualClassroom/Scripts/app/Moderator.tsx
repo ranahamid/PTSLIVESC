@@ -457,7 +457,7 @@ namespace VC.App {
                                     <div ref={(ref: HTMLDivElement) => this.divMain = ref} className="main">
                                         <Components.Box ref={(ref: Components.Box) => this.boxSubscriber = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={true} />
                                         {/* <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} /> */}
-                                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="" style={Components.BoxLabelStyle.Nothing} className="cBoxLabel" labelClasses={labelClasses} visible={true} /> 
+                                        <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="" style={Components.BoxLabelStyle.NoIcon} className="cBoxLabel" labelClasses={labelClasses} visible={true} /> 
 
                                     </div>
                                     <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">

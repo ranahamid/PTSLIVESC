@@ -335,18 +335,18 @@ namespace VirtualClassroom.Code
         public static List<GroupComputer> CreateGroup(TblFC fc)
         {
             List<GroupComputer> group = new List<GroupComputer>();
-
+            int i = 1;
             // student computers
             group.AddRange(
-                fc.TblFCPCs.Select(x => new GroupComputer
+                fc.TblFCPCs.OrderBy(x=> x.TblPC.Name).Select(x => new GroupComputer
                 {
                     Uid = x.TblPC.Uid,
                     Id = x.TblPC.Id,
-                    Name=x.TblPC.Name,
+                    Name = x.TblPC.Name,
                     Role = (int)VC.VcRoles.PC,
-                    Position = x.Position,
-             
-
+                    //Enable this if want to get by by position
+                    //Position = x.Position,
+                    Position = i++
                 }));
             group = group.OrderBy(x => x.Name).ToList();
             return group;

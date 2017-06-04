@@ -37,21 +37,21 @@ var VC;
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
                         let addressData;
                         addressData = "";
-                        if (tokenData.Address1 != null) {
-                            addressData = tokenData.Address1;
-                        }
-                        if (tokenData.State != null) {
-                            addressData = addressData + ", " + tokenData.State;
-                        }
-                        if (tokenData.City != null) {
-                            addressData = addressData + ", " + tokenData.City;
-                        }
                         if (tokenData.Country != null) {
                             addressData = addressData + ", " + tokenData.Country;
                         }
-                        if (tokenData.ZipCode != null) {
-                            addressData = addressData + "-" + tokenData.ZipCode;
+                        else if (tokenData.City != null) {
+                            addressData = addressData + ", " + tokenData.City;
                         }
+                        else if (tokenData.State != null) {
+                            addressData = addressData + ", " + tokenData.State;
+                        }
+                        else if (tokenData.Address1 != null) {
+                            addressData = tokenData.Address1;
+                        }
+                        //if (tokenData.ZipCode != null) {
+                        //    addressData = addressData + "-" + tokenData.ZipCode;
+                        //}
                         if (addressData != "")
                             this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
                         else
@@ -337,7 +337,11 @@ var VC;
                 for (let i = 0; i < 8; i++) {
                     if (this.connectedStudents[i]) {
                         this.boxSubscribers[i].setVisibility(true);
+                        //animated
+                        //   $(this.boxSubscribers[i]).addClass(" animated rollIn ");
                         this.label[i].setVisibility(true);
+                        //animated
+                        $(this.label[i].getParentDiv()).addClass(" animated rollIn ");
                         if (this.divFloatingChat[i].style.display === "none") {
                             this.divFloatingChat[i].style.display = "block";
                         }
@@ -345,7 +349,11 @@ var VC;
                     }
                     else {
                         this.boxSubscribers[i].setVisibility(false);
+                        //animated
+                        // $(this.boxSubscribers[i]).removeClass(" animated rollOut ");
                         this.label[i].setVisibility(false);
+                        //animated
+                        $(this.label[i].getParentDiv()).removeClass(" animated rollOut ");
                         if (this.divFloatingChat[i].style.display === "block") {
                             this.divFloatingChat[i].style.display = "none";
                         }

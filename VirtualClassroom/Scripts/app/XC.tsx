@@ -144,10 +144,13 @@ namespace VC.App {
             return exists;
         }
 
-        public getConnectionByUid(uid: string): any {
+        public getConnectionByUid(uid: string): any
+        {
             let c: any = null;
-            for (let i: number = 0; i < this.connections.length && c == null; i++) {
-                if (Global.Fce.toTokenData(this.connections[i].data).Uid === uid) {
+            for (let i: number = 0; i < this.connections.length && c == null; i++)
+            {
+                if (Global.Fce.toTokenData(this.connections[i].data).Uid === uid)
+                {
                     c = this.connections[i];
                 }
             }
@@ -158,10 +161,13 @@ namespace VC.App {
             return this.getConnectionByUid(this.dataResponse.Uid);
         }
 
-        public getAcConnection(): any {
+        public getAcConnection(): any
+        {
             let c: any = null;
-            for (let i: number = 0; i < this.connections.length && c == null; i++) {
-                if (Global.Fce.toTokenData(this.connections[i].data).Role === Roles.AC) {
+            for (let i: number = 0; i < this.connections.length && c == null; i++)
+            {
+                if (Global.Fce.toTokenData(this.connections[i].data).Role === Roles.AC)
+                {
                     c = this.connections[i];
                 }
             }

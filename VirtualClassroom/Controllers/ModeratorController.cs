@@ -20,9 +20,9 @@ namespace VirtualClassroom.Controllers
 
         // GET: Moderator
         public ActionResult Index(string classroomId, string id)
-       // public ActionResult Index()
+        // public ActionResult Index()
         {
-           // string classroomId= "CTM2016",  id="admin";
+            // string classroomId= "CTM2016",  id="admin";
             var q = from x in db.TblModerators
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
                     select x;
@@ -31,18 +31,17 @@ namespace VirtualClassroom.Controllers
 
             if (q != null && q.Count() == 1)
             {
-                TblModerator pc = q.Single();
+                TblModerator moderator = q.Single();
 
-                //if (pc.ScUid.HasValue || pc.TcUid.HasValue)
-               
-                viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
-                viewModel.ClassroomId = pc.TblClassroom.Id;
+
+                viewModel.Name = moderator.TblClassroom.Name + " - " + moderator.Name;
+                viewModel.ClassroomId = moderator.TblClassroom.Id;
                 viewModel.ActionUrl = Url.Action();
-                
+
             }
             else
             {
-                viewModel.Name = "Virtual Classroom - Personal computer";
+                viewModel.Name = "Virtual Classroom - Moderator computer";
                 viewModel.ErrorMessage = "Invalid URL.";
             }
 
@@ -57,34 +56,31 @@ namespace VirtualClassroom.Controllers
 
             if (q != null && q.Count() == 1)
             {
-                TblModerator pc = q.Single();
+                TblModerator moderator = q.Single();
+                TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
-                //if (pc.ScUid.HasValue || pc.TcUid.HasValue)
-                
-                    TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+                cData.Uid = moderator.Uid;
+                cData.Id = moderator.Id;
+                cData.Key = TokBoxHelper.Key;
+                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(moderator);
+                cData.Session = TokBoxHelper.GetSession(moderator.ClassroomId,
+                    new TokBoxHelper.TokenData
+                    {
+                        Uid = moderator.Uid,
+                        Id = moderator.Id,
+                        Name = moderator.Name,
+                        Role = (int)VC.VcRoles.Moderator,
+                        Address1 = moderator.Address1,
+                        State = moderator.State,
+                        City = moderator.City,
+                        ZipCode = moderator.ZipCode,
+                        Country = moderator.Country
+                    });
+                cData.Group = TokBoxHelper.CreateGroup(moderator);
 
-                    cData.Uid = pc.Uid;
-                    cData.Id = pc.Id;
-                    cData.Key = TokBoxHelper.Key;
-                    cData.ComputerSetting = new TokBoxHelper.ComputerConfig(pc);
-                    cData.Session = TokBoxHelper.GetSession(pc.ClassroomId,
-                        new TokBoxHelper.TokenData
-                        {
-                            Uid = pc.Uid,
-                            Id = pc.Id,
-                            Name = pc.Name,
-                            Role = (int)VC.VcRoles.Moderator,
-                            Address1 = pc.Address1,
-                            State = pc.State,
-                            City = pc.City,
-                            ZipCode = pc.ZipCode,
-                            Country = pc.Country
-                        });
-                    cData.Group = TokBoxHelper.CreateGroup(pc);
+                return responseSuccess(cData);
 
-                    return responseSuccess(cData);
-                
-              
+
             }
             else
             {
@@ -103,11 +99,11 @@ namespace VirtualClassroom.Controllers
 
             if (q != null && q.Count() == 1)
             {
-                TblModerator tblPC = q.Single();
+                TblModerator tblModerator = q.Single();
                 if (audio.HasValue)
-                    tblPC.Audio = audio.Value;
+                    tblModerator.Audio = audio.Value;
                 if (video.HasValue)
-                    tblPC.Video = video.Value;
+                    tblModerator.Video = video.Value;
 
                 try
                 {

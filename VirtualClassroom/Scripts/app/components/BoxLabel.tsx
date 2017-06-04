@@ -7,7 +7,7 @@ namespace VC.App.Components {
         NotConnected = 0,
         Connected = 1,
         HandRaised = 2,
-        Nothing=3
+        NoIcon=3
     }
 
     interface IBoxLabelProps {
@@ -65,7 +65,7 @@ namespace VC.App.Components {
                 case BoxLabelStyle.HandRaised:
                     icon = "glyphicon glyphicon-hand-up";
                     break;
-                case BoxLabelStyle.Nothing:
+                case BoxLabelStyle.NoIcon:
                     icon= "";
                     break;
             }

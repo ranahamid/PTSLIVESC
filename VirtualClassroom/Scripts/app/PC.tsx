@@ -37,7 +37,8 @@ namespace VC.App {
         }
         connected(connection: any): void {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(connection.data);
-            if (this.dataResponse.Uid === tokenData.Uid) {
+            if (this.dataResponse.Uid === tokenData.Uid)
+            {
                 // me
                 this.setStatusVisibility(false);
                 this.setUiVisibility(true);
@@ -96,6 +97,7 @@ namespace VC.App {
                         } as Global.ISignalAudioPublish);
                     }
                 } else if (tokenData.Role === Roles.PC) {
+                   
                     // send signal to subscribe to my audio
                     if (this.dataResponse.ComputerSetting.Audio && this.boxPublisher.isConnected) {
                         Global.Signaling.sendSignal<Global.ISignalAudioPublish>(this.session, connection, Global.SignalTypes.AudioPublish, {

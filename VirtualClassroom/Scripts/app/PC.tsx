@@ -458,21 +458,24 @@ namespace VC.App {
                                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} />
                                     </div>
                                     <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">
-                                        <div ref={(ref: HTMLDivElement) => this.divButtons = ref} className="divButtons">
-                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon facetime-video-on" iconOff="glyphicon facetime-video-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" delayed={500} /></div>
-                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon music-on" iconOff="glyphicon music-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>                                            
-                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="" textOff="" classOn="btn btn-success " classOff="btn btn-danger " iconOn="glyphicon rise-hand-on" iconOff="glyphicon rise-hand-off" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>                                           
+                                        
+                                            <div ref={(ref: HTMLDivElement) => this.divButtons = ref} className="divButtons">
+                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-successWhite" classOff="btn btn-danger" iconOn="glyphicon facetime-video-on icon-btn-color-on" iconOff="glyphicon facetime-video-off icon-btn-color-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" delayed={500} /></div>
+                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-successWhite" classOff="btn btn-danger" iconOn="glyphicon music-on icon-btn-color-on" iconOff="glyphicon music-off icon-btn-color-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>                                            
+                                            <div ><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="" textOff="" classOn="btn btn-successWhite " classOff="btn btn-danger " iconOn="glyphicon rise-hand-on icon-btn-color-on" iconOff="glyphicon rise-hand-off icon-btn-color-off" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>                                           
+                                            </div>
+
+                                            <div className="top-panel">
+                                                <div className='header-button2'>
+                                                    <span id="video-text">Video</span>
+                                                    <button id='minimizevideo'>
+                                                        <i class="fa fa-window-minimize" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                                <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
                                         </div>
+                                        
 
-                                        <div className='header-button2'>      
-                                            <span id="video-text">Video</span>                                     
-                                            <button id='minimizevideo'>
-                                                <i class="fa fa-window-minimize" aria-hidden="true"></i>
-                                            </button>
-                                        </div>
-
-
-                                        <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
                                         <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Message Cohort (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
                                     </div>
                                 </td>

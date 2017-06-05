@@ -397,8 +397,18 @@ namespace VC.App.Components {
 
         render(): JSX.Element {
             return (
-                <div className="box">
-                    <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
+                <div className="col-md-12 padding-zero">
+                    <div className="row">
+                        <div className="col-md-9  padding-zero">
+                            <div className="box">
+                                <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <button id='enterChat' >Enter</button>
+                            <button id='exportchat' >Export</button>
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -552,11 +562,12 @@ namespace VC.App.Components {
         }
 
         render(): JSX.Element {
+
             return (
                 <div ref={(ref: HTMLDivElement) => this.divChat = ref} className="panel-group chat">
                     <div className="panel panel-default" onMouseEnter={() => this.setFocus()}>
                         <div className='header-button'>
-                            <button id='exportchat' >Export</button>
+                         
                             <button id='minimizechat'>
                                 <i class="fa fa-window-minimize" aria-hidden="true"></i>
                             </button>
@@ -568,7 +579,13 @@ namespace VC.App.Components {
                         </div>
 
                         <div className="panel-footer" ref={(ref: HTMLDivElement) => this.divFooter = ref}>
-                            <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
+                            <div className="chat-input-box">
+                                <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
+                            </div>
+
+                            
+
+
                             <div className="panel-time">
                                 <TimeBox ref={(ref: TimeBox) => this.timeBox = ref} fixedHeight={this.props.fixedHeight} onSubmit2={(message: string) => this.onSubmit2(message) } />
                             </div>

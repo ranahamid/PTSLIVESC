@@ -251,7 +251,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)})));
+                    return (React.createElement("div", {className: "col-md-12 padding-zero"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3"}, React.createElement("button", {id: 'enterChat'}, "Enter"), React.createElement("button", {id: 'exportchat'}, "Export")))));
                 }
             }
             class Chat extends React.Component {
@@ -345,7 +345,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'exportchat'}, "Export"), React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)}), React.createElement("div", {className: "panel-time"}, React.createElement(TimeBox, {ref: (ref) => this.timeBox = ref, fixedHeight: this.props.fixedHeight, onSubmit2: (message) => this.onSubmit2(message)}))))));
+                    return (React.createElement("div", {ref: (ref) => this.divChat = ref, className: "panel-group chat"}, React.createElement("div", {className: "panel panel-default", onMouseEnter: () => this.setFocus()}, React.createElement("div", {className: 'header-button'}, React.createElement("button", {id: 'minimizechat'}, React.createElement("i", {class: "fa fa-window-minimize", "aria-hidden": "true"}))), this.renderHeading(), React.createElement("div", {className: "panel-body"}, React.createElement(ChatList, {ref: (ref) => this.chatList = ref, fadingOut: false})), React.createElement("div", {className: "panel-footer", ref: (ref) => this.divFooter = ref}, React.createElement("div", {className: "chat-input-box"}, React.createElement(ChatBox, {ref: (ref) => this.chatBox = ref, fixedHeight: this.props.fixedHeight, onSubmit: (message) => this.onSubmit(message)})), React.createElement("div", {className: "panel-time"}, React.createElement(TimeBox, {ref: (ref) => this.timeBox = ref, fixedHeight: this.props.fixedHeight, onSubmit2: (message) => this.onSubmit2(message)}))))));
                 }
             }
             Components.Chat = Chat;

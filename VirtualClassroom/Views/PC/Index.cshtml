@@ -4,20 +4,7 @@
     .panel-body {
         background-color:#a09f9f;
     }
-    .icon-size-pc
-    {
-        width:65px;
-        height:80px;
-    }
-    #targetDiv{
-        background:#000;
-    }
-    .divButtons{
-        margin-top:5px;
-    }
-    #video-text{
-        margin-left:3px;
-    }
+
 </style>
 <script>
     $("#Header1").css('display', 'none');
@@ -39,7 +26,6 @@
 else
 {
     <div id="targetDiv" class="targetContainer"></div>
-
     @Scripts.RenderFormat("<script src=\"{0}\"></script>", "https://static.opentok.com/v2/js/opentok.min.js")
 
     @Scripts.Render("~/bundles/react")
@@ -98,8 +84,7 @@ else
                 {                
                     val = val + $(this).find(".itemName").text() ;
                     val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
-                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';                    
-                                    
+                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';                                                        
                 });
                 var blob = new Blob([val], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, "ChatReport.txt");
@@ -113,7 +98,6 @@ else
                 $(".panel-footer").slideToggle();
                 
             });
-
 
             $("#minimizevideo").click(function () {
                 $(".cBoxP").slideToggle();              

@@ -462,14 +462,13 @@ namespace VC.App {
                                     </div>
                                     <div ref={(ref: HTMLDivElement) => this.divFrame = ref} className="frame">
                                         <div ref={(ref: HTMLDivElement) => this.divButtons = ref} className="divButtons">
-                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="Raise your hand" textOff="Lower your hand" classOn="btn btn-success " classOff="btn btn-danger " iconOn="glyphicon rise-hand-on" iconOff="glyphicon rise-hand-off" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>
-                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon music-on" iconOff="glyphicon music-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>
                                             <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonVideo = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon facetime-video-on" iconOff="glyphicon facetime-video-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(null, false) } } onOff={() => { this.turnAv(null, true) } } className="avButton" delayed={500} /></div>
-
-
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonAudio = ref} textOn="" textOff="" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon music-on" iconOff="glyphicon music-off" status={Components.SwitchButtonStatus.Hidden } onOn={() => { this.turnAv(false, null) } } onOff={() => { this.turnAv(true, null) } } className="avButton" delayed={500} /></div>                                            
+                                            <div><Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonHand = ref} textOn="" textOff="" classOn="btn btn-success " classOff="btn btn-danger " iconOn="glyphicon rise-hand-on" iconOff="glyphicon rise-hand-off" status={Components.SwitchButtonStatus.Start} onOn={this.raiseHand.bind(this) } onOff={this.lowerHand.bind(this) } className="handButton" delayed={500} /></div>                                         
                                         </div>
 
                                         <div className='header-button2'>
+                                            <span id="video-text">Video</span> 
                                             <button id='minimizevideo'>
                                                 <i class="fa fa-window-minimize" aria-hidden="true"></i>
                                             </button>

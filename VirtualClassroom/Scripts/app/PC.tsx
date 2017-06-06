@@ -473,9 +473,7 @@ namespace VC.App {
                                                     </button>
                                                 </div>
                                                 <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
-                                        </div>
-                                        
-
+                                            </div>
                                         <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Message Cohort (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />
                                     </div>
                                 </td>

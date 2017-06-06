@@ -546,14 +546,14 @@ namespace VC.App.Components {
         renderHeading(): JSX.Element {
             if (this.props.onChatClosed === undefined) {
                 return (
-                    <div className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
+                    <div  style={{ display: 'none' }} className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <h4>{this.props.title}</h4>
                         
                     </div>
                 );
             } else {
                 return (
-                    <div className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
+                    <div style={{ display: 'none' }} className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <button type="button" className="close" onClick={() => this.props.onChatClosed() }>&times; </button>
                         <h4>{this.props.title}</h4>
                     </div>
@@ -567,13 +567,13 @@ namespace VC.App.Components {
                 <div ref={(ref: HTMLDivElement) => this.divChat = ref} className="panel-group chat">
                     <div className="panel panel-default" onMouseEnter={() => this.setFocus()}>
                         <div className='header-button'>
-                         
+                            <span id="chat-text">Chat</span>
                             <button id='minimizechat'>
                                 <i class="fa fa-window-minimize" aria-hidden="true"></i>
                             </button>
                         </div>
                         
-                        {this.renderHeading()}
+                         {this.renderHeading()}
                         <div className="panel-body">
                             <ChatList ref={(ref: ChatList) => this.chatList = ref} fadingOut={false} />
                         </div>

@@ -402,8 +402,8 @@ namespace VC.App {
 
             let innerHeight: number = windowHeight - (headerHeight + footerHeight + 90); // 90 = padding
 
-            if (innerHeight < 653) {
-                innerHeight = 653;
+            if (innerHeight < 580) {
+                innerHeight = 580;
             }
 
             $(this.boxSubscriber.getBox())

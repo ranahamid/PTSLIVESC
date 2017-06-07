@@ -360,8 +360,8 @@ var VC;
                 let headerHeight = $(header1).outerHeight();
                 let footerHeight = $(footer1).outerHeight();
                 let innerHeight = windowHeight - (headerHeight + footerHeight + 90); // 90 = padding
-                if (innerHeight < 653) {
-                    innerHeight = 653;
+                if (innerHeight < 580) {
+                    innerHeight = 580;
                 }
                 $(this.boxSubscriber.getBox())
                     .css("width", "100%")

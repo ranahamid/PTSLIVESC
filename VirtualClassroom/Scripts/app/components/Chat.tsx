@@ -320,12 +320,17 @@ namespace VC.App.Components {
 
         render(): JSX.Element {
             return (
-                <div className="box">                    
-                    <div class="col-md-12"  style={{ display: 'none' }} className="ModeratorTimeAlert" >
-                        <div class="input-group">
-                            <textarea rows="1" ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="remaining minute..." onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>                                              
+                    <div className="col-md-12 padding-zero ModeratorTimeAlert"   style={{ display: 'none' }} >
+                        <div className="row">
+                            <div className="col-md-9  padding-zero">
+                                <div className="box">
+                                        <textarea rows="1" ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control border-textarea" placeholder="Remaining minute..." onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
+                                </div>
+                            </div>
+                        <div className="col-md-3 chat-button-box">
+                            <button id='enterTime' >Enter</button>                          
                         </div>
-                    </div>                   
+                    </div>
                 </div>
             );
         }
@@ -401,10 +406,10 @@ namespace VC.App.Components {
                     <div className="row">
                         <div className="col-md-9  padding-zero">
                             <div className="box">
-                                <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
+                                <textarea ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control border-textarea" placeholder="Enter your message" onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-3 chat-button-box">
                             <button id='enterChat' >Enter</button>
                             <button id='exportchat' >Export</button>
                         </div>
@@ -429,10 +434,7 @@ namespace VC.App.Components {
         height: number;
     }
 
-
-
-
-
+    
     export class Chat extends React.Component<IChatProps, IChatState> {
         private chatList: ChatList;
         private chatBox: ChatBox;

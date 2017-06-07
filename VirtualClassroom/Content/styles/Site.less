@@ -8,6 +8,18 @@ body {
     min-height: 400px;
 }
 
+.border-textarea{
+    border:2px solid #666;
+    margin-left: 5px;
+}
+
+.panel-body {
+    background-color: #E2E3E5 !important;
+}
+
+.chat-button-box{
+ background-color: #E2E3E5;
+}
 
 .icon-size-pc
     {
@@ -47,6 +59,16 @@ body {
      color:white;
      border-radius: 5px;
     width: 100%;
+}
+
+#enterTime{
+      background-color:forestgreen;
+    border-color:forestgreen;
+
+     color:white;
+     border-radius: 5px;
+    width: 100%;
+    margin-top: 5px;
 }
 #exportchat{
     background-color:gray;
@@ -104,18 +126,20 @@ body {
 {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    background: #a09f9f;
+   // background: #a09f9f;
 }
 
 
 .chat-input-box{
-    width:104%;
-    background: #a09f9f;
+    width:100%;
+   // background: #a09f9f;
     padding-bottom: 8px;
 }
 
 
-
+.btn-successWhite{
+    background:#f5f5f5;
+}
 
 
 
@@ -513,8 +537,8 @@ content: url('../CTMShared/CTM-Camera-Off.png');
         }
 
         .panel-footer {
-            background-color: #a09f9f;
-                padding-bottom: 55px;
+            background-color:#E2E3E5;
+            padding-bottom: 55px;
         }
 
         .panel-time{
@@ -540,7 +564,7 @@ content: url('../CTMShared/CTM-Camera-Off.png');
             .itemName {
                 font-family: 'museosans-500';
                 font-size: 10px;
-                color: #ccc;
+                color: #666;
             }
 
             .itemTime {
@@ -549,13 +573,13 @@ content: url('../CTMShared/CTM-Camera-Off.png');
                 padding-top: 3px;
                 text-align: right;
                 margin-right: 5px;
-                color: #ddd;
+                color: #777;
             }
 
             .itemMessage {
                 font-family: 'museosans-500';
                 font-size: 10px;
-                color: #fff;
+                color: #333;
                 word-wrap: break-word;
             }
 
@@ -570,10 +594,12 @@ content: url('../CTMShared/CTM-Camera-Off.png');
 
     .box {
         textarea {
-            background-color: #333;
-            color: white;
+            //background-color: #333;
+            background-color: #E2E3E5;
+
+            color: black;
             resize: none;
-            width: 100%;
+            width: 98%;
             height: auto;
             overflow: hidden;
             -webkit-box-sizing: border-box;

@@ -192,7 +192,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "box"}, React.createElement("div", {class: "col-md-12", style: { display: 'none' }, className: "ModeratorTimeAlert"}, React.createElement("div", {class: "input-group"}, React.createElement("textarea", {rows: "1", ref: (ref) => this.tb = ref, className: "form-control", placeholder: "remaining minute...", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)})))));
+                    return (React.createElement("div", {className: "col-md-12 padding-zero ModeratorTimeAlert", style: { display: 'none' }}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {rows: "1", ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Remaining minute...", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterTime'}, "Enter")))));
                 }
             }
             //chatbox
@@ -251,7 +251,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "col-md-12 padding-zero"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3"}, React.createElement("button", {id: 'enterChat'}, "Enter"), React.createElement("button", {id: 'exportchat'}, "Export")))));
+                    return (React.createElement("div", {className: "col-md-12 padding-zero"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterChat'}, "Enter"), React.createElement("button", {id: 'exportchat'}, "Export")))));
                 }
             }
             class Chat extends React.Component {

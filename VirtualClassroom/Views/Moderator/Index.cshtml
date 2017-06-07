@@ -10,6 +10,11 @@
 #targetDiv{
         background:#000;
     }
+
+ .panel-footer {
+    /*background-color: #e2e3e5;*/
+    padding-bottom: 102px !important;
+}
 </style>
 
 @{
@@ -45,8 +50,8 @@ else
 
         $(function ()
         {
-            //$(".ModeratorTimeAlert").css('display', 'block');
-            //$(".ModeratorTimeAlert").css('margin-top', '10px');
+            $(".ModeratorTimeAlert").css('display', 'block');
+            $(".ModeratorTimeAlert").css('margin-top', '10px');
 
             //$("#minimizechat").css('float', 'right');
             //$("#minimizechat").css('margin-top', '3px');
@@ -94,7 +99,7 @@ else
 
             $("#minimizechat").click(function ()
             {
-                $(".panel-heading").slideToggle();
+               // $(".panel-heading").slideToggle();
                 $(".panel-body").slideToggle();
                 $(".panel-footer").slideToggle();
 

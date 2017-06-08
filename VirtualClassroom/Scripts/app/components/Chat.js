@@ -125,6 +125,38 @@ var VC;
                 sendRepeatWarning(fullMsg) {
                     this.props.onSubmit2(fullMsg);
                 }
+                SendTimebyButton() {
+                    // Send by button
+                    let message = this.tb.value;
+                    let remainingMin;
+                    let countDownMin;
+                    let countdown;
+                    let fullMsg;
+                    if (!(message.length === 0 || !message.trim())) {
+                        remainingMin = parseInt(message, 10);
+                        countDownMin = 1;
+                        if (remainingMin > 0) {
+                            fullMsg = remainingMin + " minutes remaining on break.";
+                            this.props.onSubmit2(fullMsg);
+                            countdown = remainingMin;
+                            if (remainingMin >= 2) {
+                                for (var i = remainingMin - 1; i >= 1; i--) {
+                                    setTimeout(() => {
+                                        countdown = countdown - 1;
+                                        fullMsg = countdown + " minutes remaining on break.";
+                                        console.log(fullMsg);
+                                        this.sendRepeatWarning(fullMsg);
+                                    }, countDownMin * 60000);
+                                    countDownMin = countDownMin + 1;
+                                }
+                            }
+                        }
+                        else {
+                        }
+                        this.tb.value = "";
+                    }
+                    this.fitTbHeight();
+                }
                 onKeyDown(e) {
                     // if enter
                     let message = this.tb.value;
@@ -192,7 +224,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "col-md-12 padding-zero ModeratorTimeAlert", style: { display: 'none' }}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {rows: "1", ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Remaining minute...", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterTime'}, "Enter")))));
+                    return (React.createElement("div", {className: "col-md-12 padding-zero ModeratorTimeAlert", style: { display: 'none' }}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {rows: "1", ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Remaining minute...", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterTime', onClick: () => this.SendTimebyButton()}, "Enter")))));
                 }
             }
             //chatbox
@@ -205,6 +237,23 @@ var VC;
                     if (!this.props.fixedHeight) {
                         this.tb.style.height = "0px";
                         this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
+                    }
+                }
+                SendChatbyButton() {
+                    // send button clicked
+                    let message = this.tb.value;
+                    if (!(message.length === 0 || !message.trim())) {
+                        if (message.length <= this.maxLength) {
+                            // not empty or white spaces
+                            this.props.onSubmit(message);
+                            this.tb.value = "";
+                        }
+                        else {
+                            let caret = this.tb.selectionStart;
+                            $(this.tb).val($(this.tb).val().substr(0, this.maxLength));
+                            this.tb.selectionStart = caret;
+                        }
+                        this.fitTbHeight();
                     }
                 }
                 onKeyDown(e) {
@@ -251,7 +300,7 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {className: "col-md-12 padding-zero"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterChat'}, "Enter"), React.createElement("button", {id: 'exportchat'}, "Export")))));
+                    return (React.createElement("div", {className: "col-md-12 padding-zero"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-9  padding-zero"}, React.createElement("div", {className: "box"}, React.createElement("textarea", {ref: (ref) => this.tb = ref, className: "form-control border-textarea", placeholder: "Enter your message", onKeyDown: (e) => this.onKeyDown(e), onPaste: (e) => this.onPaste(e)}))), React.createElement("div", {className: "col-md-3 chat-button-box"}, React.createElement("button", {id: 'enterChat', onClick: () => this.SendChatbyButton()}, "Enter"), React.createElement("button", {id: 'exportchat'}, "Export")))));
                 }
             }
             class Chat extends React.Component {

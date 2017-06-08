@@ -444,7 +444,7 @@ namespace VC.Admin.Lists {
             return (
                 <tr key={d.id}>
                     {this.renderItemCols(d) }
-                    <td style={{ textAlign: "right" }}>
+                    <td style={{ textAlign: "right", width: "25%" }}>
                         <button type="button" className="btn btn-sm btn-info"    onClick={() => this.props.showBoxEdit(d.id) }><span className="glyphicon glyphicon-pencil"></span>Edit</button>
                         &nbsp;
                         <button type="button" id="showDisableClass" style={{display: "none"}} className="showDisableClass btn btn-sm btn-warning" onClick={() => this.props.showDisableClass(d.id) } ><span className="glyphicon glyphicon-minus-sign"></span>Disable</button>

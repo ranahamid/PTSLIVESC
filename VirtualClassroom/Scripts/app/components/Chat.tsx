@@ -30,7 +30,7 @@ namespace VC.App.Components {
 
         updateTime(): void {
             this.divTime.innerHTML = this.getItemTimeString();
-    
+
         }
 
         getItemTimeString(): string {
@@ -46,14 +46,12 @@ namespace VC.App.Components {
         render(): JSX.Element {
 
             let userNameMessage;
-            if (this.props.item.userRole == Roles.Moderator )
-            {
+            if (this.props.item.userRole == Roles.Moderator) {
                 userNameMessage = (
-                    <div className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp; </span>{this.props.item.userName}</div></div>                                     
+                    <div className="col-sm-6"><div className="itemName"><span>[Moderator]&nbsp; </span>{this.props.item.userName}</div></div>
                 )
             }
-            else
-            {
+            else {
                 userNameMessage = (
                     <div  className="col-sm-6"><div className="itemName">{this.props.item.userName}</div></div>
                 )
@@ -88,7 +86,7 @@ namespace VC.App.Components {
                         <div className="col-sm-6" style={{ display: 'none' }}><div ref={(ref: HTMLDivElement) => this.divTime2 = ref} className="itemTimechat">{this.getItemTimeString2() }</div></div>
                     </div>
                     <div className="row">
-                         {itemMessage}                                         
+                        {itemMessage}
                     </div>
                 </div>
             );
@@ -189,18 +187,17 @@ namespace VC.App.Components {
 
     interface IChatBoxProps {
         onSubmit: (text: string) => void;
-      
+
         fixedHeight: boolean;
-   
+
     }
     interface IChatBoxState {
     }
-    
-   
+
+
     //TimeBox
-    interface ITimeBoxProps
-    {
-     //   onSubmit: (text: string) => void;
+    interface ITimeBoxProps {
+        //   onSubmit: (text: string) => void;
         onSubmit2: (text: string) => void;
         fixedHeight: boolean;
     }
@@ -215,26 +212,67 @@ namespace VC.App.Components {
 
         constructor(props: ITimeBoxProps) {
             super(props);
-            
+
         }
 
         public fitTbHeight(): void {
-            if (!this.props.fixedHeight) {                    
+            if (!this.props.fixedHeight) {
                 this.tb.style.height = "0px";
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }
         }
 
-        
-        private sendRepeatWarning(fullMsg: string): void
-        {           
-            this.props.onSubmit2(fullMsg);              
-          
+
+        private sendRepeatWarning(fullMsg: string): void {
+            this.props.onSubmit2(fullMsg);
+
         }
 
-        
-        private onKeyDown(e: KeyboardEvent): void
-        {         
+        public SendTimebyButton(): void
+        {
+            // Send by button
+            let message: string = this.tb.value;
+            let remainingMin: number;
+            let countDownMin: number;
+
+            let countdown;
+            let fullMsg: string;
+            if (!(message.length === 0 || !message.trim()))
+            {
+                    remainingMin = parseInt(message, 10);
+                    countDownMin = 1;
+
+                    if (remainingMin > 0) {
+                        fullMsg = remainingMin + " minutes remaining on break.";
+                        this.props.onSubmit2(fullMsg);
+                        countdown = remainingMin;
+                        if (remainingMin >= 2) {
+                            for (var i = remainingMin - 1; i >= 1; i--) {
+                                setTimeout(() => {
+                                    countdown = countdown - 1;
+                                    fullMsg = countdown + " minutes remaining on break.";
+                                    console.log(fullMsg);
+
+                                    this.sendRepeatWarning(fullMsg);
+
+                                }, countDownMin * 60000);
+                                countDownMin = countDownMin + 1;
+                            }
+                        }
+                    }
+                    else {
+                        //nothing
+                    }
+
+                    this.tb.value = "";
+                }
+            
+           
+            this.fitTbHeight();
+        }
+
+
+        private onKeyDown(e: KeyboardEvent): void {
             // if enter
             let message: string = this.tb.value;
             let remainingMin: number;
@@ -242,38 +280,31 @@ namespace VC.App.Components {
 
             let countdown;
             let fullMsg: string;
-            if (e.which === 13)
-            {
+            if (e.which === 13) {
                 e.preventDefault();
-                if (!(message.length === 0 || !message.trim()))
-                {                  
+                if (!(message.length === 0 || !message.trim())) {
                     remainingMin = parseInt(message, 10);
                     countDownMin = 1;
 
-                    if (remainingMin > 0)
-                    {
+                    if (remainingMin > 0) {
                         fullMsg = remainingMin + " minutes remaining on break.";
                         this.props.onSubmit2(fullMsg);
                         countdown = remainingMin;
-                        if (remainingMin >= 2)
-                        {
-                            for (var i = remainingMin-1; i >=1;i--)
-                            {
-                                setTimeout(() =>
-                                {
+                        if (remainingMin >= 2) {
+                            for (var i = remainingMin - 1; i >= 1; i--) {
+                                setTimeout(() => {
                                     countdown = countdown - 1;
                                     fullMsg = countdown + " minutes remaining on break.";
                                     console.log(fullMsg);
 
-                                    this.sendRepeatWarning(fullMsg); 
-                                     
+                                    this.sendRepeatWarning(fullMsg);
+
                                 }, countDownMin * 60000);
                                 countDownMin = countDownMin + 1;
-                            }                              
-                        }                     
+                            }
+                        }
                     }
-                    else
-                    {
+                    else {
                         //nothing
                     }
 
@@ -320,15 +351,15 @@ namespace VC.App.Components {
 
         render(): JSX.Element {
             return (
-                    <div className="col-md-12 padding-zero ModeratorTimeAlert"   style={{ display: 'none' }} >
-                        <div className="row">
-                            <div className="col-md-9  padding-zero">
-                                <div className="box">
-                                        <textarea rows="1" ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control border-textarea" placeholder="Remaining minute..." onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
-                                </div>
+                <div className="col-md-12 padding-zero ModeratorTimeAlert"   style={{ display: 'none' }} >
+                    <div className="row">
+                        <div className="col-md-9  padding-zero">
+                            <div className="box">
+                                <textarea rows="1" ref={(ref: HTMLTextAreaElement) => this.tb = ref} className="form-control border-textarea" placeholder="Remaining minute..." onKeyDown={(e: KeyboardEvent) => this.onKeyDown(e) } onPaste={(e: ClipboardEvent) => this.onPaste(e) }></textarea>
                             </div>
+                        </div>
                         <div className="col-md-3 chat-button-box">
-                            <button id='enterTime' >Enter</button>                          
+                            <button id='enterTime' onClick={() => this.SendTimebyButton () }  >Enter</button>
                         </div>
                     </div>
                 </div>
@@ -337,7 +368,7 @@ namespace VC.App.Components {
     }
 
 
-//chatbox
+    //chatbox
     class ChatBox extends React.Component<IChatBoxProps, IChatBoxState> {
         private maxLength: number = 500;
         private tb: HTMLTextAreaElement;
@@ -354,6 +385,27 @@ namespace VC.App.Components {
                 this.tb.style.height = (this.tb.scrollHeight + (this.tb.offsetHeight - this.tb.clientHeight)) + "px";
             }
         }
+
+        public SendChatbyButton(): void {
+            // send button clicked
+            let message: string = this.tb.value;
+
+            if (!(message.length === 0 || !message.trim())) {
+                if (message.length <= this.maxLength) {
+                    // not empty or white spaces
+                    this.props.onSubmit(message);
+                    this.tb.value = "";
+                }
+                else {
+                    let caret: number = this.tb.selectionStart;
+                    $(this.tb).val($(this.tb).val().substr(0, this.maxLength));
+                    this.tb.selectionStart = caret;
+                }
+
+                this.fitTbHeight();
+            }
+        }
+
         private onKeyDown(e: KeyboardEvent): void {
             // if enter
             let message: string = this.tb.value;
@@ -410,7 +462,7 @@ namespace VC.App.Components {
                             </div>
                         </div>
                         <div className="col-md-3 chat-button-box">
-                            <button id='enterChat' >Enter</button>
+                            <button id='enterChat' onClick={() => this.SendChatbyButton() } >Enter</button>
                             <button id='exportchat' >Export</button>
                         </div>
                     </div>
@@ -423,23 +475,23 @@ namespace VC.App.Components {
         title: string;
         onItemSubmitted: (item: IChatListItem) => void;
         fixedHeight: boolean;
-    
+
         onChatClosed?: () => void;
     }
     export interface IChatState {
         uid: string;
         name: string;
         role: Roles;
-      
+
         height: number;
     }
 
-    
+
     export class Chat extends React.Component<IChatProps, IChatState> {
         private chatList: ChatList;
         private chatBox: ChatBox;
         private timeBox: TimeBox;
-        
+
 
         private divChat: HTMLDivElement;
         private divFooter: HTMLDivElement;
@@ -479,19 +531,18 @@ namespace VC.App.Components {
             this.chatList.setHeight(listHeight);
         }
 
-        private onSubmit(message: string): void
-        {
+        private onSubmit(message: string): void {
             let item: IChatListItem =
-            {
-                timestamp: new Date(),
-                userUid: this.state.uid,
-                userName: this.state.name,
-                userRole: this.state.role,
-                message: message,           
-                me: true
-            } as IChatListItem;
+                {
+                    timestamp: new Date(),
+                    userUid: this.state.uid,
+                    userName: this.state.name,
+                    userRole: this.state.role,
+                    message: message,
+                    me: true
+                } as IChatListItem;
 
-            this.addItem(item);            
+            this.addItem(item);
             this.props.onItemSubmitted(item);
         }
 
@@ -521,11 +572,9 @@ namespace VC.App.Components {
             this.chatBox.focus();
         }
 
-        public addItem(item: IChatListItem): void
-        {
+        public addItem(item: IChatListItem): void {
             // avoid double item from signaling
-            if (item.me || item.userUid !== this.state.uid)
-            {
+            if (item.me || item.userUid !== this.state.uid) {
                 this.chatList.addItem(item);
             }
         }
@@ -550,7 +599,7 @@ namespace VC.App.Components {
                 return (
                     <div  style={{ display: 'none' }} className="panel-heading" ref={(ref: HTMLDivElement) => this.divHeader = ref}>
                         <h4>{this.props.title}</h4>
-                        
+
                     </div>
                 );
             } else {
@@ -567,15 +616,15 @@ namespace VC.App.Components {
 
             return (
                 <div ref={(ref: HTMLDivElement) => this.divChat = ref} className="panel-group chat">
-                    <div className="panel panel-default" onMouseEnter={() => this.setFocus()}>
+                    <div className="panel panel-default" onMouseEnter={() => this.setFocus() }>
                         <div className='header-button'>
                             <span id="chat-text">Chat</span>
                             <button id='minimizechat'>
                                 <i class="fa fa-window-minimize" aria-hidden="true"></i>
                             </button>
                         </div>
-                        
-                         {this.renderHeading()}
+
+                        {this.renderHeading() }
                         <div className="panel-body">
                             <ChatList ref={(ref: ChatList) => this.chatList = ref} fadingOut={false} />
                         </div>
@@ -585,14 +634,14 @@ namespace VC.App.Components {
                                 <ChatBox ref={(ref: ChatBox) => this.chatBox = ref} fixedHeight={this.props.fixedHeight} onSubmit={(message: string) => this.onSubmit(message) } />
                             </div>
 
-                            
+
 
 
                             <div className="panel-time">
                                 <TimeBox ref={(ref: TimeBox) => this.timeBox = ref} fixedHeight={this.props.fixedHeight} onSubmit2={(message: string) => this.onSubmit2(message) } />
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             );

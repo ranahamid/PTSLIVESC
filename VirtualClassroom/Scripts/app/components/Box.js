@@ -11,12 +11,24 @@ var VC;
                 BoxFitMode[BoxFitMode["Cover"] = 1] = "Cover";
             })(Components.BoxFitMode || (Components.BoxFitMode = {}));
             var BoxFitMode = Components.BoxFitMode;
+            //add
+            (function (BoxStyle) {
+                BoxStyle[BoxStyle["NotConnected"] = 0] = "NotConnected";
+                BoxStyle[BoxStyle["Connected"] = 1] = "Connected";
+                BoxStyle[BoxStyle["HandRaised"] = 2] = "HandRaised";
+            })(Components.BoxStyle || (Components.BoxStyle = {}));
+            var BoxStyle = Components.BoxStyle;
             class Box extends React.Component {
                 constructor(props) {
                     super(props);
                     this.streamHandler = null;
                     this.isConnected = false;
-                    this.state = { mirror: props.mirror, visible: props.visible };
+                    //add
+                    this.state = { mirror: props.mirror, visible: props.visible, style: props.style };
+                }
+                //add
+                setStyle(style) {
+                    this.setState({ visible: true, style: style });
                 }
                 getBox() {
                     return this.divBox;
@@ -202,7 +214,10 @@ var VC;
                     }
                 }
                 render() {
-                    return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: this.props.className, style: { display: (this.state.visible ? "block" : "none") }}));
+                    let className = this.props.BoxClasses[this.state.style];
+                    let thisClassName = this.props.className;
+                    let TotalClassName = className + " " + thisClassName;
+                    return (React.createElement("div", {ref: (ref) => this.divBox = ref, className: TotalClassName, style: { display: (this.state.visible ? "block" : "none") }}));
                 }
             }
             Components.Box = Box;

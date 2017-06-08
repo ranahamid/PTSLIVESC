@@ -10,6 +10,7 @@ namespace VC.App.Components {
         NoIcon=3
     }
 
+
     interface IBoxLabelProps {
         text: string;
         style: BoxLabelStyle;

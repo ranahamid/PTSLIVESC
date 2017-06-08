@@ -321,6 +321,7 @@ namespace VC.App {
                 "alert alert-danger"   // error
             ];
 
+            
             return (
                 <div className="_cContainer">
                     <div ref={(ref: HTMLDivElement) => this.divStatus = ref}>
@@ -332,7 +333,7 @@ namespace VC.App {
                         <div ref={(ref: HTMLDivElement) => this.divUIwebcam = ref} style={{ display: "block" }}>
                             <Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonWebcam = ref} status={Components.SwitchButtonStatus.Start} textOn="Start webcam publishing" textOff="Stop webcam publishing" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-blackboard" iconOff="glyphicon glyphicon-blackboard" onOn={this.webcamPublishingOn.bind(this) } onOff={this.webcamPublishingOff.bind(this) } className="publishingButton" />
                             <div style={{ float: "right", paddingTop: "10px", paddingRight: "15px" }} ref={(ref: HTMLDivElement) => this.divMirror = ref}><label><input ref={(ref: HTMLInputElement) => this.chMirror = ref} type="checkbox" /> Mirror video source</label></div>
-                            <Components.Box ref={(ref: Components.Box) => this.boxPublisherWebcam = ref} fitMode={Components.BoxFitMode.Cover} id={this.props.targetId + "_PublisherWebcam"} streamProps={this.publishProps} className="cBox" visible={true} />
+                            <Components.Box ref={(ref: Components.Box) => this.boxPublisherWebcam = ref} fitMode={Components.BoxFitMode.Cover} id={this.props.targetId + "_PublisherWebcam"} streamProps={this.publishProps} className="cBox" visible={true} style={Components.BoxStyle.NotConnected} BoxClasses={statusClasses}/>
                         </div>
 
                         <div ref={(ref: HTMLDivElement) => this.divUIscreensharing = ref} style={{ display: "none" }}>
@@ -341,7 +342,7 @@ namespace VC.App {
                             </div>
                             <div style={{ display: (this.state.extensionError !== "" ? "none" : "block") }}>
                                 <Components.SwitchButton ref={(ref: Components.SwitchButton) => this.switchButtonScreensharing = ref} status={Components.SwitchButtonStatus.Hidden} textOn="Start screen sharing" textOff="Stop screen sharing" classOn="btn btn-success" classOff="btn btn-danger" iconOn="glyphicon glyphicon-blackboard" iconOff="glyphicon glyphicon-blackboard" onOn={this.screenSharingOn.bind(this) } onOff={this.screenSharingOff.bind(this) } className="publishingButton" />
-                                <Components.Box ref={(ref: Components.Box) => this.boxPublisherScreen = ref} id={this.props.targetId + "_PublisherScreen"} streamProps={this.publishProps} className="cBox" visible={true} />
+                                <Components.Box ref={(ref: Components.Box) => this.boxPublisherScreen = ref} id={this.props.targetId + "_PublisherScreen"} streamProps={this.publishProps} className="cBox" visible={true} style={Components.BoxStyle.NotConnected} BoxClasses={statusClasses}/>
                             </div>
                         </div>
                         <div ref={(ref: HTMLDivElement) => this.divUIsurveys = ref} style={{ display: "none" }}>

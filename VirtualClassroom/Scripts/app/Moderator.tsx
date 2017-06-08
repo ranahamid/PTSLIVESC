@@ -455,7 +455,7 @@ namespace VC.App {
                             <tr>
                                 <td>
                                     <div ref={(ref: HTMLDivElement) => this.divMain = ref} className="main">
-                                        <Components.Box ref={(ref: Components.Box) => this.boxSubscriber = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={true} />
+                                        <Components.Box ref={(ref: Components.Box) => this.boxSubscriber = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={true} style={Components.BoxStyle.NotConnected} BoxClasses={labelClasses}/>
                                         {/* <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="Teacher computer not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={true} /> */}
                                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label = ref} text="" style={Components.BoxLabelStyle.NoIcon} className="cBoxLabel" labelClasses={labelClasses} visible={true} /> 
 
@@ -474,7 +474,7 @@ namespace VC.App {
                                                         <i class="fa fa-window-minimize" aria-hidden="true"></i>
                                                     </button>
                                                 </div>
-                                                <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true} />
+                                                <Components.Box ref={(ref: Components.Box) => this.boxPublisher = ref} id={this.props.targetId + "_Publisher1"} streamProps={this.publishProps} className="cBoxP" visible={true}  style={Components.BoxStyle.NotConnected} BoxClasses={labelClasses}/>
                                          </div>
 
                                         <Components.Chat ref={(ref: Components.Chat) => this.chatPublic = ref} title="Message Cohort (Public)" fixedHeight={true} onItemSubmitted={(item: Components.IChatListItem) => this.onChatPublicItemSubmitted(item) } />

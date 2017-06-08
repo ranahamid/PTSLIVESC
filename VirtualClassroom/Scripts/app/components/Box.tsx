@@ -8,6 +8,13 @@ namespace VC.App.Components {
         Cover
     }
 
+    //add
+    export enum BoxStyle {
+        NotConnected = 0,
+        Connected = 1,
+        HandRaised = 2,
+    }
+
     interface IBoxProps {
         id: string;
         streamProps: any;
@@ -15,10 +22,15 @@ namespace VC.App.Components {
         visible: boolean;
         fitMode?: BoxFitMode;
         mirror?: boolean;
+        //add
+        style: BoxStyle;
+        BoxClasses: Array<string>;
     }
     interface IBoxState {
         mirror?: boolean;
         visible: boolean;
+        //add
+        style: BoxStyle;
     }
 
     export class Box extends React.Component<IBoxProps, IBoxState> {
@@ -26,10 +38,18 @@ namespace VC.App.Components {
         public isConnected: boolean = false;
         private divBox: HTMLDivElement;
 
+
         constructor(props: IBoxProps) {
             super(props);
-            this.state = { mirror: props.mirror, visible: props.visible } as IBoxState;
+            //add
+            this.state = { mirror: props.mirror, visible: props.visible, style: props.style } as IBoxState;
         }
+
+        //add
+        public setStyle(style: BoxStyle): void {
+            this.setState({ visible: true, style: style } as IBoxState);
+        }
+
 
         public getBox(): HTMLDivElement {
             return this.divBox;
@@ -38,6 +58,8 @@ namespace VC.App.Components {
             let box: HTMLDivElement = this.getBox();
             box.innerHTML = "<div id=" + this.props.id + "></div>";
         }
+
+        
 
         public setVisibility(visible: boolean): void {
             if (visible) {
@@ -255,8 +277,11 @@ namespace VC.App.Components {
         }
 
         render(): JSX.Element {
+            let className: string = this.props.BoxClasses[this.state.style];
+            let thisClassName = this.props.className;
+            let TotalClassName = className + " " + thisClassName;
             return (
-                <div ref={(ref: HTMLDivElement) => this.divBox = ref} className={this.props.className} style={{ display: (this.state.visible ? "block" : "none") }}></div>
+                <div ref={(ref: HTMLDivElement) => this.divBox = ref} className={TotalClassName} style={{ display: (this.state.visible ? "block" : "none") }}></div>
             );
         }
     }

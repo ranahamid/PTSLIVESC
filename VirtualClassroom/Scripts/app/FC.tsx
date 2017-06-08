@@ -66,6 +66,14 @@ namespace VC.App {
                     else
                         this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
 
+                    //add
+                    if (this.raisedHands[groupComputer.Position - 1]) {
+                        this.boxSubscribers[groupComputer.Position - 1].setStyle(Components.BoxStyle.HandRaised)
+                    }
+                    else {
+                        this.boxSubscribers[groupComputer.Position - 1].setStyle(Components.BoxStyle.Connected)
+                    }
+
                     this.connectedStudents[groupComputer.Position - 1] = true;
                     this.fitLayout();
                 }
@@ -154,23 +162,46 @@ namespace VC.App {
                 this.disconnect();
             }
         }
-        private raiseHandSignalReceived(event: any): void {
+        private raiseHandSignalReceived(event: any): void
+        {
             let tokenData: Global.TokenData = Global.Fce.toTokenData(event.from.data);
             let groupComputer: Global.GroupComputer = this.getGroupComputer(tokenData.Uid);
             let data: Global.ISignalRaiseHandData = JSON.parse(event.data) as Global.ISignalRaiseHandData;
 
-            if (tokenData.Role === Roles.AC) {
+            if (tokenData.Role === Roles.AC)
+            {
                 // all
                 for (let i: number = 0; i < 8; i++) {
-                    if (this.connectedStudents[i]) {
+                    if (this.connectedStudents[i])
+                    {
                         this.raisedHands[i] = data.raised;
                         this.label[i].setStyle(data.raised ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected);
+                        //test
+                        this.boxSubscribers[i].setStyle(data.raised ? Components.BoxStyle.HandRaised : Components.BoxStyle.Connected);
+
+                        //add
+                        if (data.raised) {
+                            this.boxSubscribers[i].setStyle(Components.BoxStyle.HandRaised)
+                        }
+                        else {
+                            this.boxSubscribers[i].setStyle(Components.BoxStyle.Connected)
+                        }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 // single student
                 this.raisedHands[groupComputer.Position - 1] = data.raised;
                 this.label[groupComputer.Position - 1].setStyle(data.raised ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected);
+                this.boxSubscribers[groupComputer.Position - 1].setStyle(data.raised ? Components.BoxStyle.HandRaised : Components.BoxStyle.Connected);
+
+                if (data.raised) {
+                    this.boxSubscribers[groupComputer.Position - 1].setStyle(Components.BoxStyle.HandRaised)
+                }
+                else {
+                    this.boxSubscribers[groupComputer.Position - 1].setStyle(Components.BoxStyle.Connected)
+                }
             }
         }
         private chatSignalReceived(event: any): void {
@@ -601,20 +632,28 @@ namespace VC.App {
                 "handRaised"    // handRaised
             ];
 
+            let BoxClasses: Array<string> = [
+                "notConnectedBox", // notConnected
+                "connectedBox",    // connected
+                "handRaisedBox"    // handRaised
+            ];
+
+
             return (
                 <div className="scContainer">
                     <div ref={(ref: HTMLDivElement) => this.divStatus = ref}>
                         <Components.Status ref={(ref: Components.Status) => this.status = ref} text="Connecting ..." style={Components.StatusStyle.Connecting} className="cStatus" statusClasses={statusClasses} />
                     </div>
                     <div ref={(ref: HTMLDivElement) => this.divUI = ref} style={{ display: "none" }}>
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={false} />
-                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={false} />
+
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[0] = ref} id={this.props.targetId + "_Subscriber1"} streamProps={this.subscribeProps}  className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses} />
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[1] = ref} id={this.props.targetId + "_Subscriber2"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[2] = ref} id={this.props.targetId + "_Subscriber3"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[3] = ref} id={this.props.targetId + "_Subscriber4"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[4] = ref} id={this.props.targetId + "_Subscriber5"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[5] = ref} id={this.props.targetId + "_Subscriber6"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[6] = ref} id={this.props.targetId + "_Subscriber7"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
+                        <Components.Box ref={(ref: Components.Box) => this.boxSubscribers[7] = ref} id={this.props.targetId + "_Subscriber8"} streamProps={this.subscribeProps} className="cBox" visible={false} style={Components.BoxStyle.NotConnected} BoxClasses={BoxClasses}/>
 
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[0] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={false} />
                         <Components.BoxLabel ref={(ref: Components.BoxLabel) => this.label[1] = ref} text="Student not connected..." style={Components.BoxLabelStyle.NotConnected} className="cBoxLabel" labelClasses={labelClasses} visible={false} />

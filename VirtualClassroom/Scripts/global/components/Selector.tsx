@@ -121,12 +121,14 @@ namespace VC.Global.Components {
         }
         renderSelectorItems(): Array<JSX.Element> {
             let items: Array<JSX.Element> = [];
-            for (let i: number = 0; i < this.state.items.length; i++) {
+            for (let i: number = 0; i < this.state.items.length; i++)
+            {
                 items.push(<SelectorItem key={this.state.items[i].id} item={this.state.items[i]} selected={this.state.items[i].id === this.state.selectedValue} />);
             }
             return items;
         }
-        renderSelector(): JSX.Element {
+        renderSelector(): JSX.Element
+        {
             let items: Array<JSX.Element> = this.renderSelectorItems();
             return (
                 <select ref={(ref: HTMLSelectElement) => this.select = ref} className={this.props.className} onChange={this.onSelectedItemChanged.bind(this) }>

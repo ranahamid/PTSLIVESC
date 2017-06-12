@@ -44,6 +44,9 @@ namespace VirtualClassroom.Models
         public string City { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+
+        //add
+        public Featured featured { get; set; }
     }
 
 

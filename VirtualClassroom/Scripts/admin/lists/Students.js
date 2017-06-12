@@ -9,6 +9,8 @@ var VC;
             const FORM_ID = "Id";
             const FORM_NAME = "Name";
             const FORM_TEACHER = "Teacher";
+            //add
+            const FORM_Featured = "Featured";
             class Students extends Lists.Base {
                 getList() {
                     return this.list;
@@ -44,7 +46,8 @@ var VC;
             }
             class StudentsBox extends Lists.Box {
                 constructor(props) {
-                    super({ id: "", name: "", teacher: null }, props);
+                    //update
+                    super({ id: "", name: "", teacher: null, featured: null }, props);
                 }
                 boxWillShow() {
                     let tbId = this.refs[Lists.REF_FORM_TB + FORM_ID];
@@ -55,6 +58,9 @@ var VC;
                     this.setValidationStatus(FORM_NAME, Lists.BoxValidationStatus.None, "");
                     let tbTeacher = this.refs[Lists.REF_FORM_TB + FORM_TEACHER];
                     tbTeacher.init(this.state.item.teacher !== null ? this.state.item.teacher.id : null);
+                    //add
+                    let tbFeatured = this.refs[Lists.REF_FORM_TB + FORM_Featured];
+                    tbFeatured.init(this.state.item.featured !== null ? this.state.item.featured.id : null);
                 }
                 boxDidShow() {
                     if (this.state.type === Lists.BoxTypes.Create) {
@@ -214,11 +220,18 @@ var VC;
                     if (selectedTeacher !== "") {
                         teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() };
                     }
+                    //add featured
+                    let featured = null;
+                    let tbfeatured = this.refs[Lists.REF_FORM_TB + FORM_Featured];
+                    let selectedFeatured = tbfeatured.getSelectedValue();
+                    if (selectedFeatured !== "") {
+                        featured = { id: selectedFeatured, name: tbfeatured.getSelectedText() };
+                    }
                     $.ajax({
                         cache: false,
                         type: "POST",
                         url: "/api/Classroom/" + this.props.classroomId + "/CreateStudent",
-                        data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher }),
+                        data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher, featured: featured }),
                         contentType: "application/json",
                         success: (r) => {
                             this.close();
@@ -251,11 +264,18 @@ var VC;
                     if (selectedTeacher !== "") {
                         teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() };
                     }
+                    //add featured
+                    let featured = null;
+                    let tbfeatured = this.refs[Lists.REF_FORM_TB + FORM_Featured];
+                    let selectedFeatured = tbfeatured.getSelectedValue();
+                    if (selectedFeatured !== "") {
+                        featured = { id: selectedFeatured, name: tbfeatured.getSelectedText() };
+                    }
                     $.ajax({
                         cache: false,
                         type: "POST",
                         url: "/api/Classroom/" + this.props.classroomId + "/UpdateStudent",
-                        data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher }),
+                        data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher, featured: featured }),
                         contentType: "application/json",
                         success: (r) => {
                             this.close();
@@ -316,8 +336,11 @@ var VC;
                 onSelectedTeacherChanged() {
                     // implement when need
                 }
+                onSelectedFeaturedChanged() {
+                    // implement when need
+                }
                 renderForm() {
-                    return (React.createElement("form", {className: "form-horizontal", role: "form"}, React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_ID, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_ID}, "Id: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_ID, type: "text", className: "form-control", disabled: this.state.type !== Lists.BoxTypes.Create, placeholder: "Student computer Id", maxLength: "25", onPaste: () => this.validateId(false), onCut: () => this.validateId(false), onKeyUp: (e) => this.onKeyPressId(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_ID, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_NAME, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_NAME}, "Name: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_NAME, type: "text", className: "form-control", disabled: this.state.type === Lists.BoxTypes.Delete, placeholder: "Student computer name", maxLength: "150", onPaste: () => this.validateName(false), onCut: () => this.validateName(false), onKeyUp: (e) => this.onKeyPressName(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_NAME, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_TEACHER, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_TEACHER}, "Teacher: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_TEACHER, classroomId: this.props.classroomId, loadAction: "GetAvailableTeachers", defaultName: "Select Teacher computer", onSelectedItemChanged: this.onSelectedTeacherChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_TEACHER, style: { display: "none" }})))));
+                    return (React.createElement("form", {className: "form-horizontal", role: "form"}, React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_ID, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_ID}, "Id: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_ID, type: "text", className: "form-control", disabled: this.state.type !== Lists.BoxTypes.Create, placeholder: "Student computer Id", maxLength: "25", onPaste: () => this.validateId(false), onCut: () => this.validateId(false), onKeyUp: (e) => this.onKeyPressId(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_ID, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_NAME, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_NAME}, "Name: "), React.createElement("div", {className: "col-sm-10"}, React.createElement("input", {ref: Lists.REF_FORM_TB + FORM_NAME, type: "text", className: "form-control", disabled: this.state.type === Lists.BoxTypes.Delete, placeholder: "Student computer name", maxLength: "150", onPaste: () => this.validateName(false), onCut: () => this.validateName(false), onKeyUp: (e) => this.onKeyPressName(e)}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_NAME, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_Featured, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_Featured}, "Featured: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_Featured, classroomId: this.props.classroomId, loadAction: "GetAvailableFeatureds", defaultName: "Select Featured computer", onSelectedItemChanged: this.onSelectedFeaturedChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_Featured, style: { display: "none" }}))), React.createElement("div", {ref: Lists.REF_FORM_DIV + FORM_TEACHER, className: "form-group"}, React.createElement("label", {className: "col-sm-2", htmlFor: Lists.REF_FORM_TB + FORM_TEACHER}, "Teacher: "), React.createElement("div", {className: "col-sm-10"}, React.createElement(VC.Global.Components.Selector, {ref: Lists.REF_FORM_TB + FORM_TEACHER, classroomId: this.props.classroomId, loadAction: "GetAvailableTeachers", defaultName: "Select Teacher computer", onSelectedItemChanged: this.onSelectedTeacherChanged.bind(this), className: "form-control"}), React.createElement("span", {ref: Lists.REF_FORM_ICON + FORM_TEACHER, style: { display: "none" }})))));
                 }
             }
             class StudentsImportBox extends Lists.ImportBox {

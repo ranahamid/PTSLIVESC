@@ -107,6 +107,24 @@ namespace VirtualClassroom.Controllers
             return responseSuccess(data);
         }
 
+        //
+        public DataResponse<List<Computer>> GetAvailableFeatureds(string classroomId)
+        {
+            var q = from x in db.TblFCs
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    orderby x.Name
+                    select x;
+
+            List<Computer> data = q.Select(x =>
+                new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
+                ).ToList();
+           
+            return responseSuccess(data);
+        }
+
+
+
+
         [HttpGet]
         public DataResponse<List<Classroom>> Load()
         {
@@ -177,7 +195,29 @@ namespace VirtualClassroom.Controllers
                                                   select fcpc.FcUid).FirstOrDefault())
                                  select FC.Name).FirstOrDefault(),
 
-                teacher = x.TcUid.HasValue ? new Teacher() { id = x.TblTC.Id, name = x.TblTC.Name } : null
+                teacher = x.TcUid.HasValue ? new Teacher()
+                {
+                    id = x.TblTC.Id,
+                    name = x.TblTC.Name
+                } : null,
+
+                //add
+                featured=new Featured()
+                {
+                    id = (from FC in db.TblFCs
+                          where FC.Uid == ((from fcpc in db.TblFCPCs
+                                            where fcpc.PcUid == x.Uid
+                                            select fcpc.FcUid).FirstOrDefault())
+                          select FC.Id).FirstOrDefault(),
+
+                    name = (from FC in db.TblFCs
+                            where FC.Uid == ((from fcpc in db.TblFCPCs
+                                              where fcpc.PcUid == x.Uid
+                                              select fcpc.FcUid).FirstOrDefault())
+                            select FC.Name).FirstOrDefault()
+                }
+
+
             }).ToList();
 
             return responseSuccess(data);
@@ -1113,6 +1153,7 @@ namespace VirtualClassroom.Controllers
                 }
             }
 
+
             Guid pcUid = Guid.NewGuid();
 
             db.TblPCs.InsertOnSubmit(new TblPC
@@ -1129,18 +1170,44 @@ namespace VirtualClassroom.Controllers
                 Volume = 80
             });
 
+           
+
+          
+            if (item.featured != null)
+            {
+
+                // insert into TblFCs
+
+                var qFC = (from FC in db.TblFCs
+                           where FC.Uid == ((from fcpc in db.TblFCPCs
+                                             where fcpc.PcUid == pcUid
+                                             select fcpc.FcUid).FirstOrDefault())
+                           select FC.Uid).FirstOrDefault();
+                   
+                Guid fcUid = qFC;
+                db.TblFCPCs.InsertOnSubmit(new TblFCPC
+                {
+                    PcUid = pcUid,
+                    FcUid=fcUid,
+                    Position=1                    
+                });
+
+             
+            }
+
             try
             {
                 db.SubmitChanges();
-
                 item.uid = pcUid;
-
                 return responseSuccess(item);
             }
             catch (ChangeConflictException ex)
             {
                 return responseError<Student>(ex.Message);
             }
+
+           
+            //
         }
         [HttpPost]
         public DataResponse<Student> UpdateStudent(string classroomId, [FromBody] Student item)

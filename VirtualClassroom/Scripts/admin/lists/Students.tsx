@@ -6,6 +6,8 @@ namespace VC.Admin.Lists {
     const FORM_ID: string = "Id";
     const FORM_NAME: string = "Name";
     const FORM_TEACHER: string = "Teacher";
+    //add
+    const FORM_Featured: string = "Featured";
 
     export interface IStudentsListItem extends IDataItem<string> {
         uid: string;
@@ -13,7 +15,16 @@ namespace VC.Admin.Lists {
         featuredpcname: string;
         position: number;
         teacher: ITeachersListItem;
+        //add
+        featured: IFeaturedsListItem;
     }
+
+    //add
+    export interface IFeaturedsListItem extends IDataItem<string> {
+        uid: string;
+        name: string;
+    }
+
 
     export class Students extends Base<string, IStudentsListItem, StudentsList, StudentsBox, StudentsImportBox> {
         private list: StudentsList;
@@ -71,7 +82,8 @@ namespace VC.Admin.Lists {
     class StudentsBox extends Box<string, IStudentsListItem, IStudentsBoxProps, IStudentsBoxState> {
 
         constructor(props: IStudentsBoxProps) {
-            super({ id: "", name: "", teacher: null } as IStudentsListItem,
+            //update
+            super({ id: "", name: "", teacher: null, featured:null } as IStudentsListItem,
                 props);
         }
 
@@ -86,6 +98,10 @@ namespace VC.Admin.Lists {
 
             let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
             tbTeacher.init(this.state.item.teacher !== null ? this.state.item.teacher.id : null);
+
+            //add
+            let tbFeatured: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_Featured] as Global.Components.Selector;
+            tbFeatured.init(this.state.item.featured !== null ? this.state.item.featured.id : null);
         }
         boxDidShow(): void {
             if (this.state.type === BoxTypes.Create) {
@@ -97,7 +113,8 @@ namespace VC.Admin.Lists {
             }
         }
 
-        isIdValid(id: string): boolean {
+        isIdValid(id: string): boolean
+        {
             let valid: boolean = id.length > 0; // cannot be empty
             let allowedChars: string = "abcdefghijklmnopqrstuvwxyz0123456789";
             // check allowed chars
@@ -254,15 +271,25 @@ namespace VC.Admin.Lists {
             let teacher: ITeachersListItem = null;
             let tbTeacher: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_TEACHER] as Global.Components.Selector;
             let selectedTeacher: string = tbTeacher.getSelectedValue();
-            if (selectedTeacher !== "") {
+            if (selectedTeacher !== "")
+            {
                 teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
+            }
+
+            //add featured
+            let featured: IFeaturedsListItem = null;
+            let tbfeatured: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_Featured] as Global.Components.Selector;
+            let selectedFeatured: string = tbfeatured.getSelectedValue();
+            if (selectedFeatured !== "")
+            {
+                featured = { id: selectedFeatured, name: tbfeatured.getSelectedText() } as IFeaturedsListItem;
             }
 
             $.ajax({
                 cache: false,
                 type: "POST",
                 url: "/api/Classroom/" + this.props.classroomId + "/CreateStudent",
-                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher } as IStudentsListItem),
+                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher, featured: featured } as IStudentsListItem),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<IStudentsListItem>): void => {
                     this.close();
@@ -283,6 +310,7 @@ namespace VC.Admin.Lists {
                 }
             });
         }
+
         doUpdate(): void {
             let tbId: HTMLInputElement = this.refs[REF_FORM_TB + FORM_ID] as HTMLInputElement;
             let tbName: HTMLInputElement = this.refs[REF_FORM_TB + FORM_NAME] as HTMLInputElement;
@@ -296,11 +324,20 @@ namespace VC.Admin.Lists {
                 teacher = { id: selectedTeacher, name: tbTeacher.getSelectedText() } as ITeachersListItem;
             }
 
+            //add featured
+            let featured: IFeaturedsListItem = null;
+            let tbfeatured: Global.Components.Selector = this.refs[REF_FORM_TB + FORM_Featured] as Global.Components.Selector;
+            let selectedFeatured: string = tbfeatured.getSelectedValue();
+            if (selectedFeatured !== "") {
+                featured = { id: selectedFeatured, name: tbfeatured.getSelectedText() } as IFeaturedsListItem;
+            }
+
+
             $.ajax({
                 cache: false,
                 type: "POST",
                 url: "/api/Classroom/" + this.props.classroomId + "/UpdateStudent",
-                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher } as IStudentsListItem),
+                data: JSON.stringify({ id: idVal, name: nameVal, teacher: teacher, featured: featured } as IStudentsListItem),
                 contentType: "application/json",
                 success: (r: Global.Data.IDataResponse<IStudentsListItem>): void => {
                     this.close();
@@ -361,6 +398,10 @@ namespace VC.Admin.Lists {
             // implement when need
         }
 
+        onSelectedFeaturedChanged(): void {
+            // implement when need
+        }
+
         renderForm(): JSX.Element {
             return (
                 <form className="form-horizontal" role="form">
@@ -371,6 +412,7 @@ namespace VC.Admin.Lists {
                             <span ref={REF_FORM_ICON + FORM_ID} style={{ display: "none" }}></span>
                         </div>
                     </div>
+
                     <div ref={REF_FORM_DIV + FORM_NAME} className="form-group">
                         <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_NAME}>Name: </label>
                         <div className="col-sm-10">
@@ -378,13 +420,27 @@ namespace VC.Admin.Lists {
                             <span ref={REF_FORM_ICON + FORM_NAME} style={{ display: "none" }}></span>
                         </div>
                     </div>
+
+           
+
+                    <div ref={REF_FORM_DIV + FORM_Featured} className="form-group">
+                        <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_Featured}>Featured: </label>
+                        <div className="col-sm-10">
+                            <Global.Components.Selector ref={REF_FORM_TB + FORM_Featured} classroomId={this.props.classroomId} loadAction="GetAvailableFeatureds" defaultName="Select Featured computer" onSelectedItemChanged={ this.onSelectedFeaturedChanged.bind(this) } className="form-control" />
+                            <span ref={REF_FORM_ICON + FORM_Featured} style={{ display: "none" }}></span>
+                        </div>
+                    </div>
+
+               
+
                     <div ref={REF_FORM_DIV + FORM_TEACHER} className="form-group">
                         <label className="col-sm-2" htmlFor={REF_FORM_TB + FORM_TEACHER}>Teacher: </label>
                         <div className="col-sm-10">
-                            <Global.Components.Selector ref={REF_FORM_TB + FORM_TEACHER} classroomId={this.props.classroomId} loadAction="GetAvailableTeachers" defaultName="Select Teacher computer" onSelectedItemChanged={this.onSelectedTeacherChanged.bind(this) } className="form-control" />
+                            <Global.Components.Selector ref={REF_FORM_TB + FORM_TEACHER} classroomId={this.props.classroomId} loadAction="GetAvailableTeachers" defaultName="Select Teacher computer" onSelectedItemChanged={ this.onSelectedTeacherChanged.bind(this) } className="form-control" />
                             <span ref={REF_FORM_ICON + FORM_TEACHER} style={{ display: "none" }}></span>
                         </div>
                     </div>
+
                 </form>
             );
         }

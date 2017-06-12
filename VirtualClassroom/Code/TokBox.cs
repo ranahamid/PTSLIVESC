@@ -303,17 +303,20 @@ namespace VirtualClassroom.Code
         public static List<GroupComputer> CreateGroup(TblSC sc)
         {
             List<GroupComputer> group = new List<GroupComputer>();
-
+            int i = 1;
             // student computers
             group.AddRange(
-                sc.TblPCs.Select(x => new GroupComputer
+                sc.TblPCs.OrderBy(x => x.Name).Select(x => new GroupComputer
                 {
                     Uid = x.Uid,
                     Id = x.Id,
                     Role = (int)VC.VcRoles.PC,
-                    Position = x.Position
+                    //Enable this if want to get by by position
+                    //Position = x.Position,
+                    Position = i++
                 }));
-
+            //add
+            group = group.OrderBy(x => x.Name).ToList();
             return group;
         }
         public static List<GroupComputer> CreateGroup(TblTC tc)

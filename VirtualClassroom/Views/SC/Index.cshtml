@@ -5,6 +5,8 @@
     ViewBag.Name = Model.Name;
 }
 
+<link href="~/Content/animate.css" rel="stylesheet" />
+
 @if (!String.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert alert-danger">@Model.ErrorMessage</div>

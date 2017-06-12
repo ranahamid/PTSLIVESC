@@ -194,6 +194,7 @@ namespace VC.App {
                 // single student
                 this.raisedHands[groupComputer.Position - 1] = data.raised;
                 this.label[groupComputer.Position - 1].setStyle(data.raised ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected);
+                //add
                 this.boxSubscribers[groupComputer.Position - 1].setStyle(data.raised ? Components.BoxStyle.HandRaised : Components.BoxStyle.Connected);
 
                 if (data.raised) {
@@ -443,10 +444,10 @@ namespace VC.App {
                     //animated
                    // $(this.boxSubscribers[i]).removeClass(" animated rollOut ");
 
-
-                    this.label[i].setVisibility(false);
                     //animated
                     $(this.label[i].getParentDiv()).removeClass(" animated rollOut ");
+                    this.label[i].setVisibility(false);
+                    
                     if (this.divFloatingChat[i].style.display === "block")
                     {
                         this.divFloatingChat[i].style.display = "none";

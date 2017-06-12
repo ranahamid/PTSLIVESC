@@ -172,6 +172,7 @@ var VC;
                     // single student
                     this.raisedHands[groupComputer.Position - 1] = data.raised;
                     this.label[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                    //add
                     this.boxSubscribers[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxStyle.HandRaised : App.Components.BoxStyle.Connected);
                     if (data.raised) {
                         this.boxSubscribers[groupComputer.Position - 1].setStyle(App.Components.BoxStyle.HandRaised);
@@ -374,9 +375,9 @@ var VC;
                         this.boxSubscribers[i].setVisibility(false);
                         //animated
                         // $(this.boxSubscribers[i]).removeClass(" animated rollOut ");
-                        this.label[i].setVisibility(false);
                         //animated
                         $(this.label[i].getParentDiv()).removeClass(" animated rollOut ");
+                        this.label[i].setVisibility(false);
                         if (this.divFloatingChat[i].style.display === "block") {
                             this.divFloatingChat[i].style.display = "none";
                         }

@@ -34,8 +34,37 @@ var VC;
                     if (tokenData.Role === App.Roles.PC) {
                         // student
                         let groupComputer = this.getGroupComputer(tokenData.Uid);
-                        this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        //
+                        let addressData;
+                        addressData = "";
+                        if (tokenData.Country != null) {
+                            addressData = addressData + ", " + tokenData.Country;
+                        }
+                        else if (tokenData.City != null) {
+                            addressData = addressData + ", " + tokenData.City;
+                        }
+                        else if (tokenData.State != null) {
+                            addressData = addressData + ", " + tokenData.State;
+                        }
+                        else if (tokenData.Address1 != null) {
+                            addressData = tokenData.Address1;
+                        }
+                        //if (tokenData.ZipCode != null) {
+                        //    addressData = addressData + "-" + tokenData.ZipCode;
+                        //}
+                        if (addressData != "")
+                            this.label[groupComputer.Position - 1].setText(tokenData.Name + ", " + addressData + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        else
+                            this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected));
+                        //  this.label[groupComputer.Position - 1].setText(tokenData.Name + " connected.", (this.raisedHands[groupComputer.Position - 1] ? Components.BoxLabelStyle.HandRaised : Components.BoxLabelStyle.Connected));
                         this.connectedStudents[groupComputer.Position - 1] = true;
+                        //add
+                        if (this.raisedHands[groupComputer.Position - 1]) {
+                            this.boxSubscribers[groupComputer.Position - 1].setStyle(App.Components.BoxStyle.HandRaised);
+                        }
+                        else {
+                            this.boxSubscribers[groupComputer.Position - 1].setStyle(App.Components.BoxStyle.Connected);
+                        }
                         this.fitLayout();
                     }
                 }
@@ -126,6 +155,15 @@ var VC;
                         if (this.connectedStudents[i]) {
                             this.raisedHands[i] = data.raised;
                             this.label[i].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                            //test
+                            this.boxSubscribers[i].setStyle(data.raised ? App.Components.BoxStyle.HandRaised : App.Components.BoxStyle.Connected);
+                            //add
+                            if (data.raised) {
+                                this.boxSubscribers[i].setStyle(App.Components.BoxStyle.HandRaised);
+                            }
+                            else {
+                                this.boxSubscribers[i].setStyle(App.Components.BoxStyle.Connected);
+                            }
                         }
                     }
                 }
@@ -133,6 +171,14 @@ var VC;
                     // single student
                     this.raisedHands[groupComputer.Position - 1] = data.raised;
                     this.label[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxLabelStyle.HandRaised : App.Components.BoxLabelStyle.Connected);
+                    //add
+                    this.boxSubscribers[groupComputer.Position - 1].setStyle(data.raised ? App.Components.BoxStyle.HandRaised : App.Components.BoxStyle.Connected);
+                    if (data.raised) {
+                        this.boxSubscribers[groupComputer.Position - 1].setStyle(App.Components.BoxStyle.HandRaised);
+                    }
+                    else {
+                        this.boxSubscribers[groupComputer.Position - 1].setStyle(App.Components.BoxStyle.Connected);
+                    }
                 }
             }
             chatSignalReceived(event) {
@@ -185,23 +231,20 @@ var VC;
                 });
                 return connectedStudentsCount;
             }
-            getLayoutSize() {
-                let layout = 1;
-                let connectedStudentsCount = this.getCountOfConnectedStudents();
-                if (connectedStudentsCount > 6) {
-                    layout = 8;
-                }
-                else if (connectedStudentsCount > 4) {
-                    layout = 6;
-                }
-                else if (connectedStudentsCount > 2) {
-                    layout = 4;
-                }
-                else if (connectedStudentsCount > 1) {
-                    layout = 2;
-                }
-                return layout;
-            }
+            //private getLayoutSize(): number {
+            //    let layout: number = 1;
+            //    let connectedStudentsCount: number = this.getCountOfConnectedStudents();
+            //    if (connectedStudentsCount > 6) {
+            //        layout = 8;
+            //    } else if (connectedStudentsCount > 4) {
+            //        layout = 6;
+            //    } else if (connectedStudentsCount > 2) {
+            //        layout = 4;
+            //    } else if (connectedStudentsCount > 1) {
+            //        layout = 2;
+            //    }
+            //    return layout;
+            //}
             fitLayout() {
                 let windowHeight = $(window).innerHeight();
                 let windowWidth = $(window).innerWidth();
@@ -209,13 +252,15 @@ var VC;
             }
             fitLayerSizes(windowWidth, windowHeight) {
                 let connectedStudentsCount = this.getCountOfConnectedStudents();
-                let layout = this.getLayoutSize();
+                // let layout: number = this.getLayoutSize();
                 let countOfVisibleBoxes = 0;
                 // visibility of boxes + labels + floating chat divs
                 for (let i = 0; i < 8; i++) {
                     if (this.connectedStudents[i]) {
                         this.boxSubscribers[i].setVisibility(true);
                         this.label[i].setVisibility(true);
+                        //animated
+                        $(this.label[i].getParentDiv()).addClass(" animated rollIn ");
                         if (this.divFloatingChat[i].style.display === "none") {
                             this.divFloatingChat[i].style.display = "block";
                         }
@@ -223,6 +268,8 @@ var VC;
                     }
                     else {
                         this.boxSubscribers[i].setVisibility(false);
+                        //animated
+                        $(this.label[i].getParentDiv()).removeClass(" animated rollOut ");
                         this.label[i].setVisibility(false);
                         if (this.divFloatingChat[i].style.display === "block") {
                             this.divFloatingChat[i].style.display = "none";
@@ -230,45 +277,88 @@ var VC;
                     }
                 }
                 // show boxes left
-                for (let i = 7; i >= 0 && countOfVisibleBoxes < layout; i++) {
-                    if (!this.connectedStudents[i]) {
-                        this.boxSubscribers[i].setVisibility(true);
-                        this.label[i].setVisibility(true);
-                        if (this.divFloatingChat[i].style.display === "none") {
-                            this.divFloatingChat[i].style.display = "block";
-                        }
-                        countOfVisibleBoxes++;
-                    }
-                }
+                //for (let i: number = 7; i >= 0 && countOfVisibleBoxes < layout; i++) {
+                //    if (!this.connectedStudents[i]) {
+                //        this.boxSubscribers[i].setVisibility(true);
+                //        this.label[i].setVisibility(true);
+                //        if (this.divFloatingChat[i].style.display === "none") {
+                //            this.divFloatingChat[i].style.display = "block";
+                //        }
+                //        countOfVisibleBoxes++;
+                //    }
+                //}
                 // sizes and position of boxes + labels + floating chat divs
-                if (layout > 6) {
+                //if (layout > 6) {
+                //    for (let i: number = 0; i < 8; i++) {
+                //        $(this.boxSubscribers[i].getBox())
+                //            .css("width", "25%")
+                //            .css("height", windowHeight / 2 + "px"); // 8
+                //        $(this.label[i].getParentDiv()).css("width", "25%");
+                //        $(this.divFloatingChat[i]).css("width", "25%");
+                //    }
+                //} else if (layout > 4) {
+                //    for (let i: number = 0; i < 8; i++) {
+                //        $(this.boxSubscribers[i].getBox())
+                //            .css("width", "33.33%")
+                //            .css("height", windowHeight / 2 + "px"); // 6
+                //        $(this.label[i].getParentDiv()).css("width", "33.33%");
+                //        $(this.divFloatingChat[i]).css("width", "33.33%");
+                //    }
+                //} else if (layout > 2) {
+                //    for (let i: number = 0; i < 8; i++) {
+                //        $(this.boxSubscribers[i].getBox())
+                //            .css("width", "50%")
+                //            .css("height", windowHeight / 2 + "px"); // 4
+                //        $(this.label[i].getParentDiv()).css("width", "50%");
+                //        $(this.divFloatingChat[i]).css("width", "50%");
+                //    }
+                //} else if (layout > 1) {
+                //    for (let i: number = 0; i < 8; i++) {
+                //        $(this.boxSubscribers[i].getBox())
+                //            .css("width", "50%")
+                //            .css("height", windowHeight + "px"); // 2
+                //        $(this.label[i].getParentDiv()).css("width", "50%");
+                //        $(this.divFloatingChat[i]).css("width", "50%");
+                //    }
+                //} else {
+                //    for (let i: number = 0; i < 8; i++) {
+                //        $(this.boxSubscribers[i].getBox())
+                //            .css("width", "100%")
+                //            .css("height", windowHeight + "px"); // 1
+                //        $(this.label[i].getParentDiv()).css("width", "100%");
+                //        $(this.divFloatingChat[i]).css("width", "100%");
+                //    }
+                //}
+                // sizes and position of boxes + labels + floating chat divs
+                //0
+                if (connectedStudentsCount == 0) {
                     for (let i = 0; i < 8; i++) {
-                        $(this.boxSubscribers[i].getBox())
-                            .css("width", "25%")
-                            .css("height", windowHeight / 2 + "px"); // 8
-                        $(this.label[i].getParentDiv()).css("width", "25%");
-                        $(this.divFloatingChat[i]).css("width", "25%");
+                        if (!this.connectedStudents[i]) {
+                            this.boxSubscribers[i].setVisibility(true);
+                            this.label[i].setVisibility(true);
+                            if (this.divFloatingChat[i].style.display === "none") {
+                                this.divFloatingChat[i].style.display = "block";
+                            }
+                            $(this.boxSubscribers[i].getBox())
+                                .css("width", "100%")
+                                .css("height", windowHeight + "px"); //1
+                            $(this.label[i].getParentDiv()).css("width", "100%");
+                            $(this.divFloatingChat[i]).css("width", "100%");
+                            break;
+                        }
                     }
                 }
-                else if (layout > 4) {
+                //1
+                if (connectedStudentsCount == 1) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
-                            .css("width", "33.33%")
-                            .css("height", windowHeight / 2 + "px"); // 6
-                        $(this.label[i].getParentDiv()).css("width", "33.33%");
-                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                            .css("width", "100%")
+                            .css("height", windowHeight + "px"); // 1
+                        $(this.label[i].getParentDiv()).css("width", "100%");
+                        $(this.divFloatingChat[i]).css("width", "100%");
                     }
                 }
-                else if (layout > 2) {
-                    for (let i = 0; i < 8; i++) {
-                        $(this.boxSubscribers[i].getBox())
-                            .css("width", "50%")
-                            .css("height", windowHeight / 2 + "px"); // 4
-                        $(this.label[i].getParentDiv()).css("width", "50%");
-                        $(this.divFloatingChat[i]).css("width", "50%");
-                    }
-                }
-                else if (layout > 1) {
+                else if (connectedStudentsCount == 2) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
                             .css("width", "50%")
@@ -277,13 +367,72 @@ var VC;
                         $(this.divFloatingChat[i]).css("width", "50%");
                     }
                 }
-                else {
+                else if (connectedStudentsCount == 3) {
                     for (let i = 0; i < 8; i++) {
                         $(this.boxSubscribers[i].getBox())
-                            .css("width", "100%")
-                            .css("height", windowHeight + "px"); // 1
-                        $(this.label[i].getParentDiv()).css("width", "100%");
-                        $(this.divFloatingChat[i]).css("width", "100%");
+                            .css("width", "33.33%")
+                            .css("height", windowHeight + "px"); // 2
+                        $(this.label[i].getParentDiv()).css("width", "33.33%");
+                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                    }
+                }
+                else if (connectedStudentsCount == 4) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "25%")
+                            .css("height", windowHeight + "px"); // 4
+                        $(this.label[i].getParentDiv()).css("width", "25%");
+                        $(this.divFloatingChat[i]).css("width", "25%");
+                    }
+                }
+                else if (connectedStudentsCount == 5) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "20%")
+                            .css("height", windowHeight + "px"); // 4
+                        $(this.label[i].getParentDiv()).css("width", "20%");
+                        $(this.divFloatingChat[i]).css("width", "20%");
+                    }
+                }
+                else if (connectedStudentsCount == 6) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "33.33%")
+                            .css("height", windowHeight / 2 + "px"); // 6
+                        $(this.label[i].getParentDiv()).css("width", "33.33%");
+                        $(this.divFloatingChat[i]).css("width", "33.33%");
+                    }
+                }
+                else if (connectedStudentsCount == 7) {
+                    let countConnectStudent = 0;
+                    for (let i = 0; i < 8; i++) {
+                        if (this.connectedStudents[i]) {
+                            countConnectStudent++;
+                            if (countConnectStudent <= 4) {
+                                $(this.boxSubscribers[i].getBox())
+                                    .css("width", "25%")
+                                    .css("height", windowHeight / 2 + "px");
+                                $(this.label[i].getParentDiv()).css("width", "25%");
+                                $(this.divFloatingChat[i]).css("width", "25%");
+                            }
+                            else {
+                                $(this.boxSubscribers[i].getBox())
+                                    .css("width", "33.33%")
+                                    .css("height", windowHeight / 2 + "px");
+                                $(this.label[i].getParentDiv()).css("width", "33.33%");
+                                $(this.divFloatingChat[i]).css("width", "33.33%");
+                            }
+                        }
+                    }
+                }
+                //8
+                if (connectedStudentsCount >= 8) {
+                    for (let i = 0; i < 8; i++) {
+                        $(this.boxSubscribers[i].getBox())
+                            .css("width", "25%")
+                            .css("height", windowHeight / 2 + "px"); // 8
+                        $(this.label[i].getParentDiv()).css("width", "25%");
+                        $(this.divFloatingChat[i]).css("width", "25%");
                     }
                 }
                 // labels
@@ -310,6 +459,11 @@ var VC;
                     "notConnected",
                     "connected",
                     "handRaised" // handRaised
+                ];
+                let BoxClasses = [
+                    "notConnectedBox",
+                    "connectedBox",
+                    "handRaisedBox" // handRaised
                 ];
                 return (React.createElement("div", {className: "scContainer"}, React.createElement("div", {ref: (ref) => this.divStatus = ref}, React.createElement(App.Components.Status, {ref: (ref) => this.status = ref, text: "Connecting ...", style: App.Components.StatusStyle.Connecting, className: "cStatus", statusClasses: statusClasses})), React.createElement("div", {ref: (ref) => this.divUI = ref, style: { display: "none" }}, React.createElement(App.Components.Box, {ref: (ref) => this.boxPublisher = ref, id: this.props.targetId + "_Publisher1", streamProps: this.publishProps, className: "", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[0] = ref, id: this.props.targetId + "_Subscriber1", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[1] = ref, id: this.props.targetId + "_Subscriber2", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[2] = ref, id: this.props.targetId + "_Subscriber3", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[3] = ref, id: this.props.targetId + "_Subscriber4", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[4] = ref, id: this.props.targetId + "_Subscriber5", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[5] = ref, id: this.props.targetId + "_Subscriber6", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[6] = ref, id: this.props.targetId + "_Subscriber7", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.Box, {ref: (ref) => this.boxSubscribers[7] = ref, id: this.props.targetId + "_Subscriber8", streamProps: this.subscribeProps, className: "cBox", visible: false, style: App.Components.BoxStyle.NotConnected, BoxClasses: labelClasses}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[0] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[1] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[2] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[3] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[4] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[5] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[6] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement(App.Components.BoxLabel, {ref: (ref) => this.label[7] = ref, text: "Student not connected...", style: App.Components.BoxLabelStyle.NotConnected, className: "cBoxLabel", labelClasses: labelClasses, visible: false}), React.createElement("div", {ref: (ref) => this.divFloatingChat[0] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[0] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[1] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[1] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[2] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[2] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[3] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[3] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[4] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[4] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[5] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[5] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[6] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[6] = ref, fadingOut: true})), React.createElement("div", {ref: (ref) => this.divFloatingChat[7] = ref, className: "floatingChat", style: { display: "none" }}, React.createElement(App.Components.ChatList, {ref: (ref) => this.floatingChat[7] = ref, fadingOut: true})))));
             }

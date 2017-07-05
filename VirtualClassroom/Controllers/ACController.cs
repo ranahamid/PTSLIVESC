@@ -288,6 +288,36 @@ namespace VirtualClassroom.Controllers
             }
         }
 
+        //VolumeModerator
+        [HttpPost]
+        public ActionResult VolumeModerator(string classroomId, Guid uid, int volume)
+        {
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblModerator tblModerator = q.Single();
+                tblModerator.Volume = volume;
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError("Id not found.");
+            }
+        }
+
+
 
 
         [HttpPost]

@@ -22,6 +22,8 @@ namespace VC.App.AC {
         turnOff: (uid: string) => void;
         turnOffAll: (role: Roles) => void;
         raiseHandAll: (up: boolean) => void;
+        raisedHandSingle: (uid: string, up: boolean) => void;
+
         changeVolume: (uid: string, volume: number) => void;
         featuredComputerClick: (uid: string, name: string) => void;
     }
@@ -203,20 +205,28 @@ namespace VC.App.AC {
         renderComputer(item: IComputersListItem): JSX.Element {
             return (
                 <tr key={"tr_" + item.uid}>
-                    <td>
+                    <td  style={{ width: "30%" }}>
                         <div>
                             <span className="glyphicon glyphicon-link" style={{ color: "green" }}></span>&nbsp;
                             <span className={(item.handRaised ? "glyphicon glyphicon-hand-up" : "glyphicon glyphicon-hand-down")} style={{ color: (item.handRaised ? "red" : "gray"), display: (this.state.selectedRole === Roles.PC ? "inline-block" : "none") }}></span>&nbsp;
                             {item.name}
                         </div>
                     </td>
-                    <td style={{ display: (this.state.selectedRole === Roles.PC || this.state.selectedRole === Roles.TC ? "block" : "none")}}>
+
+
+                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC || this.state.selectedRole === Roles.Moderator || this.state.selectedRole === Roles.ModeratorWarning || this.state.selectedRole === Roles.TC ? "block" : "none") }}>
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
 
+                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC ? "block" : "none") }}>
+                        <button type="button" style={{ color: (item.handRaised ? "red" : "gray") }} className={(item.handRaised ? "glyphicon glyphicon-hand-down" : "glyphicon glyphicon-hand-up") } onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
+                            <span style={{ display: (item.handRaised ? "block" : "none") }}>Hands Down</span>
+                            <span style={{ display: (!item.handRaised ? "block" : "none") }}>Hands Up</span>
+                        </button>                   
+                    </td>
                  
 
-                    <td style={{ textAlign: "right" }}>
+                    <td style={{ width: "40%", textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>
                         <div className="cListButton" style={{ display: "none" }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
                         <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC || this.state.selectedRole === Roles.SC ? "none" : "block") }}><Components.SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="" /></div>
@@ -253,9 +263,11 @@ namespace VC.App.AC {
                         <div style={{ display: "none" }}><Components.SwitchButton textOn="ALL" textOff="ALL" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-music" iconOff="glyphicon glyphicon-music" status={(audioOn ? Components.SwitchButtonStatus.Stop : Components.SwitchButtonStatus.Start) } onOn={() => this.props.turnAvAll(role, true, null) } onOff={() => this.props.turnAvAll(role, false, null) } className="" /></div>
                         <button type="button" className="btn btn-xs btn-danger" onClick={() => { this.props.turnAvAll(role, false, null) } }><span className="glyphicon glyphicon-music"></span> Mute ALL</button>
                     </div>
+
                     <div key={"ButtonHandsAll_" + role} className="cListButton" style={{ display: (this.state.computers.length === 0 || role !== Roles.PC ? "none" : "block") }}>
                         <button type="button" className="btn btn-xs btn-danger" onClick={() => { this.props.raiseHandAll(false); } }><span className="glyphicon glyphicon-hand-down"></span> ALL Hands Down</button>
                     </div>
+
                 </div>
             );
         }

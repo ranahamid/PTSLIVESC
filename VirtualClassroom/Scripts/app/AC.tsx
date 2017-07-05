@@ -176,10 +176,24 @@ namespace VC.App {
             // send signal
             Global.Signaling.sendSignalAll<Global.ISignalTurnOffData>(this.session, Global.SignalTypes.TurnOff, { role: role } as Global.ISignalTurnOffData);
         }
-        private raiseHandAll(up: boolean): void {
+
+        private raiseHandAll(up: boolean): void
+        {
             // send signal
             Global.Signaling.sendSignalAll<Global.ISignalRaiseHandData>(this.session, Global.SignalTypes.RaiseHand, { raised: up } as Global.ISignalRaiseHandData);
         }
+
+
+        //raisedHandSingle
+        private raisedHandSingle(uid: string, up: boolean): void
+        {
+            let connection: any = this.getConnectionByUid(uid);
+            // send single signal
+            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: up } as Global.ISignalRaiseHandData);
+        }
+
+
+
         private changeVolume(uid: string, volume: number): void {
             let connection: any = this.getConnectionByUid(uid);
             let role: Roles = Global.Fce.toTokenData(connection.data).Role;
@@ -261,7 +275,10 @@ namespace VC.App {
                             turnOff={(uid: string) => this.turnOff(uid) }
                             turnOffAll={(role: Roles) => this.turnOffAll(role) }
                             raiseHandAll={(up: boolean) => this.raiseHandAll(up) }
+                            raisedHandSingle={(uid: string, up: boolean) => this.raisedHandSingle(uid, up) }
+
                             changeVolume={(uid: string, volume: number) => this.changeVolume(uid, volume) }
+
                             featuredComputerClick={(uid: string, name: string) => this.featuredComputerClick(uid, name) } />
                         <VC.App.AC.FeaturedBox ref={(ref: VC.App.AC.FeaturedBox) => this.featuredBox = ref} classroomId={this.props.classroomId} onFeaturedUpdated={(uid: string, students: Array<VC.App.AC.IStudentItem>) => this.onFeaturedUpdated(uid, students) } />
                     </div>

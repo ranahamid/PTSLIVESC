@@ -218,11 +218,17 @@ namespace VC.App.AC {
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
 
-                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC ? "block" : "none") }}>
-                        <button type="button" style={{ color: (item.handRaised ? "red" : "gray") }} className={(item.handRaised ? "glyphicon glyphicon-hand-down" : "glyphicon glyphicon-hand-up") } onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
+                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC ? "run-in" : "none") }}>
+
+                        <button type="button" style={{ color: (item.handRaised ? "red" : "gray") }}  className={(item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-info") }  onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
+
+                            <span style={{ display: (item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-down"></span>
                             <span style={{ display: (item.handRaised ? "block" : "none") }}>Hands Down</span>
+
+                            <span style={{ display: (!item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-up"></span>
                             <span style={{ display: (!item.handRaised ? "block" : "none") }}>Hands Up</span>
-                        </button>                   
+
+                        </button>                
                     </td>
                  
 
@@ -286,6 +292,7 @@ namespace VC.App.AC {
                                 <tr>
                                     <th style={{ width: "50%" }}>Student computer</th>
                                     <th>Volume</th>
+                                    <th>Hands</th>
                                     <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>

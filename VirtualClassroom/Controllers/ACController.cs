@@ -76,6 +76,41 @@ namespace VirtualClassroom.Controllers
             }
         }
 
+        //TurnAvModerator
+        [HttpPost]
+        public ActionResult TurnAvModerator(string classroomId, Guid uid, bool? audio, bool? video)
+        {
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblModerator tblModerator = q.Single();
+                if (audio.HasValue)
+                    tblModerator.Audio = audio.Value;
+                if (video.HasValue)
+                    tblModerator.Video = video.Value;
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
+            {
+                return responseError("Id not found.");
+            }
+        }
+
+
+
+
         [HttpPost]
         public ActionResult TurnAvPC(string classroomId, Guid uid, bool? audio, bool? video)
         {
@@ -166,6 +201,36 @@ namespace VirtualClassroom.Controllers
                 return responseError(ex.Message);
             }
         }
+
+        //TurnAvAllModerator 
+
+        [HttpPost]
+        public ActionResult TurnAvAllModerator(string classroomId, bool? audio, bool? video)
+        {
+            var q = from x in db.TblModerators
+                    where x.ClassroomId.ToLower() == classroomId.ToLower()
+                    select x;
+
+            foreach (TblModerator tblModerator in q.Select(x => x))
+            {
+                if (audio.HasValue)
+                    tblModerator.Audio = audio.Value;
+                if (video.HasValue)
+                    tblModerator.Video = video.Value;
+            }
+
+            try
+            {
+                db.SubmitChanges();
+                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ChangeConflictException ex)
+            {
+                return responseError(ex.Message);
+            }
+        }
+
+
 
 
         [HttpPost]

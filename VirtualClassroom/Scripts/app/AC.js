@@ -166,8 +166,10 @@ var VC;
                 // send signal
                 App.Global.Signaling.sendSignalAll(this.session, App.Global.SignalTypes.RaiseHand, { raised: up });
             }
+
             //raisedHandSingle
             raisedHandSingle(uid, up) {
+                console.log("raisedHandSingle: " + uid + ",up:" + up);
                 let connection = this.getConnectionByUid(uid);
                 // send single signal
                 App.Global.Signaling.sendSignal(this.session, connection, App.Global.SignalTypes.RaiseHand, { raised: up });

@@ -205,7 +205,7 @@ namespace VC.App.AC {
         renderComputer(item: IComputersListItem): JSX.Element {
             return (
                 <tr key={"tr_" + item.uid}>
-                    <td  style={{ width: "30%" }}>
+                    <td>
                         <div>
                             <span className="glyphicon glyphicon-link" style={{ color: "green" }}></span>&nbsp;
                             <span className={(item.handRaised ? "glyphicon glyphicon-hand-up" : "glyphicon glyphicon-hand-down")} style={{ color: (item.handRaised ? "red" : "gray"), display: (this.state.selectedRole === Roles.PC ? "inline-block" : "none") }}></span>&nbsp;
@@ -214,25 +214,23 @@ namespace VC.App.AC {
                     </td>
 
 
-                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC || this.state.selectedRole === Roles.Moderator || this.state.selectedRole === Roles.ModeratorWarning || this.state.selectedRole === Roles.TC ? "block" : "none") }}>
+                    <td style={{ display: (this.state.selectedRole === Roles.PC || this.state.selectedRole === Roles.Moderator || this.state.selectedRole === Roles.ModeratorWarning || this.state.selectedRole === Roles.TC ? "block" : "none") }}>
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
 
-                    <td style={{ width: "15%", display: (this.state.selectedRole === Roles.PC ? "run-in" : "none") }}>
+                    <td style={{ display: (this.state.selectedRole === Roles.PC ? "run-in" : "none") }}>
 
-                        <button type="button" style={{ color: (item.handRaised ? "red" : "gray") }}  className={(item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-info") }  onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
+                        <button type="button" style={{ color: (!item.handRaised ? "red" : "gray") }}  className={(!item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-info") }  onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
 
-                            <span style={{ display: (item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-down"></span>
-                            <span style={{ display: (item.handRaised ? "block" : "none") }}>Hands Down</span>
-
-                            <span style={{ display: (!item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-up"></span>
-                            <span style={{ display: (!item.handRaised ? "block" : "none") }}>Hands Up</span>
+                            <span style={{ display: (!item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-down">Hands Down</span>                     
+                            <span style={{ display: (item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-up">Hands Up</span>
+                     
 
                         </button>                
                     </td>
                  
 
-                    <td style={{ width: "40%", textAlign: "right" }}>
+                    <td style={{ textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>
                         <div className="cListButton" style={{ display: "none" }}><button type="button" className="btn btn-xs btn-default" disabled="true"><span className="glyphicon glyphicon-record"></span></button></div>
                         <div className="cListButton" style={{ display: (this.state.selectedRole === Roles.FC || this.state.selectedRole === Roles.SC ? "none" : "block") }}><Components.SwitchButton textOn="" textOff="" classOn="btn btn-xs btn-danger" classOff="btn btn-xs btn-success" iconOn="glyphicon glyphicon-facetime-video" iconOff="glyphicon glyphicon-facetime-video" status={this.getButtonStatus(item.video) } onOn={() => this.props.turnAv(item.uid, null, true) } onOff={() => this.props.turnAv(item.uid, null, false) } className="" /></div>
@@ -290,10 +288,10 @@ namespace VC.App.AC {
                         <table className="table" align="center">
                             <thead>
                                 <tr>
-                                    <th style={{ width: "50%" }}>Student computer</th>
-                                    <th>Volume</th>
-                                    <th>Hands</th>
-                                    <th>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
+                                    <th style={{ width: "30%" }}>Student computer</th>
+                                    <th style={{ width: "15%" }}>Volume</th>
+                                    <th style={{ width: "15%" }}>Hands</th>
+                                    <th style={{ width: "40%" }}>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>

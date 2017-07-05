@@ -51,6 +51,7 @@ namespace VirtualClassroom.Controllers
             return View(viewModel);
         }
 
+
         public ActionResult GetData(string classroomId, string id)
         {
             var q = from x in db.TblPCs
@@ -101,6 +102,7 @@ namespace VirtualClassroom.Controllers
 
         }
 
+
         public ActionResult LoadAnswers(string classroomId, string id)
         {
             var qPC = from x in db.TblPCs
@@ -125,6 +127,8 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student ID.");
             }
         }
+
+
 
         [HttpPost]
         public ActionResult TurnAv(string classroomId, string id, bool? audio, bool? video)
@@ -156,6 +160,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student Id.");
             }
         }
+
 
 
         // dispose

@@ -48,6 +48,7 @@ namespace VirtualClassroom.Controllers
             return View(viewModel);
         }
 
+
         public ActionResult GetData(string classroomId, string id)
         {
             var q = from x in db.TblModerators
@@ -88,6 +89,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid URL.");
             }
         }
+
 
 
         [HttpPost]

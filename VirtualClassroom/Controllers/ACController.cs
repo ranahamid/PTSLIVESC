@@ -106,6 +106,9 @@ namespace VirtualClassroom.Controllers
                 return responseError("Id not found.");
             }
         }
+
+
+
         [HttpPost]
         public ActionResult TurnAvTC(string classroomId, Guid uid, bool? audio, bool? video)
         {
@@ -137,6 +140,7 @@ namespace VirtualClassroom.Controllers
             }
         }
 
+
         [HttpPost]
         public ActionResult TurnAvAllPC(string classroomId, bool? audio, bool? video)
         {
@@ -162,6 +166,8 @@ namespace VirtualClassroom.Controllers
                 return responseError(ex.Message);
             }
         }
+
+
         [HttpPost]
         public ActionResult TurnAvAllTC(string classroomId, bool? audio, bool? video)
         {
@@ -187,6 +193,7 @@ namespace VirtualClassroom.Controllers
                 return responseError(ex.Message);
             }
         }
+
 
         [HttpPost]
         public ActionResult VolumePC(string classroomId, Guid uid, int volume)
@@ -215,6 +222,9 @@ namespace VirtualClassroom.Controllers
                 return responseError("Id not found.");
             }
         }
+
+
+
         [HttpPost]
         public ActionResult VolumeTC(string classroomId, Guid uid, int volume)
         {
@@ -242,6 +252,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Id not found.");
             }
         }
+
 
         // dispose
         protected override void Dispose(bool disposing)

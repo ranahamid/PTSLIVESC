@@ -13,10 +13,12 @@ namespace VirtualClassroom.Controllers
             db = new VirtualClassroomDataContext();
         }
 
+
         public ActionResult Index()
         {
             return View();
         }
+
         public ActionResult Classroom(string classroomId)
         {
             var q = from x in db.TblClassrooms
@@ -41,6 +43,7 @@ namespace VirtualClassroom.Controllers
 
             return View(viewModel);
         }
+
 
         // dispose
         protected override void Dispose(bool disposing)

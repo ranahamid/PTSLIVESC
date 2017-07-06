@@ -31,7 +31,7 @@ var VC;
                     let l = [];
                     l.push(React.createElement("td", {key: "tdId_" + d.id}, d.id));
                     l.push(React.createElement("td", {key: "tdName_" + d.id}, d.name));
-                    l.push(React.createElement("td", {key: "td_featuredpcname" + d.id}, d.featuredpcname));
+                    l.push(React.createElement("td", {key: "td_featuredpcname" + d.id}, d.featured.name));
                     l.push(React.createElement("td", {key: "tdTeacher_" + d.id}, d.teacher === null ? "-" : d.teacher.name));
                     return l;
                 }

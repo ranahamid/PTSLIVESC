@@ -189,11 +189,11 @@ namespace VirtualClassroom.Controllers
                 id = x.Id,
                 name = x.Name,
              
-                featuredpcname = (from FC in db.TblFCs
-                                 where FC.Uid ==((from fcpc in db.TblFCPCs
-                                                  where fcpc.PcUid == x.Uid
-                                                  select fcpc.FcUid).FirstOrDefault())
-                                 select FC.Name).FirstOrDefault(),
+                //featuredpcname = (from FC in db.TblFCs
+                //                 where FC.Uid ==((from fcpc in db.TblFCPCs
+                //                                  where fcpc.PcUid == x.Uid
+                //                                  select fcpc.FcUid).FirstOrDefault())
+                //                 select FC.Name).FirstOrDefault(),
 
                 teacher = x.TcUid.HasValue ? new Teacher()
                 {
@@ -1179,26 +1179,27 @@ namespace VirtualClassroom.Controllers
                 // insert into TblFCs
 
                 var qFC = (from FC in db.TblFCs
-                           where FC.Uid == ((from fcpc in db.TblFCPCs
-                                             where fcpc.PcUid == pcUid
-                                             select fcpc.FcUid).FirstOrDefault())
+                           where FC.Id == item.featured.id
                            select FC.Uid).FirstOrDefault();
                    
                 Guid fcUid = qFC;
+
+                Guid FCPCUid = Guid.NewGuid();
+
                 db.TblFCPCs.InsertOnSubmit(new TblFCPC
                 {
+                    Uid= FCPCUid,
                     PcUid = pcUid,
                     FcUid=fcUid,
                     Position=1                    
                 });
-
-             
             }
 
             try
             {
                 db.SubmitChanges();
                 item.uid = pcUid;
+            //    item.featuredpcname = item.featured.name;
                 return responseSuccess(item);
             }
             catch (ChangeConflictException ex)

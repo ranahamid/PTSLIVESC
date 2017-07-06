@@ -37,7 +37,7 @@ namespace VirtualClassroom.Models
     {
         public int position { get; set; }
         public Teacher teacher { get; set; }
-        public string featuredpcname{get;set;}
+      //  public string featuredpcname{get;set;}
         public Guid FcUid { get; set; }
         public string address1 { get; set; }
         public string State { get; set; }
@@ -56,7 +56,7 @@ namespace VirtualClassroom.Models
         public string title { get; set; }
         public int position { get; set; }
         public Teacher teacher { get; set; }
-        public string featuredpcname { get; set; }
+      //  public string featuredpcname { get; set; }
         public Guid FcUid { get; set; }
         public string address1 { get; set; }
         public string State { get; set; }

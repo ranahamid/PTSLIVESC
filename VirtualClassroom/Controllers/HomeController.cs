@@ -37,7 +37,7 @@ namespace VirtualClassroom.Controllers
                                 name = z.Name,                               
                                 position = z.Position,
                                 teacher = null,
-                                 address1 = z.Address1,
+                                address1 = z.Address1,
                                 State = z.State,
                                 City = z.City,
                                 ZipCode = z.ZipCode,

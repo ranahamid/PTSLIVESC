@@ -22,7 +22,8 @@ namespace VC.App.AC {
         turnOff: (uid: string) => void;
         turnOffAll: (role: Roles) => void;
         raiseHandAll: (up: boolean) => void;
-        raisedHandSingle: (uid: string, up: boolean) => void;
+
+       
 
         changeVolume: (uid: string, volume: number) => void;
         featuredComputerClick: (uid: string, name: string) => void;
@@ -203,6 +204,9 @@ namespace VC.App.AC {
             return name;
         }
         renderComputer(item: IComputersListItem): JSX.Element {
+            let isHandRaise: boolean = false;
+            isHandRaise = !item.handRaised;
+
             return (
                 <tr key={"tr_" + item.uid}>
                     <td>
@@ -218,17 +222,14 @@ namespace VC.App.AC {
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
 
-                    <td style={{ display: (this.state.selectedRole === Roles.PC ? "run-in" : "none") }}>
-
-                        <button type="button" style={{ color: (!item.handRaised ? "red" : "gray") }}  className={(!item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-info") }  onClick={() => { this.props.raisedHandSingle(item.uid, item.handRaised); } }>
-
-                            <span style={{ display: (!item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-down">Hands Down</span>                     
-                            <span style={{ display: (item.handRaised ? "block" : "none") }} className="glyphicon glyphicon-hand-up">Hands Up</span>
-                     
-
-                        </button>                
+                    <td>
+                        <div style={{ display: (this.state.selectedRole == Roles.PC ? "block" : "none") }}>
+                            <button type="button" className={(item.handRaised ? "btn btn-xs btn-info" : "btn btn-xs btn-danger") }  onClick={() => { this.props.raiseHandAll(isHandRaise); } }>
+                                <div style={{ display: (item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-down"></span> Hands Down </div>
+                                <div style={{ display: (!item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-up"></span> Hands Up </div>
+                            </button>
+                        </div>
                     </td>
-                 
 
                     <td style={{ textAlign: "right" }}>
                         <div className="cListButton"><button type="button" className="btn btn-xs btn-warning" onClick={() => this.props.turnOff(item.uid) }><span className="glyphicon glyphicon-off"></span></button></div>

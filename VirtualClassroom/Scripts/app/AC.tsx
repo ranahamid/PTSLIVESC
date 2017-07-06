@@ -185,13 +185,7 @@ namespace VC.App {
 
 
         //raisedHandSingle
-        private raisedHandSingle(uid: string, up: boolean): void
-        {
-            let connection: any = this.getConnectionByUid(uid);
-            // send single signal
-            Global.Signaling.sendSignal<Global.ISignalRaiseHandData>(this.session, connection, Global.SignalTypes.RaiseHand, { raised: up } as Global.ISignalRaiseHandData);
-        }
-
+    
 
 
         private changeVolume(uid: string, volume: number): void {
@@ -275,7 +269,7 @@ namespace VC.App {
                             turnOff={(uid: string) => this.turnOff(uid) }
                             turnOffAll={(role: Roles) => this.turnOffAll(role) }
                             raiseHandAll={(up: boolean) => this.raiseHandAll(up) }
-                            raisedHandSingle={(uid: string, up: boolean) => this.raisedHandSingle(uid, up) }
+
 
                             changeVolume={(uid: string, volume: number) => this.changeVolume(uid, volume) }
 

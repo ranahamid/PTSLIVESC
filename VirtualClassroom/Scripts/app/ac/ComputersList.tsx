@@ -23,6 +23,7 @@ namespace VC.App.AC {
         turnOffAll: (role: Roles) => void;
         raiseHandAll: (up: boolean) => void;
 
+        raiseHandSingle: (uid: string, up: boolean) => void;
        
 
         changeVolume: (uid: string, volume: number) => void;
@@ -224,7 +225,7 @@ namespace VC.App.AC {
 
                     <td>
                         <div style={{ display: (this.state.selectedRole == Roles.PC ? "block" : "none") }}>
-                            <button type="button" className={(item.handRaised ? "btn btn-xs btn-info" : "btn btn-xs btn-danger") }  onClick={() => { this.props.raiseHandAll(isHandRaise); } }>
+                            <button type="button" className={(item.handRaised ? "btn btn-xs btn-info" : "btn btn-xs btn-danger") }  onClick={() => { this.props.raiseHandSingle(item.uid,isHandRaise); } }>
                                 <div style={{ display: (item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-down"></span> Hands Down </div>
                                 <div style={{ display: (!item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-up"></span> Hands Up </div>
                             </button>

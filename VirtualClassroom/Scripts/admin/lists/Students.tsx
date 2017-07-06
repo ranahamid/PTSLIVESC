@@ -62,7 +62,7 @@ namespace VC.Admin.Lists {
             l.push(<td key={"tdId_" + d.id}>{d.id}</td>);
             l.push(<td key={"tdName_" + d.id}>{d.name}</td>);
 
-            l.push(<td key={"td_featuredpcname" + d.id}>{d.featured.name}</td>);
+            l.push(<td key={"td_featuredpcname" + d.id}>{d.featured === null ? "-" : d.featured.name}</td>);
             l.push(<td key={"tdTeacher_" + d.id}>{d.teacher === null ? "-" : d.teacher.name}</td>);
             return l;
         }

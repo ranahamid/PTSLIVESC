@@ -19,8 +19,8 @@
 </script>
 @{
     ViewBag.Title = "Personal Computer";
-    //   ViewBag.Name = Model.Name;
-    ViewBag.Name = "";
+    ViewBag.Name = Model.Name;
+    
 }
 
 
@@ -48,20 +48,21 @@ else
         });
 
 
-        $(function ()
-        {
+        $(function () {
             //Footer1
             $("#Footer1 hr").css('display', 'none');
-            $("#Footer1 #copyright").text('C:TMONLINE');
+            // console.log('copyright: ' + '@Model.Name');
+
+            $("#Footer1 #copyright").text('@Model.Name');
             //minimizechat
             //$("#minimizechat").css('float', 'right');
             //$("#minimizechat").css('margin-top', '3px');
             //$("#minimizechat").css('margin-right', '2px');
             //$("#minimizechat").css('color', '#fff');
             //minimizevideo
-         
+
             //$("#minimizevideo").css('margin-right', '2px');
-			//$("#minimizevideo").css('margin-top', '3px');
+            //$("#minimizevideo").css('margin-top', '3px');
             //$("#minimizevideo").css('float', 'right');
             //$("#minimizevideo").css('color', '#fff');
 
@@ -78,35 +79,32 @@ else
             //$("#exportchat").css('background-color', '#5cb85c');
             //$("#exportchat").css('border-color', '#4cae4c');
             //$("#exportchat").css('color', '#0000ff');
-            
-            $("#exportchat").click(function ()
-            {           
-                var values = [];
-                var val="";
 
-                $(".item").each(function ()
-                {                
-                    val = val + $(this).find(".itemName").text() ;
-                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
-                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';                                                        
+            $("#exportchat").click(function () {
+                var values = [];
+                var val = "";
+
+                $(".item").each(function () {
+                    val = val + $(this).find(".itemName").text();
+                    val = val + " [" + $(this).find(".itemTimechat").text() + " ]" + '\n';
+                    val = val + $(this).find(".itemMessage").text() + '\n' + '\n';
                 });
                 var blob = new Blob([val], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, "ChatReport.txt");
-  
+
             });
 
-            $("#minimizechat").click(function ()
-            {
-              //  $(".panel-heading").slideToggle();                
+            $("#minimizechat").click(function () {
+                //  $(".panel-heading").slideToggle();
                 $(".panel-body").slideToggle();
                 $(".panel-footer").slideToggle();
-                
+
             });
 
             $("#minimizevideo").click(function () {
-                $(".cBoxP").slideToggle();              
+                $(".cBoxP").slideToggle();
             });
-            
+
         });
 
     </script>

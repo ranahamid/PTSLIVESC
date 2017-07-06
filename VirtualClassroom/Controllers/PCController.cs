@@ -32,7 +32,10 @@ namespace VirtualClassroom.Controllers
 
                 if (pc.ScUid.HasValue || pc.TcUid.HasValue)
                 {
-                    viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
+                    //    viewModel.Name = pc.TblClassroom.Name + " - " + pc.Name;
+
+                    viewModel.Name = pc.TblClassroom.Name;
+
                     viewModel.ClassroomId = pc.TblClassroom.Id;
                     viewModel.ActionUrl = Url.Action();
                 }

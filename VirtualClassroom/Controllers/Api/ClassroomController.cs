@@ -1175,9 +1175,7 @@ namespace VirtualClassroom.Controllers
           
             if (item.featured != null)
             {
-
                 // insert into TblFCs
-
                 var qFC = (from FC in db.TblFCs
                            where FC.Id == item.featured.id
                            select FC.Uid).FirstOrDefault();
@@ -1205,11 +1203,9 @@ namespace VirtualClassroom.Controllers
             catch (ChangeConflictException ex)
             {
                 return responseError<Student>(ex.Message);
-            }
-
-           
-            //
+            }          
         }
+
         [HttpPost]
         public DataResponse<Student> UpdateStudent(string classroomId, [FromBody] Student item)
         {
@@ -1295,126 +1291,7 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Student Id not found.");
             }
         }
-
-
-        [HttpPost]
-        public DataResponse<List<Student>> ImportStudents1(string classroomId, [FromBody] string data)
-        {
-            List<Student> importedStudents = new List<Student>();
-            string error = String.Empty;
-
-            // split rows
-            string[] datas = data.Split('\n');
-
-            // enumerate rows
-            for (int i = 0; i < datas.Length && String.IsNullOrEmpty(error); i++)
-            {
-                if (!String.IsNullOrEmpty(datas[i]))
-                {
-                    string[] row = datas[i].Split(',');
-                    
-                    // validate row
-                    if (row.Length < 1 || String.IsNullOrEmpty(row[0]))
-                    {
-                        error = "[Row: " + (i + 1) + "] Missing ID";
-                    }
-                    else if (row.Length < 2 || String.IsNullOrEmpty(row[1]))
-                    {
-                        error = "[Row: " + (i + 1) + "] Missing Name";
-                    }
-
-                    if (String.IsNullOrEmpty(error))
-                    {
-                        string id = row[0].Trim().Replace("\"", "");
-                        string name = row[1].Trim().Replace("\"", "");
-
-                        // validate ID & name
-                        if (!isValidId(id))
-                        {
-                            error = "[Row: " + (i + 1) + "] Invalid ID";
-                        }
-                        else if (id.Length > 20)
-                        {
-                            error = "[Row: " + (i + 1) + "] ID max length is 20";
-                        }
-                        else if (isStudentIdExists(classroomId, id))
-                        {
-                            error = "[Row: " + (i + 1) + "] ID already exists";
-                        }
-                        else if (name.Length == 0)
-                        {
-                            error = "[Row: " + (i + 1) + "] Name is empty";
-                        }
-                        else if (name.Length > 256)
-                        {
-                            error = "[Row: " + (i + 1) + "] Name max length is 256";
-                        }
-
-                        if (String.IsNullOrEmpty(error))
-                        {
-                            // can be imported
-                            importedStudents.Add(new Student()
-                            {
-                                id = id,
-                                name = name,
-                                position = 0,
-                                teacher = null
-                            });
-                        }
-                    }
-                }
-            }
-
-            if (String.IsNullOrEmpty(error))
-            {
-                if (importedStudents.Count == 0)
-                {
-                    return responseError<List<Student>>("Nothing to import");
-                }
-                else
-                {
-                    // import to DB
-                    List<TblPC> pcs = new List<TblPC>();
-                    foreach (Student student in importedStudents)
-                    {
-                        Guid newPcUid = Guid.NewGuid();
-
-                        pcs.Add(new TblPC
-                        {
-                            Uid = newPcUid,
-                            Id = student.id,
-                            ClassroomId = classroomId,
-                            Name = student.name,
-                            ScUid = null,
-                            TcUid = null,
-                            Position = 0,
-                            Audio = true,
-                            Video = true,
-                            Volume = 80
-                        });
-
-                        student.uid = newPcUid;
-                    }
-
-                    db.TblPCs.InsertAllOnSubmit(pcs);
-
-                    try
-                    {
-                        db.SubmitChanges();
-
-                        return responseSuccess(importedStudents);
-                    }
-                    catch (ChangeConflictException ex)
-                    {
-                        return responseError<List<Student>>(ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                return responseError<List<Student>>(error);
-            }
-        }
+        
         //test
         [HttpPost]
         public DataResponse<List<Student>> ImportStudents(string classroomId, [FromBody] string data)

@@ -223,8 +223,8 @@ namespace VC.App.AC {
                         <Components.Volume ref={"RefVolumeBar_" + item.uid} volume={item.video !== undefined ? item.volume : 0} display={item.video !== undefined} onVolumeChanged={(vol: number) => this.props.changeVolume(item.uid, vol) } />
                     </td>
 
-                    <td>
-                        <div style={{ display: (this.state.selectedRole == Roles.PC ? "block" : "none") }}>
+                    <td style={{ display: (this.state.selectedRole == Roles.PC ? "run-in" : "none") }}>
+                        <div >
                             <button type="button" className={(item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-success") }  onClick={() => { this.props.raiseHandSingle(item.uid,isHandRaise); } }>
                                 <div style={{ display: (item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-down"></span> Hands Down </div>
                                 <div style={{ display: (!item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-up"></span> Hands Up </div>
@@ -293,7 +293,7 @@ namespace VC.App.AC {
                                     <th style={{ width: "30%" }}>Student computer</th>
                                     <th style={{ width: "25%" }}>Volume</th>
                                     <th style={{ width: "15%" }}>Hands</th>
-                                    <th style={{ width: "35%" }}>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
+                                    <th style={{ width: "30%" }}>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>

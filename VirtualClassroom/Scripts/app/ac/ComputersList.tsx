@@ -225,7 +225,7 @@ namespace VC.App.AC {
 
                     <td>
                         <div style={{ display: (this.state.selectedRole == Roles.PC ? "block" : "none") }}>
-                            <button type="button" className={(item.handRaised ? "btn btn-xs btn-info" : "btn btn-xs btn-danger") }  onClick={() => { this.props.raiseHandSingle(item.uid,isHandRaise); } }>
+                            <button type="button" className={(item.handRaised ? "btn btn-xs btn-danger" : "btn btn-xs btn-success") }  onClick={() => { this.props.raiseHandSingle(item.uid,isHandRaise); } }>
                                 <div style={{ display: (item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-down"></span> Hands Down </div>
                                 <div style={{ display: (!item.handRaised ? "block" : "none") }}>  <span className="glyphicon glyphicon-hand-up"></span> Hands Up </div>
                             </button>
@@ -291,9 +291,9 @@ namespace VC.App.AC {
                             <thead>
                                 <tr>
                                     <th style={{ width: "30%" }}>Student computer</th>
-                                    <th style={{ width: "15%" }}>Volume</th>
+                                    <th style={{ width: "25%" }}>Volume</th>
                                     <th style={{ width: "15%" }}>Hands</th>
-                                    <th style={{ width: "40%" }}>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
+                                    <th style={{ width: "35%" }}>{this.renderComputerAllButtons(this.state.selectedRole) }</th>
                                 </tr>
                             </thead>
                             <tbody>

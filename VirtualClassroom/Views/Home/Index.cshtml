@@ -31,29 +31,29 @@
                                         @{
                                             for (int i = 0; i < sc.students.Count; i++)
                                             {
-                                                var address = "";
-                                                if (sc.students[i].address1 != null)
+                                                var address = string.Empty;
+                                                if (sc.students[i].address1 != null && sc.students[i].address1 != string.Empty)
                                                 {
                                                     address = sc.students[i].address1;
                                                 }
-                                                if (sc.students[i].State != null)
+                                                if (sc.students[i].State != null && sc.students[i].State != string.Empty)
                                                 {
                                                     address = address+", "+sc.students[i].State;
                                                 }
-                                                if (sc.students[i].City != null)
+                                                if (sc.students[i].City != null && sc.students[i].City != string.Empty)
                                                 {
                                                     address = address + ", " + sc.students[i].City;
                                                 }
-                                                if (sc.students[i].Country != null)
+                                                if (sc.students[i].Country != null && sc.students[i].Country != string.Empty)
                                                 {
                                                     address = address + ", " + sc.students[i].Country;
                                                 }
-                                                if (sc.students[i].ZipCode != null)
+                                                if (sc.students[i].ZipCode != null && sc.students[i].ZipCode != string.Empty)
                                                 {
                                                     address = address + "-" + sc.students[i].ZipCode;
                                                 }
-                                                
-                                                if (address != "")
+
+                                                if (address != string.Empty)
                                                 {
                                                     <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
                                                 }
@@ -67,6 +67,98 @@
                                 </li>
                             </ul>
                         }
+
+
+                        @if (item.studentsWithOutSeat.Count > 0)
+                        {
+                            <p>Students WithOut Seat</p>
+                            foreach (var sc in item.studentsWithOutSeat)
+                            {
+
+                                <ul>
+                                    @{
+
+                                        var address = string.Empty;
+                                        if (sc.address1 != null && sc.address1 != string.Empty)
+                                        {
+                                            address = sc.address1;
+                                        }
+                                        if (sc.State != null && sc.State != string.Empty)
+                                        {
+                                            address = address + ", " + sc.State;
+                                        }
+                                        if (sc.City != null && sc.City != string.Empty)
+                                        {
+                                            address = address + ", " + sc.City;
+                                        }
+                                        if (sc.Country != null && sc.Country != string.Empty)
+                                        {
+                                            address = address + ", " + sc.Country;
+                                        }
+                                        if (sc.ZipCode != null && sc.ZipCode != string.Empty)
+                                        {
+                                            address = address + "-" + sc.ZipCode;
+                                        }
+
+                                        if (address != string.Empty)
+                                        {
+                                                <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                            }
+                                            else
+                                            {
+                                                <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                            }                                        
+                                    }
+                                </ul>
+                                            }
+                        }
+
+
+                        @if (item.studentsWithOutSeatTeacher.Count > 0)
+                        {
+                            <p>Students WithOut Seat and Teacher</p>
+                            foreach (var sc in item.studentsWithOutSeatTeacher)
+                            {
+
+                                <ul>
+                                    @{
+
+                                        var address = string.Empty;
+                                        if (sc.address1 != null && sc.address1 != string.Empty)
+                                        {
+                                            address = sc.address1;
+                                        }
+                                        if (sc.State != null && sc.State != string.Empty)
+                                        {
+                                            address = address + ", " + sc.State;
+                                        }
+                                        if (sc.City != null && sc.City != string.Empty)
+                                        {
+                                            address = address + ", " + sc.City;
+                                        }
+                                        if (sc.Country != null && sc.Country != string.Empty)
+                                        {
+                                            address = address + ", " + sc.Country;
+                                        }
+                                        if (sc.ZipCode != null && sc.ZipCode != string.Empty)
+                                        {
+                                            address = address + "-" + sc.ZipCode;
+                                        }
+
+                                        if (address != string.Empty)
+                                        {
+                                            <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                        }
+                                        else
+                                        {
+                                            <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                        }
+                                    }
+                                </ul>
+                                            }
+                        }
+
+
                         @if (item.teachers.Count > 0)
                         {
                             <p>Teacher</p>

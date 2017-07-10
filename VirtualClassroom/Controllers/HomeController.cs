@@ -45,6 +45,34 @@ namespace VirtualClassroom.Controllers
                             }).ToList()
                         }).ToList(),
 
+                        studentsWithOutSeat = x.TblPCs.Where(z => z.ScUid == null && z.TcUid != null).OrderBy(z => z.Name).Select(z => new Student()
+                        {
+                            uid = z.Uid,
+                            id = z.Id,
+                            name = z.Name,
+                            position = z.Position,
+                            teacher = null,
+                            address1 = z.Address1,
+                            State = z.State,
+                            City = z.City,
+                            ZipCode = z.ZipCode,
+                            Country = z.Country
+                        }).ToList(),
+
+                        studentsWithOutSeatTeacher = x.TblPCs.Where(z => z.ScUid == null && z.TcUid == null).OrderBy(z => z.Name).Select(z => new Student()
+                        {
+                            uid = z.Uid,
+                            id = z.Id,
+                            name = z.Name,
+                            position = z.Position,
+                            teacher = null,
+                            address1 = z.Address1,
+                            State = z.State,
+                            City = z.City,
+                            ZipCode = z.ZipCode,
+                            Country = z.Country
+                        }).ToList(),
+
                         //  teachers = x.TblTCs.OrderBy(y => y.Id).Select(y => new Teacher()
                         teachers = x.TblTCs.OrderBy(y => y.Name).Select(y => new Teacher()
                         {

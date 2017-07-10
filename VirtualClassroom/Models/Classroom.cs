@@ -24,6 +24,13 @@ namespace VirtualClassroom.Models
         public List<Teacher> teachers { get; set; }
         public List<Moderator> moderators { get; set; }
         public List<Featured> featureds { get; set; }
+
+        //without seat computer
+        public List<Student> studentsWithOutSeat { get; set; }
+
+        //without seat and teacher computer
+        public List<Student> studentsWithOutSeatTeacher { get; set; }
+
     }
 
     [DataObject]

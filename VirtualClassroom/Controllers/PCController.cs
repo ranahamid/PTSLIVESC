@@ -21,7 +21,7 @@ namespace VirtualClassroom.Controllers
         public ActionResult Index(string classroomId, string id)
         {
             var q = from x in db.TblPCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
+                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id == id && x.TblClassroom.IsActive != 0
                     select x;
 
             ComputerViewModel viewModel = new ComputerViewModel();

@@ -160,6 +160,14 @@ namespace VirtualClassroom.Models
 				return this.GetTable<TblModerator>();
 			}
 		}
+		
+		public System.Data.Linq.Table<TblCountry> TblCountries
+		{
+			get
+			{
+				return this.GetTable<TblCountry>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblTC")]
@@ -2864,6 +2872,87 @@ namespace VirtualClassroom.Models
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblCountries")]
+	public partial class TblCountry
+	{
+		
+		private System.Nullable<int> _CountryID;
+		
+		private string _CountryName;
+		
+		private string _TwoCharCountryCode;
+		
+		private string _ThreeCharCountryCode;
+		
+		public TblCountry()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryID", DbType="Int")]
+		public System.Nullable<int> CountryID
+		{
+			get
+			{
+				return this._CountryID;
+			}
+			set
+			{
+				if ((this._CountryID != value))
+				{
+					this._CountryID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryName", DbType="VarChar(50)")]
+		public string CountryName
+		{
+			get
+			{
+				return this._CountryName;
+			}
+			set
+			{
+				if ((this._CountryName != value))
+				{
+					this._CountryName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TwoCharCountryCode", DbType="Char(2)")]
+		public string TwoCharCountryCode
+		{
+			get
+			{
+				return this._TwoCharCountryCode;
+			}
+			set
+			{
+				if ((this._TwoCharCountryCode != value))
+				{
+					this._TwoCharCountryCode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThreeCharCountryCode", DbType="Char(3)")]
+		public string ThreeCharCountryCode
+		{
+			get
+			{
+				return this._ThreeCharCountryCode;
+			}
+			set
+			{
+				if ((this._ThreeCharCountryCode != value))
+				{
+					this._ThreeCharCountryCode = value;
+				}
 			}
 		}
 	}

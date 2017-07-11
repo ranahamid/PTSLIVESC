@@ -118,7 +118,7 @@ namespace VirtualClassroom.Controllers
             List<Computer> data = q.Select(x =>
                 new Computer() { uid = x.Uid, id = x.Id, name = x.Name }
                 ).ToList();
-           
+
             return responseSuccess(data);
         }
 
@@ -159,24 +159,24 @@ namespace VirtualClassroom.Controllers
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-                
+
                 students = x.TblFCPCs.OrderBy(z => z.Position).Select(z => new Student()
                 {
                     uid = z.Uid,
                     id = z.TblPC.Id,
                     name = z.TblPC.Name,
-                
+
                     position = z.Position,
                     teacher = null,
                     address1 = z.TblPC.Address1,
-                    State =z.TblPC.State,
-                    City=z.TblPC.City,
-                    ZipCode=z.TblPC.ZipCode,
-                    Country=z.TblPC.Country
+                    State = z.TblPC.State,
+                    City = z.TblPC.City,
+                    ZipCode = z.TblPC.ZipCode,
+                    Country = z.TblPC.Country
                 }).ToList()
             }).ToList();
 
-          //  data= data.OrderBy(x=>x.position)
+            //  data= data.OrderBy(x=>x.position)
 
             return responseSuccess(data);
         }
@@ -188,7 +188,7 @@ namespace VirtualClassroom.Controllers
                 uid = x.Uid,
                 id = x.Id,
                 name = x.Name,
-             
+
                 //featuredpcname = (from FC in db.TblFCs
                 //                 where FC.Uid ==((from fcpc in db.TblFCPCs
                 //                                  where fcpc.PcUid == x.Uid
@@ -202,7 +202,7 @@ namespace VirtualClassroom.Controllers
                 } : null,
 
                 //add
-                featured=new Featured()
+                featured = new Featured()
                 {
                     id = (from FC in db.TblFCs
                           where FC.Uid == ((from fcpc in db.TblFCPCs
@@ -303,11 +303,11 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblClassroom tblClassroom = q.Single();
                 tblClassroom.Name = item.name;
-                
+
                 try
                 {
                     db.SubmitChanges();
@@ -398,7 +398,7 @@ namespace VirtualClassroom.Controllers
                     where x.Id.ToLower() == loweredId
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 // delete forms and answers
                 db.TblFormAnswers.DeleteAllOnSubmit(from x in db.TblFormAnswers
@@ -410,8 +410,8 @@ namespace VirtualClassroom.Controllers
 
 
                 db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
-                                            where x.TblFC.ClassroomId.ToLower() == loweredId
-                                            select x);
+                                              where x.TblFC.ClassroomId.ToLower() == loweredId
+                                              select x);
                 db.TblFCs.DeleteAllOnSubmit(from x in db.TblFCs
                                             where x.ClassroomId.ToLower() == loweredId
                                             select x);
@@ -623,7 +623,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblSC tblSC = q.Single();
                 tblSC.Name = item.name;
@@ -669,7 +669,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblSC tblSC = q.Single();
 
@@ -920,7 +920,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblFC tblFC = q.Single();
                 tblFC.Name = item.name;
@@ -974,7 +974,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblFC tblFC = q.Single();
 
@@ -1170,26 +1170,26 @@ namespace VirtualClassroom.Controllers
                 Volume = 80
             });
 
-           
 
-          
+
+
             if (item.featured != null)
             {
                 // insert into TblFCs
                 var qFC = (from FC in db.TblFCs
                            where FC.Id == item.featured.id
                            select FC.Uid).FirstOrDefault();
-                   
+
                 Guid fcUid = qFC;
 
                 Guid FCPCUid = Guid.NewGuid();
 
                 db.TblFCPCs.InsertOnSubmit(new TblFCPC
                 {
-                    Uid= FCPCUid,
+                    Uid = FCPCUid,
                     PcUid = pcUid,
-                    FcUid=fcUid,
-                    Position=1                    
+                    FcUid = fcUid,
+                    Position = 1
                 });
             }
 
@@ -1197,13 +1197,13 @@ namespace VirtualClassroom.Controllers
             {
                 db.SubmitChanges();
                 item.uid = pcUid;
-            //    item.featuredpcname = item.featured.name;
+                //    item.featuredpcname = item.featured.name;
                 return responseSuccess(item);
             }
             catch (ChangeConflictException ex)
             {
                 return responseError<Student>(ex.Message);
-            }          
+            }
         }
 
         [HttpPost]
@@ -1213,7 +1213,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 Guid? tcUid = null;
                 if (item.teacher != null)
@@ -1258,7 +1258,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblPC tblPC = q.Single();
 
@@ -1291,7 +1291,7 @@ namespace VirtualClassroom.Controllers
                 return responseError<string>("Student Id not found.");
             }
         }
-        
+
         //test
         [HttpPost]
         public DataResponse<List<Student>> ImportStudents(string classroomId, [FromBody] string data)
@@ -1355,7 +1355,7 @@ namespace VirtualClassroom.Controllers
                                 name = name,
                                 position = 0,
                                 teacher = null,
-                                featured=null,
+                                featured = null,
                             });
                         }
                     }
@@ -1471,7 +1471,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == item.id.ToLower()
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
                 tblTC.Name = item.name;
@@ -1501,7 +1501,7 @@ namespace VirtualClassroom.Controllers
                     where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == loweredId
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblTC tblTC = q.Single();
 
@@ -1759,13 +1759,13 @@ namespace VirtualClassroom.Controllers
                             Name = moderator.name,
                             Audio = true,
                             Video = true,
-                            Volume=100,
-                            Address1=string.Empty,
+                            Volume = 100,
+                            Address1 = string.Empty,
                             State = string.Empty,
                             City = string.Empty,
                             ZipCode = string.Empty,
                             Country = string.Empty,
-                          
+
 
                         });
 
@@ -1909,7 +1909,7 @@ namespace VirtualClassroom.Controllers
             {
                 TblModerator tblModerator = q.Single();
 
-               // Guid tcUid = tblModerator.Uid;
+                // Guid tcUid = tblModerator.Uid;
 
                 //foreach (TblPC tblPC in db.TblPCs.Where(x => x.TcUid.HasValue && x.TcUid == tcUid).Select(x => x))
                 //{

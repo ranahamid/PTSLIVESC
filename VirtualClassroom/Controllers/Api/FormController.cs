@@ -27,7 +27,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblForm form = q.Single();
 
@@ -49,7 +49,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblFormAnswer answer = q.Single();
 
@@ -71,7 +71,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 Forms.FormResultData data = new Forms.FormResultData(q.Single());
 
@@ -186,7 +186,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == data.uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblForm form = q.Single();
 
@@ -226,7 +226,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 // delete form answers
                 db.TblFormAnswers.DeleteAllOnSubmit(from x in db.TblFormAnswers
@@ -260,7 +260,7 @@ namespace VirtualClassroom.Controllers
                     where x.Uid == data.uid
                     select x;
 
-             if (q!=null && q.Count() == 1)
+            if (q != null && q.Count() == 1)
             {
                 TblFormAnswer answer = q.Single();
 

@@ -17,7 +17,7 @@ namespace VirtualClassroom.Controllers
         {
             var q = from x in db.TblClassrooms
                     orderby x.Id
-                    where x.IsActive!=0
+                    where x.IsActive != 0
                     select new Classroom
                     {
                         id = x.Id,
@@ -34,7 +34,7 @@ namespace VirtualClassroom.Controllers
                             {
                                 uid = z.Uid,
                                 id = z.Id,
-                                name = z.Name,                               
+                                name = z.Name,
                                 position = z.Position,
                                 teacher = null,
                                 address1 = z.Address1,

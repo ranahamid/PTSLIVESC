@@ -38,7 +38,7 @@
                                                 }
                                                 if (sc.students[i].State != null && sc.students[i].State != string.Empty)
                                                 {
-                                                    address = address+", "+sc.students[i].State;
+                                                    address = address + ", " + sc.students[i].State;
                                                 }
                                                 if (sc.students[i].City != null && sc.students[i].City != string.Empty)
                                                 {
@@ -66,7 +66,7 @@
                                     </ul>
                                 </li>
                             </ul>
-                        }
+                                            }
 
 
                         @if (item.studentsWithOutSeat.Count > 0)
@@ -102,16 +102,16 @@
 
                                         if (address != string.Empty)
                                         {
-                                                <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                            }
-                                            else
-                                            {
-                                                <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                            }                                        
+                                            <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                        }
+                                        else
+                                        {
+                                            <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                        }
                                     }
                                 </ul>
                                             }
-                        }
+                                        }
 
 
                         @if (item.studentsWithOutSeatTeacher.Count > 0)
@@ -156,7 +156,7 @@
                                     }
                                 </ul>
                                             }
-                        }
+                                        }
 
 
                         @if (item.teachers.Count > 0)
@@ -170,9 +170,9 @@
                                 </ul>
                             }
                         }
-                        
-                        @if (item.moderators.Count>0)
-                        { 
+
+                        @if (item.moderators.Count > 0)
+                        {
                             <p>Moderator</p>
                             foreach (var moderator in item.moderators)
                             {
@@ -192,11 +192,11 @@
                                 </ul>
                             }
                         }
-                      
+
                     </li>
                 </ul>
             </div>
-        }
+                                        }
     </div>
 
 </div>

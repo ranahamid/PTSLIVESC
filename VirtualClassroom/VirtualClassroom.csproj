@@ -307,6 +307,7 @@
     <Compile Include="Models\Forms.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\TeacherViewModel.cs" />
     <Compile Include="Models\VirtualClassroom.cs">
       <DependentUpon>VirtualClassroom.dbml</DependentUpon>
     </Compile>
@@ -671,6 +672,7 @@
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\Account\DisplayEmail.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Shared\_Teachers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

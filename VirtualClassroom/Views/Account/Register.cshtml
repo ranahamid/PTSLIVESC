@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "Register";
 }
+@{
+    var selectSt = "Select Classroom";
+}
+
 
 <h2>@ViewBag.Title.</h2>
 
@@ -58,16 +62,18 @@
             @Html.DropDownListFor(m => m.SelectedCountry, Model.Country, "Select Country", new { @class = "form-control" })
         </div>
     </div>
-
-    <div class="form-group">
-        
+  
+    <div class="form-group" >
             @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
       
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedClassroom, Model.Classroom, "Select Classroom", new { @class = "form-control" })
+            @Html.DropDownListFor(m => m.SelectedClassroom, Model.Classroom, "Select Classroom", new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
         </div>
     </div>
 
+    <div class="form-group" id="teachersdiv">
+        @Html.Partial("_Teachers", new VirtualClassroom.Models.TeacherViewModel() { selectedTeacherId = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
+    </div>
 
     <div class="form-group">
         @Html.LabelFor(m => m.ZipCode, new { @class = "col-md-2 control-label" })
@@ -94,6 +100,53 @@
     </div>
 }
 
+<script>
+    function FillTeachers() {
+        debugger;
+        var Id = $('#classid').val();
+
+        
+
+        var classroom = $('.classroomfill :selected').val();
+        console.log("classroom" + classroom);
+
+        if (classroom != "" && classroom != "") {
+            $('.teachersdrop').removeAttr('disabled');
+        }
+
+        //$.ajax({
+        //    type: 'POST',
+        //    url: '/Account/FillTeachers?id=' + Id,
+        //    data: {  },
+        //    dataType: 'json',
+        //    async: false,
+        //    success: function (result)
+        //    {
+               
+                
+        //    },
+        //    complete: function () {
+               
+        //    },
+        //    error: function ()
+        //    {
+              
+        //    }
+        //});
+        $("#teachersdiv").empty();
+        $("#teachersdiv").load('/Account/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr)
+        {
+            var classroom = $('.classroomfill :selected').val();
+            console.log("classroom" + classroom);
+
+            if (classroom != "" && classroom != "")
+            {
+                $('.teachersdrop').removeAttr('disabled');
+            }
+        });
+
+    }
+</script>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

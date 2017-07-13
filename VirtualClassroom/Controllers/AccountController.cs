@@ -63,6 +63,17 @@ namespace VirtualClassroom.Controllers
             private set { _signInManager = value; }
         }
 
+        [AllowAnonymous]
+        public ActionResult FillTeachers(string id)
+        {
+            var vm = new VirtualClassroom.Models.TeacherViewModel()
+            {
+                selectedClassroomId = id
+            };
+
+            return PartialView("_Teachers", vm);
+        }
+
         //
         // POST: /Account/Login
         [HttpPost]

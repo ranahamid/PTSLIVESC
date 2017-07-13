@@ -59,7 +59,7 @@ namespace VirtualClassroom.Models
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
-
+   
     public class RegisterViewModel
     {
         //Custom
@@ -85,16 +85,22 @@ namespace VirtualClassroom.Models
 
         [Display(Name = "Country")]
         public IEnumerable<SelectListItem> Country { get; set; }
-        public SelectList Vendor { get; set; }
-
+   
         public string SelectedCountry { get; set; }
+
 
         [Display(Name = "Classroom")]
         public IEnumerable<SelectListItem> Classroom { get; set; }
-
-
+        
 
         public string SelectedClassroom { get; set; }
+
+
+        [Display(Name = "Teacher")]
+        public IEnumerable<SelectListItem> Teacher { get; set; }
+        
+        public string SelectedTeacher { get; set; }
+
 
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }

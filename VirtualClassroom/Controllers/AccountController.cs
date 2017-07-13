@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Web.Security;
+using System.Data.Linq;
 
 namespace VirtualClassroom.Controllers
 {
@@ -144,11 +145,12 @@ namespace VirtualClassroom.Controllers
         public ActionResult Register()
         {
             RegisterViewModel model=new RegisterViewModel();
-           
+            //country
             var Countries= from x in db.TblCountries 
                     select x;
 
             List<SelectListItem> CountryItems = new List<SelectListItem>();
+            
             foreach(var item in Countries)
             {
                 CountryItems.Add(new SelectListItem
@@ -157,9 +159,26 @@ namespace VirtualClassroom.Controllers
                     Value = item.TwoCharCountryCode,
                     Selected = (item.TwoCharCountryCode == "US") ? true:false
                 });
-            }
-         //   ViewBag.CountryId = CountryItems;
+
+            }        
             model.Country = CountryItems;
+
+          
+            //classroom            
+            var TblClassrooms = from x in db.TblClassrooms
+                            select x;
+
+            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
+            foreach (var item in TblClassrooms)
+            {
+                TblClassroomItems.Add(new SelectListItem
+                {
+                    Text = item.Name,
+                    Value = item.Id,
+                    //Selected = (item.TwoCharCountryCode == "US") ? true : false
+                });
+            }
+            model.Classroom = TblClassroomItems;
 
             return View(model);
         }
@@ -177,13 +196,54 @@ namespace VirtualClassroom.Controllers
 
                 //await UserManager.AddClaimAsync(user.Id, new Claim("FullName", user.FullName));
 
-                var result = await UserManager.CreateAsync(user, model.Password);
+                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     ViewBag.Link = callbackUrl;
+
+                    //store the others property in tblPC
+                    string fullName = model.FullName;
+                    //string idName = fullName.Trim().Replace(" ", string.Empty);
+
+                    string CurrentUserId = user.Id;
+
+                    string selectedCountry = model.SelectedCountry;
+                    string selectedClassroom =model.SelectedClassroom;
+
+                    Guid pcUid = Guid.NewGuid();
+
+                    db.TblPCs.InsertOnSubmit(new TblPC
+                    {
+                        Uid = pcUid,
+                        Id = CurrentUserId,
+                        ClassroomId = selectedClassroom,
+                        Name = fullName,
+                        ScUid = null,
+                        TcUid = null,
+                        Position = 0,
+                        Audio = true,
+                        Video = true,
+                        Volume = 80,
+                        Address1 =model.Address1,
+                        City=model.City,
+                        Country=selectedCountry,
+                        ZipCode=model.ZipCode,
+                        State=model.State,
+                    });
+
+                    try
+                    {
+                        db.SubmitChanges();                    
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                       
+                    }
+
+                    //end of store the others property in tblPC
                     return View("DisplayEmail");
                 }
                 AddErrors(result);

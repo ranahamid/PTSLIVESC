@@ -74,11 +74,30 @@ namespace VirtualClassroom.Models
         public string Email { get; set; }
 
         //Custom
+        [Display(Name = "Address1")]
         public string Address1 { get; set; }
-        public string State { get; set; }
-        public string City { get; set; }
-        public IEnumerable<SelectListItem> Country { get; set; }
 
+        [Display(Name = "State")]
+        public string State { get; set; }
+
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [Display(Name = "Country")]
+        public IEnumerable<SelectListItem> Country { get; set; }
+        public SelectList Vendor { get; set; }
+
+        public string SelectedCountry { get; set; }
+
+        [Display(Name = "Classroom")]
+        public IEnumerable<SelectListItem> Classroom { get; set; }
+
+
+
+        public string SelectedClassroom { get; set; }
+
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

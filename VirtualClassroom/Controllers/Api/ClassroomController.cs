@@ -1197,7 +1197,6 @@ namespace VirtualClassroom.Controllers
             {
                 db.SubmitChanges();
                 item.uid = pcUid;
-                //    item.featuredpcname = item.featured.name;
                 return responseSuccess(item);
             }
             catch (ChangeConflictException ex)

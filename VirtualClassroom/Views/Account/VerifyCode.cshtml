@@ -1,9 +1,10 @@
 ﻿@model VirtualClassroom.Models.VerifyCodeViewModel
 @{
     ViewBag.Title = "Enter Verification Code";
+    ViewBag.Name = "Enter Verification Code";
 }
 
-<h2>@ViewBag.Title.</h2>
+
 
 @using (Html.BeginForm("VerifyCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" })) {
     @Html.AntiForgeryToken()

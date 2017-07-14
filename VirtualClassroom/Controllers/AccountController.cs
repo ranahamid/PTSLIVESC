@@ -12,7 +12,6 @@ using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Web.Security;
 using System.Data.Linq;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace VirtualClassroom.Controllers
 {
@@ -217,14 +216,11 @@ namespace VirtualClassroom.Controllers
                     ViewBag.Link = callbackUrl;
 
                     //store the others property in tblPC
-                    string fullName = model.FullName;
-                    //string idName = fullName.Trim().Replace(" ", string.Empty);
-
+                    string fullName = model.FullName;                
                     string CurrentUserId = user.Id;
 
                     string selectedCountry = model.SelectedCountry;
                     string selectedClassroom =model.SelectedClassroom;
-
                     Guid selectedTeacher = Guid.NewGuid();
 
                     if(model.SelectedTeacher != null)

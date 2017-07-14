@@ -1,0 +1,323 @@
+
+Custom Bootstrap Badges
+***/
+.badge {
+  font-size: 11px !important;
+  font-weight: 300;
+  text-align: center;
+  height: 18px;
+  color: #fff;
+  padding: 3px 6px 3px 6px;
+  -webkit-border-radius: 12px !important;
+  -moz-border-radius: 12px !important;
+  border-radius: 12px !important;
+  text-shadow: none !important;
+  text-align: center;
+  vertical-align: middle; }
+  .badge.badge-roundless {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important; }
+  .badge.badge-empty {
+    display: inline-block;
+    padding: 0;
+    min-width: 8px;
+    height: 8px;
+    width: 8px; }
+
+/* Badge variants */
+.badge-default {
+  background-color: #bac3d0;
+  background-image: none; }
+
+.badge-primary {
+  background-color: #337ab7;
+  background-image: none; }
+
+.badge-info {
+  background-color: #659be0;
+  background-image: none; }
+
+.badge-success {
+  background-color: #36c6d3;
+  background-image: none; }
+
+.badge-danger {
+  background-color: #ed6b75;
+  background-image: none; }
+
+.badge-warning {
+  background-color: #F1C40F;
+  background-image: none; }
+
+/* Fix badge position for navs */
+.nav.nav-pills > li > a > .badge,
+.nav.nav-stacked > li > a > .badge {
+  margin-top: -2px; }
+
+/***
+Dropdown Menu Badges
+***/
+.dropdown-menu > li > a > .badge {
+  position: absolute;
+  margin-top: 1px;
+  right: 3px;
+  display: inline; }
+
+.dropdown-menu.badge-roundless {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important; }
+
+/***
+Custom buttons based on bootstrap SASS
+***/
+.btn {
+  outline: none !important;
+  box-shadow: none !important; }
+  .btn:hover {
+    transition: all 0.3s; }
+
+.btn:not(.btn-sm):not(.btn-lg) {
+  line-height: 1.44; }
+
+/***
+Customized Bootstrap Dropdowns
+***/
+/***
+Dropdowns
+***/
+.dropup.open > .dropdown-toggle,
+.dropdown.open > .dropdown-toggle {
+  border-color: #ddd; }
+
+/***
+Dropdown Menu
+***/
+/*rtl:ignore*/
+.dropdown-menu {
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
+
+.dropdown-menu {
+  left: 0/*rtl:auto*/;
+  min-width: 175px;
+  position: absolute;
+  z-index: 1000;
+  display: none;
+  float: left;
+  list-style: none;
+  text-shadow: none;
+  padding: 0px;
+  background-color: #ffffff;
+  margin: 10px  0px 0px 0px;
+  border: 1px solid #eee;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px; }
+  .dropdown-hoverable:hover .dropdown-menu {
+    display: block; }
+  .dropdown-menu li.divider {
+    background: #f1f3f6; }
+  .dropdown-menu li.header {
+    padding: 8px 14px 2px 14px; }
+  .dropdown-menu > li > a {
+    padding: 8px 16px;
+    color: #6f6f6f;
+    text-decoration: none;
+    display: block;
+    clear: both;
+    font-weight: 300;
+    line-height: 18px;
+    white-space: nowrap; }
+    .dropdown-menu > li > a > [class^="fa-"],
+    .dropdown-menu > li > a > [class*=" fa-"] {
+      color: #888; }
+    .dropdown-menu > li > a > [class^="icon-"],
+    .dropdown-menu > li > a > [class*=" icon-"] {
+      color: #666; }
+    .dropdown-menu > li > a > [class^="glyphicon-"],
+    .dropdown-menu > li > a > [class*=" glyphicon-"] {
+      color: #888; }
+  .dropdown-menu > li:hover > a, .dropdown-menu > li.active > a, .dropdown-menu > li.active:hover > a {
+    text-decoration: none;
+    background-image: none;
+    background-color: #f6f6f6;
+    color: #555;
+    filter: none; }
+  .dropdown-menu.bottom-up {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 2px; }
+    .dropdown-menu.bottom-up:before, .dropdown-menu.bottom-up:after {
+      display: none !important; }
+  .dropdown-menu > li:first-child:hover > a {
+    border-radius: 4px 4px 0px 0px; }
+  .dropdown-menu > li:last-child:hover > a {
+    border-radius: 0px 0px 4px 4px; }
+
+.dropdown-hover:hover > .dropdown-menu {
+  display: block; }
+
+.dropdown > .dropdown-menu,
+.dropdown-toggle > .dropdown-menu,
+.btn-group > .dropdown-menu {
+  margin-top: 10px; }
+  .dropdown > .dropdown-menu:before,
+  .dropdown-toggle > .dropdown-menu:before,
+  .btn-group > .dropdown-menu:before {
+    position: absolute;
+    top: -8px;
+    left: 9px;
+    right: auto;
+    display: inline-block !important;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #e0e0e0;
+    border-left: 8px solid transparent;
+    content: ''; }
+  .dropdown > .dropdown-menu:after,
+  .dropdown-toggle > .dropdown-menu:after,
+  .btn-group > .dropdown-menu:after {
+    position: absolute;
+    top: -7px;
+    left: 10px;
+    right: auto;
+    display: inline-block !important;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #fff;
+    border-left: 7px solid transparent;
+    content: ''; }
+  .dropdown > .dropdown-menu.pull-left:before,
+  .dropdown-toggle > .dropdown-menu.pull-left:before,
+  .btn-group > .dropdown-menu.pull-left:before {
+    left: auto;
+    right: 9px; }
+  .dropdown > .dropdown-menu.pull-left:after,
+  .dropdown-toggle > .dropdown-menu.pull-left:after,
+  .btn-group > .dropdown-menu.pull-left:after {
+    left: auto;
+    right: 10px; }
+  .dropdown > .dropdown-menu.pull-right:before,
+  .dropdown-toggle > .dropdown-menu.pull-right:before,
+  .btn-group > .dropdown-menu.pull-right:before {
+    left: auto;
+    right: 9px; }
+  .dropdown > .dropdown-menu.pull-right:after,
+  .dropdown-toggle > .dropdown-menu.pull-right:after,
+  .btn-group > .dropdown-menu.pull-right:after {
+    left: auto;
+    right: 10px; }
+
+.dropdown.dropup > .dropdown-menu,
+.dropdown-toggle.dropup > .dropdown-menu,
+.btn-group.dropup > .dropdown-menu {
+  margin-top: 0px;
+  margin-bottom: 10px; }
+  .dropdown.dropup > .dropdown-menu:after, .dropdown.dropup > .dropdown-menu:before,
+  .dropdown-toggle.dropup > .dropdown-menu:after,
+  .dropdown-toggle.dropup > .dropdown-menu:before,
+  .btn-group.dropup > .dropdown-menu:after,
+  .btn-group.dropup > .dropdown-menu:before {
+    display: none !important; }
+
+.dropdown-toggle:after {
+  display: none; }
+
+/* Dropdown submenu support for Bootsrap 3 */
+.dropdown-submenu {
+  position: relative; }
+  .dropdown-submenu > .dropdown-menu {
+    top: 5px;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px; }
+  .dropdown-submenu > a:after {
+    position: absolute;
+    display: inline-block;
+    font-size: 14px;
+    right: 7px;
+    top: 7px;
+    font-family: FontAwesome;
+    height: auto;
+    content: "\f105";
+    font-weight: 300; }
+  .dropdown-submenu:hover > .dropdown-menu {
+    display: block; }
+  .dropdown-submenu:hover > a:after {
+    border-left-color: #ffffff; }
+  .dropdown-submenu.pull-left {
+    float: none; }
+    .dropdown-submenu.pull-left > .dropdown-menu {
+      left: -100%;
+      margin-left: 10px; }
+  .dropup .dropdown-submenu > .dropdown-menu {
+    top: auto;
+    bottom: 0;
+    margin-top: 0;
+    margin-bottom: -2px; }
+
+.nav.pull-right > li > .dropdown-menu,
+.nav > li > .dropdown-menu.pull-right {
+  right: 0;
+  left: auto; }
+  .nav.pull-right > li > .dropdown-menu:before,
+  .nav > li > .dropdown-menu.pull-right:before {
+    right: 12px;
+    left: auto; }
+  .nav.pull-right > li > .dropdown-menu:after,
+  .nav > li > .dropdown-menu.pull-right:after {
+    right: 13px;
+    left: auto; }
+  .nav.pull-right > li > .dropdown-menu .dropdown-menu,
+  .nav > li > .dropdown-menu.pull-right .dropdown-menu {
+    right: 100%;
+    left: auto;
+    margin-right: -1px;
+    margin-left: 0; }
+
+@media (max-width: 767px) {
+  /* 767px */
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    float: left;
+    width: auto;
+    margin-top: 0;
+    background-color: #ffffff;
+    border: 1px solid #efefef;
+    box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
+    .navbar-nav .open .dropdown-menu > li > a {
+      padding: 6px 0 6px 13px;
+      color: #333; }
+    .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-nav .open .dropdown-menu > li > a:active {
+      background-color: #eee; } }
+
+/***
+Dropdown Checkboxes
+***/
+.dropdown-content {
+  padding: 10px; }
+  .dropdown-content form {
+    margin: 0; }
+
+.dropdown.inline .dropdown-menu {
+  display: inline-block;
+  position: relative; }
+
+.dropdown-radiobuttons,
+.dropdown-checkboxes {
+  padding: 5px; }
+  .dropdown-radiobuttons label,
+  .dropdown-checkboxes label {
+    display: block;
+    font-weight: 300;
+    color: #333;
+    margin-bottom: 4px;
+    margin-top: 4px; }
+    .dropdown-radiobuttons label .radio,
+    .dropdown-checkboxes label .radio {
+      margin-right: 3px; }
+
+	  

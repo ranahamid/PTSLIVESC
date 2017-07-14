@@ -21,6 +21,7 @@ namespace VirtualClassroom.Models
             
             return userIdentity;
         }
+       
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

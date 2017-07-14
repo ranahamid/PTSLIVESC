@@ -3,9 +3,8 @@
 @Html.LabelFor(m => m.Teacher, new { @class = "col-md-2 control-label" })
 
 <div class="col-md-10">
-    @Html.DropDownListFor(m => m.selectedTeacherId, Model.Teacher, "Select Teacher", new { @class = "form-control teachersdrop" })
+    @Html.DropDownListFor(m => m.SelectedTeacher, Model.TeacherslList, "Select Teacher", new { @class = "form-control teachersdrop" })
 </div>
-
 
 
 <script type="text/javascript">

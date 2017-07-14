@@ -3,11 +3,11 @@
     ViewBag.Title = "Register";
 }
 @{
-    var selectSt = "Select Classroom";
+    var selectClassroom = "Select Classroom";
 }
 
 
-<h2>@ViewBag.Title.</h2>
+<h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    //custom
+
 
     <div class="form-group">
         @Html.LabelFor(m => m.Address1, new { @class = "col-md-2 control-label" })
@@ -67,12 +67,12 @@
             @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
       
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedClassroom, Model.Classroom, "Select Classroom", new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+            @Html.DropDownListFor(m => m.SelectedClassroom, Model.Classroom, @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
         </div>
     </div>
 
     <div class="form-group" id="teachersdiv">
-        @Html.Partial("_Teachers", new VirtualClassroom.Models.TeacherViewModel() { selectedTeacherId = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
+        @Html.Partial("_Teachers", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
     </div>
 
     <div class="form-group">
@@ -101,49 +101,36 @@
 }
 
 <script>
-    function FillTeachers() {
-        debugger;
+    function FillTeachers()
+    {
+       // debugger;
         var Id = $('#classid').val();
 
-        
-
         var classroom = $('.classroomfill :selected').val();
-        console.log("classroom" + classroom);
+        //console.log("classroom" + classroom);
+        var s='@selectClassroom';
 
-        if (classroom != "" && classroom != "") {
-            $('.teachersdrop').removeAttr('disabled');
-        }
-
-        //$.ajax({
-        //    type: 'POST',
-        //    url: '/Account/FillTeachers?id=' + Id,
-        //    data: {  },
-        //    dataType: 'json',
-        //    async: false,
-        //    success: function (result)
-        //    {
-               
-                
-        //    },
-        //    complete: function () {
-               
-        //    },
-        //    error: function ()
-        //    {
-              
-        //    }
-        //});
-        $("#teachersdiv").empty();
-        $("#teachersdiv").load('/Account/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr)
+        //console.log("selectClassroom: " + s);
+        if (classroom != "" && classroom != s) 
         {
+            $('.teachersdrop').removeAttr('disabled'); 
+        }
+        else
+        {
+            $('.teachersdrop').attr('disabled', true);
+        }
+        //console.log("Changing teachers....");
+
+        $("#teachersdiv").empty();
+        $("#teachersdiv").load('/Account/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
             var classroom = $('.classroomfill :selected').val();
             console.log("classroom" + classroom);
 
-            if (classroom != "" && classroom != "")
-            {
+            if (classroom != "" && classroom != "") {
                 $('.teachersdrop').removeAttr('disabled');
             }
         });
+      
 
     }
 </script>

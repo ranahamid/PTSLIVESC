@@ -8,7 +8,7 @@ using System.Web.Mvc;
 namespace VirtualClassroom.Models
 {
 
-    public class TeacherViewModel
+    public class TeacherViewModel:RegisterViewModel
     {
         private VirtualClassroomDataContext db;
         public TeacherViewModel()
@@ -16,11 +16,11 @@ namespace VirtualClassroom.Models
             db = new VirtualClassroomDataContext();
         }
 
-        public string selectedTeacherId { get; set; }
+       
         public string selectedClassroomId { get; set; }
 
         [Display(Name = "Classroom")]
-        public IEnumerable<SelectListItem> Teacher
+        public IEnumerable<SelectListItem> TeacherslList
         {
             get
             {
@@ -31,12 +31,14 @@ namespace VirtualClassroom.Models
                 List<SelectListItem> _teachers = new List<SelectListItem>();
                 foreach (var item in TblTeachers)
                 {
-                    _teachers.Add(new SelectListItem
+                    if(item.Uid!=null)
                     {
-                        Text = item.Name,
-                        Value = item.Id,
-                        //Selected = (item.TwoCharCountryCode == "US") ? true : false
+                        _teachers.Add(new SelectListItem
+                        {
+                            Text = item.Name,
+                            Value = (item.Uid).ToString().ToUpper()
                     });
+                    }
                 }
                 return _teachers;
             }

@@ -140,6 +140,7 @@ namespace VirtualClassroom.Models
             {
                 var result = userManager.AddToRole(user.Id, role.Name);
             }
+            
         }
     }
 

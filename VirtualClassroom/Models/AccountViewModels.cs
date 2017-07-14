@@ -61,8 +61,7 @@ namespace VirtualClassroom.Models
     }
    
     public class RegisterViewModel
-    {
-        //Custom
+    {       
         [Required]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }
@@ -73,7 +72,7 @@ namespace VirtualClassroom.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        //Custom
+       
         [Display(Name = "Address1")]
         public string Address1 { get; set; }
 
@@ -107,10 +106,11 @@ namespace VirtualClassroom.Models
 
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 4)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]

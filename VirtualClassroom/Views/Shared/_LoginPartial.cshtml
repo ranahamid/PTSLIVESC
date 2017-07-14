@@ -1,11 +1,35 @@
 ﻿@using Microsoft.AspNet.Identity
-@if (Request.IsAuthenticated) {
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" })) {
-        @Html.AntiForgeryToken()
+@using VirtualClassroom.Models
+@using System.Linq;
+@using System.Security.Claims;
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Identity.EntityFramework;
+@using Microsoft.AspNet.Identity.Owin;
+@using Microsoft.Owin;
+@using Microsoft.Owin.Security;
+@using System;
+@using System.Collections.Generic;
+@using System.Data.Entity;
+@using System.Threading.Tasks;
+@using System.Web;
 
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+@if (Request.IsAuthenticated)
+    {
+        //full name
+        var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        var user = userManager.FindByEmail(User.Identity.GetUserName());
+        string FullName = user.FullName;
+
+
+
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+
+
+            <ul class="nav navbar-nav navbar-right">
+            <li>            
+                @Html.ActionLink("Hello " + @FullName + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>

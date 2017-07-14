@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Web.Security;
 using System.Data.Linq;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace VirtualClassroom.Controllers
 {
@@ -87,6 +88,7 @@ namespace VirtualClassroom.Controllers
                 FormsAuthentication.SetAuthCookie(model.Email, model.RememberMe);
                 return View(model);
             }
+      
 
             // This doen't count login failures towards lockout only two factor authentication
             // To enable password failures to trigger lockout, change to shouldLockout: true
@@ -185,8 +187,7 @@ namespace VirtualClassroom.Controllers
                 TblClassroomItems.Add(new SelectListItem
                 {
                     Text = item.Name,
-                    Value = item.Id,
-                    //Selected = (item.TwoCharCountryCode == "US") ? true : false
+                    Value = item.Id
                 });
             }
             model.Classroom = TblClassroomItems;
@@ -194,7 +195,7 @@ namespace VirtualClassroom.Controllers
             return View(model);
         }
 
-        //
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -224,6 +225,13 @@ namespace VirtualClassroom.Controllers
                     string selectedCountry = model.SelectedCountry;
                     string selectedClassroom =model.SelectedClassroom;
 
+                    Guid selectedTeacher = Guid.NewGuid();
+
+                    if(model.SelectedTeacher != null)
+                    {
+                        bool resultGuid=Guid.TryParse(model.SelectedTeacher,out selectedTeacher);
+                    }
+
                     Guid pcUid = Guid.NewGuid();
 
                     db.TblPCs.InsertOnSubmit(new TblPC
@@ -233,7 +241,7 @@ namespace VirtualClassroom.Controllers
                         ClassroomId = selectedClassroom,
                         Name = fullName,
                         ScUid = null,
-                        TcUid = null,
+                        TcUid = selectedTeacher,
                         Position = 0,
                         Audio = true,
                         Video = true,
@@ -258,6 +266,9 @@ namespace VirtualClassroom.Controllers
                     return View("DisplayEmail");
                 }
                 AddErrors(result);
+                //
+               
+
             }
 
             // If we got this far, something failed, redisplay form

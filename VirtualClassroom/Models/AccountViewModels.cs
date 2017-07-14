@@ -89,6 +89,10 @@ namespace VirtualClassroom.Models
         public string SelectedCountry { get; set; }
 
 
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+
         [Display(Name = "Classroom")]
         public IEnumerable<SelectListItem> Classroom { get; set; }
         
@@ -101,9 +105,6 @@ namespace VirtualClassroom.Models
         
         public string SelectedTeacher { get; set; }
 
-
-        [Display(Name = "Zip Code")]
-        public string ZipCode { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

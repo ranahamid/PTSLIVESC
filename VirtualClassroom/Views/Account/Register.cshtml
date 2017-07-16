@@ -70,7 +70,7 @@
             @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
    
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedCountry, Model.Country, "Select Country", new { @class = "form-control" })
+            @Html.DropDownListFor(m => m.SelectedCountry, new SelectList(Model.Country, "Value", "Text"), "Select Country", new { @id = "CountryId", @class = "form-control" })
         </div>
     </div>
 
@@ -85,7 +85,7 @@
             @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
       
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedClassroom, Model.Classroom, @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+            @Html.DropDownListFor(m => m.SelectedClassroom, new SelectList(Model.Classroom, "Value", "Text"), @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
         </div>
     </div>
 

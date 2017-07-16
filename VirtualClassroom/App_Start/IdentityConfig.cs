@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web;
+using System.Configuration;
+using System.Net.Mail;
+using System.Net;
 
 namespace VirtualClassroom.Models
 {
@@ -87,8 +90,44 @@ namespace VirtualClassroom.Models
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            //return Task.FromResult(0);
+            return configSendMailasync(message);
         }
+
+        private Task configSendMailasync(IdentityMessage message)
+        {
+            MailMessage msg = new MailMessage();
+            msg.To.Add(message.Destination);
+            msg.From = new System.Net.Mail.MailAddress(
+                              "Joe@contoso.com", "Joe S.");
+            msg.Subject = message.Subject;
+          
+            msg.Body = message.Body;
+
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["mailAccount"],
+                                                         ConfigurationManager.AppSettings["mailPassword"]);
+            client.Timeout = 20000;
+            try
+            {
+                client.Send(msg);
+                return Task.FromResult(0);
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(0);
+            }
+            finally
+            {
+                msg.Dispose();
+            }
+         
+       }
     }
 
     public class SmsService : IIdentityMessageService

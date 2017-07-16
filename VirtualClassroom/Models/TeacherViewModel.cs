@@ -36,7 +36,7 @@ namespace VirtualClassroom.Models
                         _teachers.Add(new SelectListItem
                         {
                             Text = item.Name,
-                            Value = (item.Uid).ToString().ToUpper()
+                            Value = item.Uid.ToString()
                     });
                     }
                 }

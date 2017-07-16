@@ -76,13 +76,15 @@ namespace VC.App.Components {
                     <table>
                         <tbody>
                             <tr>
-                                <td className="tbBtn"><button type="button" disabled={this.state.volume === 0} className={this.state.volume > 0 ? "btn btn-xs btn-info" : "btn btn-xs btn-danger"} onClick={() => this.decreaseVolume() }><span className={this.state.volume > 0 ? "glyphicon glyphicon-volume-down" : "glyphicon glyphicon-volume-off"}></span></button></td>
-                                <td className="tbVol">
+                                <td className="tbBtn" style={{ borderTop: "0px" }}><button type="button" disabled={this.state.volume === 0} className={this.state.volume > 0 ? "btn btn-xs btn-info" : "btn btn-xs btn-danger"} onClick={() => this.decreaseVolume() }><span className={this.state.volume > 0 ? "glyphicon glyphicon-volume-down" : "glyphicon glyphicon-volume-off"}></span></button></td>
+                                <td className="tbVol" style={{ borderTop: "0px" }}>
                                     <div ref={(ref: HTMLDivElement) => this.progressBar = ref} className="progress progressBar" onClick={(e: MouseEvent) => this.barClick(e) }>
                                         <div className="progress-bar progress-bar-success progressBarInner" role="progressbar" style={{ width: this.state.volume + "%" }}>{this.state.volume}%</div>
                                     </div>
+                                </td >
+                                <td className="tbBtn" style={{ borderTop: "0px" }}>
+                                    <button type="button" disabled={this.state.volume === 100} className={this.state.volume < 100 ? "btn btn-xs btn-info" : "btn btn-xs btn-success"} onClick={() => this.increaseVolume() }><span className="glyphicon glyphicon-volume-up"></span></button>
                                 </td>
-                                <td className="tbBtn"><button type="button" disabled={this.state.volume === 100} className={this.state.volume < 100 ? "btn btn-xs btn-info" : "btn btn-xs btn-success"} onClick={() => this.increaseVolume() }><span className="glyphicon glyphicon-volume-up"></span></button></td>
                             </tr>
                         </tbody>
                     </table>

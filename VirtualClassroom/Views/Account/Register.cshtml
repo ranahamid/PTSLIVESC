@@ -70,9 +70,13 @@
             @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
    
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedCountry, new SelectList(Model.Country, "Value", "Text"), "Select Country", new { @id = "CountryId", @class = "form-control" })
+            @Html.DropDownListFor(m=> Model.SelectedCountry, Model.Country, "Select Country", new { @id = "CountryId", @class = "form-control",
+           @onchange = "ChangeCountry()" })
         </div>
     </div>
+
+
+
 
     <div class="form-group">
         @Html.LabelFor(m => m.ZipCode, new { @class = "col-md-2 control-label" })
@@ -85,7 +89,7 @@
             @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
       
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedClassroom, new SelectList(Model.Classroom, "Value", "Text"), @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+            @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
         </div>
     </div>
 
@@ -102,6 +106,12 @@
 }
 
 <script>
+    function ChangeCountry()
+    {
+        var Id = $('#CountryId').val();
+        console.log("Country: " + Id);
+      
+    }
     function FillTeachers()
     {
        // debugger;

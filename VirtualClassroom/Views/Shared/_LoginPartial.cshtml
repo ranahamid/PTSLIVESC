@@ -40,29 +40,9 @@
                         @Html.ActionLink("My Profile", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
                     </li>
 
-                    <li>
-                        <a href="">
-                            <i class="icon-calendar"></i> My Calendar
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <i class="icon-envelope-open"></i> My Inbox
-                            <span class="badge badge-danger"> 3 </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <i class="icon-rocket"></i> My Tasks
-                            <span class="badge badge-success"> 7 </span>
-                        </a>
-                    </li>
-                    <li class="divider"> </li>
-                    <li>
-                        <a href="">
-                            <i class="icon-lock"></i> Lock Screen
-                        </a>
-                    </li>
+                
+                    
+                 
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
 
                     @if (Request.IsAuthenticated && User.IsInRole("Admin"))
@@ -95,11 +75,7 @@ else
                 <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
 
                 <li class="divider"> </li>
-                <li>
-                    <a href="">
-                        <i class="icon-lock"></i> Lock Screen
-                    </a>
-                </li>
+            
 
                 <li>
                     @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })

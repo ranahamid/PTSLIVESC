@@ -84,25 +84,30 @@ namespace VirtualClassroom.Models
 
         [Display(Name = "Country")]
         public IEnumerable<SelectListItem> Country { get; set; }
-   
+
+  
+        [Display(Name = "Country")]
         public string SelectedCountry { get; set; }
 
 
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-        [Required]
+     
         [Display(Name = "Classroom")]
         public IEnumerable<SelectListItem> Classroom { get; set; }
-        
 
+  
+        [Display(Name = "Classroom")]
         public string SelectedClassroom { get; set; }
 
 
         [Display(Name = "Teacher")]
-        [Required]
+
         public IEnumerable<SelectListItem> Teacher { get; set; }
-        
+
+
+        [Display(Name = "Teacher")]
         public string SelectedTeacher { get; set; }
 
 

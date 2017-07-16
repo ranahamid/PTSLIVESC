@@ -99,7 +99,7 @@ namespace VirtualClassroom.Models
             MailMessage msg = new MailMessage();
             msg.To.Add(message.Destination);
             msg.From = new System.Net.Mail.MailAddress(
-                              "Joe@contoso.com", "Joe S.");
+                              "admin@example.com", "Virtual Classroom");
             msg.Subject = message.Subject;
           
             msg.Body = message.Body;

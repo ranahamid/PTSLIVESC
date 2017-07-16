@@ -101,9 +101,13 @@ else
                     </a>
                 </li>
 
-                <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-
-            </ul>
+                <li>
+                    @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+                </li>
+                <li>
+                    @Html.ActionLink("Forget password", "ForgotPassword", "Account",routeValues: null, htmlAttributes: new {  })
+                </li>
+</ul>
         </li>
 
 

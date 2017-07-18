@@ -17,8 +17,10 @@ namespace VirtualClassroom.Models
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
            
             // Add custom user claims here
-            userIdentity.AddClaim(new Claim("FullName", this.FullName));
-            
+            if(this.FullName!=null)
+            { 
+                userIdentity.AddClaim(new Claim("FullName", this.FullName));
+            }
             return userIdentity;
         }
        

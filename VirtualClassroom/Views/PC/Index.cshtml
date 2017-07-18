@@ -11,17 +11,23 @@
 .panel-body {
     background-color: #E2E3E5;
 }
+#Header1{
+    height:60px;
+}
+
+#h2-viewbag-name{
+    display:none;
+}
 </style>
 <script>
-    $("#Header1").css('display', 'none');
-    $("#Footer1 hr").css('display', 'none');
+   // $("#Header1").css('display', 'none');
+   // $("#Footer1 hr").css('display', 'none');
     $(".divBody").css('margin-top', '20px');
    
 </script>
 @{
     ViewBag.Title = "Personal Computer";
-    ViewBag.Name = Model.Name;
-    
+    ViewBag.Name = Model.Name;    
 }
 
 

@@ -235,7 +235,7 @@ namespace VC.App {
         private setLayoutVisibility(visible: boolean): void {
             // Body1 style
             let body1: HTMLBodyElement = document.getElementById("Body1") as HTMLBodyElement;
-            body1.className = visible ? "lightBody" : "darkBody";
+          //  body1.className = visible ? "lightBody" : "darkBody";
 
             // divBody1 class
             let divBody1: HTMLElement = document.getElementById("DivBody1");
@@ -243,7 +243,7 @@ namespace VC.App {
 
             // header1
             let header1: HTMLElement = document.getElementById("Header1");
-            header1.style.display = visible ? "block" : "none";
+           // header1.style.display = visible ? "block" : "none";
 
             // footer1
             let footer1: HTMLElement = document.getElementById("Footer1");

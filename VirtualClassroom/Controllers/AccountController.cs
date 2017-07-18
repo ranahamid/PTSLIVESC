@@ -212,7 +212,28 @@ namespace VirtualClassroom.Controllers
                 {
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    //body
+                    string FullName = string.Empty;
+                    if (model.FullName != null)
+                    {
+                        FullName = model.FullName;
+                    }
+                    else
+                    {
+                        FullName = User.Identity.GetUserName();
+                    }
+                    string body = "Hello " + FullName +
+                       ",\n\nWelcome to Virtual Classroom!" +
+                        "\n\nA request has been received to open your Virtual Classroom account." +
+                        "\n\nPlease confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">Click here</a>." +
+
+                        "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                        "\n\nThank you," +
+                        "\nThe Virtual Classroom Team";
+
+                    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
+
                     ViewBag.Link = callbackUrl;
 
                     //store the others property in tblPC
@@ -257,14 +278,11 @@ namespace VirtualClassroom.Controllers
                     {
                        
                     }
-
                     //end of store the others property in tblPC
+
                     return View("DisplayEmail");
                 }
-                AddErrors(result);
-                //
-               
-
+                AddErrors(result);             
             }
 
             // If we got this far, something failed, redisplay form
@@ -310,8 +328,27 @@ namespace VirtualClassroom.Controllers
 
                 var code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
-                ViewBag.Link = callbackUrl;
+
+                //body
+                string FullName = string.Empty;
+                if (user.FullName != null)
+                {
+                    FullName = user.FullName;
+                }
+                else
+                {
+                    FullName = User.Identity.GetUserName();
+                }
+                string body = "Hello "+ FullName+ 
+                    ", A request has been received to change the password for your Virtual Classroom account."+
+                    "\n\nPlease reset your password by clicking here: <a href=\"" + callbackUrl + "\">Click here</a>."+
+                    "\n\nIf you did not initiate this request, please contact us immediately at support@example.com."+
+                    "\n\nThank you,"+
+                    "\nThe Virtual Classroom Team";
+
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", body);
+                //await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                //ViewBag.Link = callbackUrl;
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -330,7 +367,7 @@ namespace VirtualClassroom.Controllers
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
-        public ActionResult ResetPassword(string code)
+        public ActionResult ResetPassword(string userId,string code)
         {
             return code == null ? View("Error") : View();
         }

@@ -18,10 +18,16 @@
     //full name
     var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
     var user = userManager.FindByEmail(User.Identity.GetUserName());
-    string FullName = user.FullName;
 
-
-
+    string FullName=string.Empty;
+    if (user.FullName!=null)
+    {
+        FullName = user.FullName;
+    }
+    else
+    {
+        FullName = User.Identity.GetUserName();
+    }
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
@@ -40,8 +46,6 @@
                         @Html.ActionLink("My Profile", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
                     </li>
 
-                
-                    
                  
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
 

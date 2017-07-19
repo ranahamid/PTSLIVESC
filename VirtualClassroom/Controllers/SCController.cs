@@ -16,19 +16,26 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult Index(string classroomId, string id)
         {
-            var q = from x in db.TblSCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
-                    select x;
-
             ComputerViewModel viewModel = new ComputerViewModel();
-
-            if (q != null && q.Count() == 1)
+            if (classroomId != null && id != null)
             {
-                TblSC sc = q.Single();
+                var q = from x in db.TblSCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
+                        select x;                              
 
-                viewModel.Name = sc.TblClassroom.Name + " - " + sc.Name;
-                viewModel.ClassroomId = sc.TblClassroom.Id;
-                viewModel.ActionUrl = Url.Action();
+                if (q != null && q.Count() == 1)
+                {
+                    TblSC sc = q.Single();
+
+                    viewModel.Name = sc.TblClassroom.Name + " - " + sc.Name;
+                    viewModel.ClassroomId = sc.TblClassroom.Id;
+                    viewModel.ActionUrl = Url.Action();
+                }
+                else
+                {
+                    viewModel.Name = "Virtual Classroom - Seat computer";
+                    viewModel.ErrorMessage = "Invalid URL.";
+                }
             }
             else
             {
@@ -41,38 +48,49 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult GetData(string classroomId, string id)
         {
-            var q = from x in db.TblSCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
-                    orderby x.Name
-                    select x;
 
-             if (q!=null && q.Count() == 1)
+            if (classroomId != null && id != null)
             {
-                TblSC sc = q.Single();
+                var q = from x in db.TblSCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                        orderby x.Name
+                        select x;
 
-                TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+                if (q != null && q.Count() == 1)
+                {
+                    TblSC sc = q.Single();
 
-                cData.Uid = sc.Uid;
-                cData.Id = sc.Id;
-                cData.Key = TokBoxHelper.Key;
-                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(sc);
-                cData.Session = TokBoxHelper.GetSession(sc.ClassroomId,
-                    new TokBoxHelper.TokenData
-                    {
-                        Uid = sc.Uid,
-                        Id = sc.Id,
-                        Name = sc.Name,
-                        Role = (int)VC.VcRoles.SC
-                    });
-                cData.Group = TokBoxHelper.CreateGroup(sc);
+                    TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
-                return responseSuccess(cData);
+                    cData.Uid = sc.Uid;
+                    cData.Id = sc.Id;
+                    cData.Key = TokBoxHelper.Key;
+                    cData.ComputerSetting = new TokBoxHelper.ComputerConfig(sc);
+                    cData.Session = TokBoxHelper.GetSession(sc.ClassroomId,
+                        new TokBoxHelper.TokenData
+                        {
+                            Uid = sc.Uid,
+                            Id = sc.Id,
+                            Name = sc.Name,
+                            Role = (int)VC.VcRoles.SC
+                        });
+                    cData.Group = TokBoxHelper.CreateGroup(sc);
+
+                    return responseSuccess(cData);
+                }
+                else
+                {
+                    // error
+                    return responseError("Invalid URL.");
+                }
             }
             else
             {
                 // error
                 return responseError("Invalid URL.");
             }
+
+            
         }
 
 

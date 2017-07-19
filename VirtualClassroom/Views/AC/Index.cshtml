@@ -5,9 +5,17 @@
     ViewBag.Name = Model.Name;
 }
 
+<style>
+    .body-class {
+        margin-top: 50px;
+    }
+</style>
+
+
 @if (!String.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert alert-danger">@Model.ErrorMessage</div>
+   
 }
 else
 {

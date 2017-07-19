@@ -16,19 +16,27 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult Index(string classroomId, string id)
         {
-            var q = from x in db.TblFCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
-                    select x;
-
             ComputerViewModel viewModel = new ComputerViewModel();
-
-            if (q != null && q.Count() == 1)
+            if (classroomId != null && id != null)
             {
-                TblFC fc = q.Single();
 
-                viewModel.Name = fc.TblClassroom.Name + " - " + fc.Name;
-                viewModel.ClassroomId = fc.TblClassroom.Id;
-                viewModel.ActionUrl = Url.Action();
+                var q = from x in db.TblFCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
+                        select x;
+                
+                if (q != null && q.Count() == 1)
+                {
+                    TblFC fc = q.Single();
+
+                    viewModel.Name = fc.TblClassroom.Name + " - " + fc.Name;
+                    viewModel.ClassroomId = fc.TblClassroom.Id;
+                    viewModel.ActionUrl = Url.Action();
+                }
+                else
+                {
+                    viewModel.Name = "Virtual Classroom - Featured computer";
+                    viewModel.ErrorMessage = "Invalid URL.";
+                }
             }
             else
             {
@@ -41,45 +49,50 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult GetData(string classroomId, string id)
         {
-            var q = from x in db.TblFCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
-                    orderby x.Name
-                    select x;
-                
-           
-            
-             if (q!=null && q.Count() == 1)
+            if (classroomId != null && id != null)
             {
-                TblFC fc = q.Single();
+                var q = from x in db.TblFCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
+                        orderby x.Name
+                        select x;                
 
-                TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+                if (q != null && q.Count() == 1)
+                {
+                    TblFC fc = q.Single();
 
-                cData.Uid = fc.Uid;
-                cData.Id = fc.Id;
-                cData.Key = TokBoxHelper.Key;
-                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(fc);
-                cData.Session = TokBoxHelper.GetSession(fc.ClassroomId,
-                    new TokBoxHelper.TokenData
-                    {
-                        Uid = fc.Uid,
-                        Id = fc.Id,
-                        Name = fc.Name,
-                        Role = (int)VC.VcRoles.FC,
-                      
-                    });
-                cData.Group = TokBoxHelper.CreateGroup(fc);
-                
-                return responseSuccess(cData);
+                    TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+
+                    cData.Uid = fc.Uid;
+                    cData.Id = fc.Id;
+                    cData.Key = TokBoxHelper.Key;
+                    cData.ComputerSetting = new TokBoxHelper.ComputerConfig(fc);
+                    cData.Session = TokBoxHelper.GetSession(fc.ClassroomId,
+                        new TokBoxHelper.TokenData
+                        {
+                            Uid = fc.Uid,
+                            Id = fc.Id,
+                            Name = fc.Name,
+                            Role = (int)VC.VcRoles.FC,
+
+                        });
+                    cData.Group = TokBoxHelper.CreateGroup(fc);
+
+                    return responseSuccess(cData);
+                }
+                else
+                {
+                    // error
+                    return responseError("Invalid URL.");
+                }
             }
             else
             {
                 // error
                 return responseError("Invalid URL.");
-            }
+            }            
         }
 
-
-
+        
         // dispose
         protected override void Dispose(bool disposing)
         {

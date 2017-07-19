@@ -18,20 +18,27 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult Index(string classroomId)
         {
-            var q = from x in db.TblClassrooms
-                    where x.Id.ToLower() == classroomId.ToLower() && x.IsActive != 0
-                    
-                    select x;
-
             ComputerViewModel viewModel = new ComputerViewModel();
-
-            if (q!=null && q.Count() == 1)
+            if (classroomId != null)
             {
-                TblClassroom ac = q.Single();
-                viewModel.Name = "Admin computer - " + ac.Name;
-                viewModel.ClassroomId = ac.Id;
-                viewModel.ActionUrl = Url.Action();
+                var q = from x in db.TblClassrooms
+                        where x.Id.ToLower() == classroomId.ToLower() && x.IsActive != 0
+                        select x;
+                
+                if (q != null && q.Count() == 1)
+                {
+                    TblClassroom ac = q.Single();
+                    viewModel.Name = "Admin computer - " + ac.Name;
+                    viewModel.ClassroomId = ac.Id;
+                    viewModel.ActionUrl = Url.Action();
+                }
+                else
+                {
+                    viewModel.Name = "Virtual Classroom - Admin computer";
+                    viewModel.ErrorMessage = "Invalid URL.";
+                }
             }
+            
             else
             {
                 viewModel.Name = "Virtual Classroom - Admin computer";
@@ -43,32 +50,41 @@ namespace VirtualClassroom.Controllers
 
         public ActionResult GetData(string classroomId)
         {
-            var q = from x in db.TblClassrooms
-                    where x.Id.ToLower() == classroomId.ToLower()
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            if (classroomId != null)
             {
-                TblClassroom classroom = q.Single();
+                var q = from x in db.TblClassrooms
+                        where x.Id.ToLower() == classroomId.ToLower()
+                        select x;
 
-                TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
+                if (q != null && q.Count() == 1)
+                {
+                    TblClassroom classroom = q.Single();
 
-                cData.Uid = Guid.Empty;
-                cData.Id = classroom.Id;
-                cData.Key = TokBoxHelper.Key;
-                cData.ComputerSetting = new TokBoxHelper.ComputerConfig(classroom);
-                cData.Session = TokBoxHelper.GetSession(classroom.Id,
-                        new TokBoxHelper.TokenData
-                        {
-                            Uid = Guid.Empty,
-                            Id = classroom.Id,
-                            Name = "Admin",
-                            Role = (int)VC.VcRoles.AC
-                        });
-                cData.Group = TokBoxHelper.CreateGroup(classroom);
+                    TokBoxHelper.ComputerData cData = new TokBoxHelper.ComputerData();
 
-                return responseSuccess(cData);
+                    cData.Uid = Guid.Empty;
+                    cData.Id = classroom.Id;
+                    cData.Key = TokBoxHelper.Key;
+                    cData.ComputerSetting = new TokBoxHelper.ComputerConfig(classroom);
+                    cData.Session = TokBoxHelper.GetSession(classroom.Id,
+                            new TokBoxHelper.TokenData
+                            {
+                                Uid = Guid.Empty,
+                                Id = classroom.Id,
+                                Name = "Admin",
+                                Role = (int)VC.VcRoles.AC
+                            });
+                    cData.Group = TokBoxHelper.CreateGroup(classroom);
+
+                    return responseSuccess(cData);
+                }
+                else
+                {
+                    // error
+                    return responseError("Invalid URL.");
+                }
             }
+            
             else
             {
                 // error
@@ -80,66 +96,78 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvModerator(string classroomId, Guid uid, bool? audio, bool? video)
         {
-            var q = from x in db.TblModerators
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            if(classroomId!=null && uid != null)
             {
-                TblModerator tblModerator = q.Single();
-                if (audio.HasValue)
-                    tblModerator.Audio = audio.Value;
-                if (video.HasValue)
-                    tblModerator.Video = video.Value;
+                var q = from x in db.TblModerators
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
 
-                try
+                if (q != null && q.Count() == 1)
                 {
-                    db.SubmitChanges();
-                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                    TblModerator tblModerator = q.Single();
+                    if (audio.HasValue)
+                        tblModerator.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblModerator.Video = video.Value;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
                 }
-                catch (ChangeConflictException ex)
+                else
                 {
-                    return responseError(ex.Message);
+                    return responseError("Id not found.");
                 }
             }
             else
             {
                 return responseError("Id not found.");
-            }
+            }            
         }
-
-
-
+        
 
         [HttpPost]
         public ActionResult TurnAvPC(string classroomId, Guid uid, bool? audio, bool? video)
         {
-            var q = from x in db.TblPCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            if (classroomId != null && uid != null)
             {
-                TblPC tblPC = q.Single();
-                if (audio.HasValue)
-                    tblPC.Audio = audio.Value;
-                if (video.HasValue)
-                    tblPC.Video = video.Value;
+                var q = from x in db.TblPCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
 
-                try
+                if (q != null && q.Count() == 1)
                 {
-                    db.SubmitChanges();
-                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                    TblPC tblPC = q.Single();
+                    if (audio.HasValue)
+                        tblPC.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblPC.Video = video.Value;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
                 }
-                catch (ChangeConflictException ex)
+                else
                 {
-                    return responseError(ex.Message);
+                    return responseError("Id not found.");
                 }
             }
             else
             {
                 return responseError("Id not found.");
-            }
+            }            
         }
 
 
@@ -147,17 +175,58 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvTC(string classroomId, Guid uid, bool? audio, bool? video)
         {
-            var q = from x in db.TblTCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-             if (q!=null && q.Count() == 1)
+            if (classroomId != null && uid != null)
             {
-                TblTC tblTC = q.Single();
-                if (audio.HasValue)
-                    tblTC.Audio = audio.Value;
-                if (video.HasValue)
-                    tblTC.Video = video.Value;
+                var q = from x in db.TblTCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
+
+                if (q != null && q.Count() == 1)
+                {
+                    TblTC tblTC = q.Single();
+                    if (audio.HasValue)
+                        tblTC.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblTC.Video = video.Value;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
+                }
+                else
+                {
+                    return responseError("Id not found.");
+                }
+            }
+            else
+            {
+                return responseError("Id not found.");
+            }   
+        }
+
+
+        [HttpPost]
+        public ActionResult TurnAvAllPC(string classroomId, bool? audio, bool? video)
+        {
+            if (classroomId != null)
+            {
+                var q = from x in db.TblPCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower()
+                        select x;
+
+                foreach (TblPC tblPC in q.Select(x => x))
+                {
+                    if (audio.HasValue)
+                        tblPC.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblPC.Video = video.Value;
+                }
 
                 try
                 {
@@ -173,33 +242,8 @@ namespace VirtualClassroom.Controllers
             {
                 return responseError("Id not found.");
             }
-        }
 
 
-        [HttpPost]
-        public ActionResult TurnAvAllPC(string classroomId, bool? audio, bool? video)
-        {
-            var q = from x in db.TblPCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower()
-                    select x;
-
-            foreach (TblPC tblPC in q.Select(x => x))
-            {
-                if (audio.HasValue)
-                    tblPC.Audio = audio.Value;
-                if (video.HasValue)
-                    tblPC.Video = video.Value;
-            }
-
-            try
-            {
-                db.SubmitChanges();
-                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
-            }
-            catch (ChangeConflictException ex)
-            {
-                return responseError(ex.Message);
-            }
         }
 
         //TurnAvAllModerator 
@@ -207,27 +251,35 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvAllModerator(string classroomId, bool? audio, bool? video)
         {
-            var q = from x in db.TblModerators
-                    where x.ClassroomId.ToLower() == classroomId.ToLower()
-                    select x;
+            if (classroomId != null )
+            {
+                var q = from x in db.TblModerators
+                        where x.ClassroomId.ToLower() == classroomId.ToLower()
+                        select x;
 
-            foreach (TblModerator tblModerator in q.Select(x => x))
+                foreach (TblModerator tblModerator in q.Select(x => x))
+                {
+                    if (audio.HasValue)
+                        tblModerator.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblModerator.Video = video.Value;
+                }
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
             {
-                if (audio.HasValue)
-                    tblModerator.Audio = audio.Value;
-                if (video.HasValue)
-                    tblModerator.Video = video.Value;
+                return responseError("Id not found.");
             }
 
-            try
-            {
-                db.SubmitChanges();
-                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
-            }
-            catch (ChangeConflictException ex)
-            {
-                return responseError(ex.Message);
-            }
         }
 
 
@@ -236,116 +288,146 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvAllTC(string classroomId, bool? audio, bool? video)
         {
-            var q = from x in db.TblTCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower()
-                    select x;
+            if (classroomId != null)
+            {
 
-            foreach (TblTC tblTC in q.Select(x => x))
+                var q = from x in db.TblTCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower()
+                        select x;
+
+                foreach (TblTC tblTC in q.Select(x => x))
+                {
+                    if (audio.HasValue)
+                        tblTC.Audio = audio.Value;
+                    if (video.HasValue)
+                        tblTC.Video = video.Value;
+                }
+
+                try
+                {
+                    db.SubmitChanges();
+                    return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
+                }
+                catch (ChangeConflictException ex)
+                {
+                    return responseError(ex.Message);
+                }
+            }
+            else
             {
-                if (audio.HasValue)
-                    tblTC.Audio = audio.Value;
-                if (video.HasValue)
-                    tblTC.Video = video.Value;
+                return responseError("Id not found.");
             }
 
-            try
-            {
-                db.SubmitChanges();
-                return Json(new { status = VC.RESPONSE_SUCCESS, audio = audio, video = video }, JsonRequestBehavior.AllowGet);
-            }
-            catch (ChangeConflictException ex)
-            {
-                return responseError(ex.Message);
-            }
         }
 
 
         [HttpPost]
         public ActionResult VolumePC(string classroomId, Guid uid, int volume)
         {
-            var q = from x in db.TblPCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-             if (q!=null && q.Count() == 1)
+            if (classroomId != null && uid != null )
             {
-                TblPC tblPC = q.Single();
-                tblPC.Volume = volume;
+                var q = from x in db.TblPCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
 
-                try
+                if (q != null && q.Count() == 1)
                 {
-                    db.SubmitChanges();
-                    return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    TblPC tblPC = q.Single();
+                    tblPC.Volume = volume;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
                 }
-                catch (ChangeConflictException ex)
+                else
                 {
-                    return responseError(ex.Message);
+                    return responseError("Id not found.");
                 }
             }
             else
             {
                 return responseError("Id not found.");
-            }
+            }            
         }
 
         //VolumeModerator
         [HttpPost]
         public ActionResult VolumeModerator(string classroomId, Guid uid, int volume)
         {
-            var q = from x in db.TblModerators
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            if (classroomId != null && uid != null)
             {
-                TblModerator tblModerator = q.Single();
-                tblModerator.Volume = volume;
+                var q = from x in db.TblModerators
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
 
-                try
+                if (q != null && q.Count() == 1)
                 {
-                    db.SubmitChanges();
-                    return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    TblModerator tblModerator = q.Single();
+                    tblModerator.Volume = volume;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
                 }
-                catch (ChangeConflictException ex)
+                else
                 {
-                    return responseError(ex.Message);
+                    return responseError("Id not found.");
                 }
             }
             else
             {
                 return responseError("Id not found.");
-            }
+            }            
         }
 
-
-
+        
 
         [HttpPost]
         public ActionResult VolumeTC(string classroomId, Guid uid, int volume)
         {
-            var q = from x in db.TblTCs
-                    where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
-                    select x;
-
-             if (q!=null && q.Count() == 1)
+            if (classroomId != null && uid != null)
             {
-                TblTC tblTC = q.Single();
-                tblTC.Volume = volume;
+                var q = from x in db.TblTCs
+                        where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
+                        select x;
 
-                try
+                if (q != null && q.Count() == 1)
                 {
-                    db.SubmitChanges();
-                    return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    TblTC tblTC = q.Single();
+                    tblTC.Volume = volume;
+
+                    try
+                    {
+                        db.SubmitChanges();
+                        return Json(new { status = VC.RESPONSE_SUCCESS, volume = volume }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (ChangeConflictException ex)
+                    {
+                        return responseError(ex.Message);
+                    }
                 }
-                catch (ChangeConflictException ex)
+                else
                 {
-                    return responseError(ex.Message);
+                    return responseError("Id not found.");
                 }
             }
             else
             {
                 return responseError("Id not found.");
             }
+           
         }
 
 

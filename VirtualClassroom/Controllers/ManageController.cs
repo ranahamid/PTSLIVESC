@@ -66,6 +66,7 @@ namespace VirtualClassroom.Controllers
         public ActionResult EditProfile()
         {
             EditProfileViewModel model = new EditProfileViewModel();
+
             //country
             var Countries = from x in db.TblCountries
                             select x;

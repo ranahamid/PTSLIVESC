@@ -29,17 +29,22 @@ namespace VirtualClassroom.Models
                                     select x;
 
                 List<SelectListItem> _teachers = new List<SelectListItem>();
-                foreach (var item in TblTeachers)
+
+                if(TblTeachers != null)
                 {
-                    if(item.Uid!=null)
+                    foreach (var item in TblTeachers)
                     {
-                        _teachers.Add(new SelectListItem
+                        if (item.Uid != null)
                         {
-                            Text = item.Name,
-                            Value = item.Uid.ToString()
-                    });
+                            _teachers.Add(new SelectListItem
+                            {
+                                Text = item.Name,
+                                Value = item.Uid.ToString()
+                            });
+                        }
                     }
                 }
+                
                 return _teachers;
             }
         }

@@ -24,7 +24,7 @@ namespace VirtualClassroom.Controllers
             db = new VirtualClassroomDataContext();
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -87,7 +87,7 @@ namespace VirtualClassroom.Controllers
                 FormsAuthentication.SetAuthCookie(model.Email, model.RememberMe);
                 return View(model);
             }
-      
+
 
             // This doen't count login failures towards lockout only two factor authentication
             // To enable password failures to trigger lockout, change to shouldLockout: true
@@ -156,39 +156,48 @@ namespace VirtualClassroom.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            RegisterViewModel model=new RegisterViewModel();
+            RegisterViewModel model = new RegisterViewModel();
             //country
-            var Countries= from x in db.TblCountries 
-                    select x;
-
-            List<SelectListItem> CountryItems = new List<SelectListItem>();
-            
-            foreach(var item in Countries)
-            {
-                CountryItems.Add(new SelectListItem
-                {
-                    Text = item.CountryName,
-                    Value = item.TwoCharCountryCode,
-                    Selected = (item.TwoCharCountryCode == "US") ? true:false
-                });
-
-            }        
-            model.Country = CountryItems;
-
-          
-            //classroom            
-            var TblClassrooms = from x in db.TblClassrooms
+            var Countries = from x in db.TblCountries
                             select x;
 
-            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
-            foreach (var item in TblClassrooms)
+            List<SelectListItem> CountryItems = new List<SelectListItem>();
+
+            if (Countries != null)
             {
-                TblClassroomItems.Add(new SelectListItem
+                foreach (var item in Countries)
                 {
-                    Text = item.Name,
-                    Value = item.Id
-                });
+                    CountryItems.Add(new SelectListItem
+                    {
+                        Text = item.CountryName,
+                        Value = item.CountryName,
+                        Selected = (item.TwoCharCountryCode == "US") ? true : false
+                    });
+
+                }
             }
+
+            model.Country = CountryItems;
+
+
+            //classroom            
+            var TblClassrooms = from x in db.TblClassrooms
+                                select x;
+
+            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
+
+            if (TblClassroomItems != null)
+            {
+                foreach (var item in TblClassrooms)
+                {
+                    TblClassroomItems.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id
+                    });
+                }
+            }
+
             model.Classroom = TblClassroomItems;
 
             return View(model);
@@ -203,7 +212,7 @@ namespace VirtualClassroom.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email,FullName=model.FullName };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FullName = model.FullName };
 
                 //await UserManager.AddClaimAsync(user.Id, new Claim("FullName", user.FullName));
 
@@ -222,6 +231,8 @@ namespace VirtualClassroom.Controllers
                     {
                         FullName = User.Identity.GetUserName();
                     }
+
+                    //send email
                     string body = "Hello " + FullName +
                        ",\n\nWelcome to Virtual Classroom!" +
                         "\n\nA request has been received to open your Virtual Classroom account." +
@@ -237,16 +248,16 @@ namespace VirtualClassroom.Controllers
                     ViewBag.Link = callbackUrl;
 
                     //store the others property in tblPC
-                    string fullName = model.FullName;                
+                    string fullName = model.FullName != null ? model.FullName : string.Empty;
                     string CurrentUserId = user.Id;
 
-                    string selectedCountry = model.SelectedCountry;
-                    string selectedClassroom =model.SelectedClassroom;
+                    string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                    string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
                     Guid selectedTeacher = Guid.NewGuid();
 
-                    if(model.SelectedTeacher != null)
+                    if (model.SelectedTeacher != null)
                     {
-                        bool resultGuid=Guid.TryParse(model.SelectedTeacher,out selectedTeacher);
+                        bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
                     }
 
                     Guid pcUid = Guid.NewGuid();
@@ -263,26 +274,26 @@ namespace VirtualClassroom.Controllers
                         Audio = true,
                         Video = true,
                         Volume = 80,
-                        Address1 =model.Address1,
-                        City=model.City,
-                        Country=selectedCountry,
-                        ZipCode=model.ZipCode,
-                        State=model.State,
+                        Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                        City = model.City != null ? model.City : string.Empty,
+                        Country = selectedCountry,
+                        ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                        State = model.State != null ? model.State : string.Empty,
                     });
 
                     try
                     {
-                        db.SubmitChanges();                    
+                        db.SubmitChanges();
                     }
                     catch (ChangeConflictException ex)
                     {
-                       
+
                     }
                     //end of store the others property in tblPC
 
                     return View("DisplayEmail");
                 }
-                AddErrors(result);             
+                AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
@@ -339,11 +350,11 @@ namespace VirtualClassroom.Controllers
                 {
                     FullName = User.Identity.GetUserName();
                 }
-                string body = "Hello "+ FullName+ 
-                    ", A request has been received to change the password for your Virtual Classroom account."+
-                    "\n\nPlease reset your password by clicking here: <a href=\"" + callbackUrl + "\">Click here</a>."+
-                    "\n\nIf you did not initiate this request, please contact us immediately at support@example.com."+
-                    "\n\nThank you,"+
+                string body = "Hello " + FullName +
+                    ", A request has been received to change the password for your Virtual Classroom account." +
+                    "\n\nPlease reset your password by clicking here: <a href=\"" + callbackUrl + "\">Click here</a>." +
+                    "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                    "\n\nThank you," +
                     "\nThe Virtual Classroom Team";
 
                 await UserManager.SendEmailAsync(user.Id, "Reset Password", body);
@@ -367,7 +378,7 @@ namespace VirtualClassroom.Controllers
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
-        public ActionResult ResetPassword(string userId,string code)
+        public ActionResult ResetPassword(string userId, string code)
         {
             return code == null ? View("Error") : View();
         }

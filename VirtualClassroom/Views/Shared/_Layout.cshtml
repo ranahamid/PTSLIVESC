@@ -40,14 +40,25 @@
             </div>
         </div>
     </div>*@
+    @{
+        var viewbagItem = string.Empty;
+        if (@ViewBag.Name==string.Empty || @ViewBag.Name==null)
+        {
+            viewbagItem = @ViewBag.Title;
+        }
+        else
+        {
+            viewbagItem = @ViewBag.Name;
+        }
 
+    }
     <div id="DivBody1" class="divBody">
         <div>
             <header id="Header1">
-                <div class="col-md-12">
+                <div class="col-md-12" id="login-bar">
                     <div class="row">
                         <div class="col-md-8">
-                            <h2 id="h2-viewbag-name">@ViewBag.Name</h2>
+                            <h2 id="h2-viewbag-name">@viewbagItem</h2>
                         </div>
                         <div class="col-md-4">
                             @Html.Partial("_LoginPartial")

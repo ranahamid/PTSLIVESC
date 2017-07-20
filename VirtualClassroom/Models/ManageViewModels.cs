@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.Web.Mvc;
 
 namespace VirtualClassroom.Models
 {
@@ -14,6 +17,52 @@ namespace VirtualClassroom.Models
         public bool BrowserRemembered { get; set; }
     }
 
+    public class EditProfileViewModel
+    {
+
+        [Required]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
+
+
+        [Display(Name = "Address1")]
+        public string Address1 { get; set; }
+
+        [Display(Name = "State")]
+        public string State { get; set; }
+
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [Display(Name = "Country")]
+        public IEnumerable<SelectListItem> Country { get; set; }
+
+
+        [Display(Name = "Country")]
+        public string SelectedCountry { get; set; }
+
+
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+
+        [Display(Name = "Classroom")]
+        public IEnumerable<SelectListItem> Classroom { get; set; }
+
+
+        [Display(Name = "Classroom")]
+        public string SelectedClassroom { get; set; }
+
+
+        [Display(Name = "Teacher")]
+
+        public IEnumerable<SelectListItem> Teacher { get; set; }
+
+
+        [Display(Name = "Teacher")]
+        public string SelectedTeacher { get; set; }
+        
+    }
     public class ManageLoginsViewModel
     {
         public IList<UserLoginInfo> CurrentLogins { get; set; }
@@ -35,7 +84,7 @@ namespace VirtualClassroom.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -47,14 +96,14 @@ namespace VirtualClassroom.Models
         public string OldPassword { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 4  )]
         [DataType(DataType.Password)]
         [Display(Name = "New password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 

@@ -6,14 +6,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Collections.Generic;
+using System;
 
 namespace VirtualClassroom.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
+        private VirtualClassroomDataContext db;
         public ManageController()
         {
+            db = new VirtualClassroomDataContext();
         }
 
         public ManageController(ApplicationUserManager userManager)
@@ -56,6 +60,161 @@ namespace VirtualClassroom.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(User.Identity.GetUserId())
             };
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult EditProfile()
+        {
+            EditProfileViewModel model = new EditProfileViewModel();
+            //country
+            var Countries = from x in db.TblCountries
+                            select x;
+
+            List<SelectListItem> CountryItems = new List<SelectListItem>();
+
+            if (Countries != null)
+            {
+                foreach (var item in Countries)
+                {
+                    CountryItems.Add(new SelectListItem
+                    {
+                        Text = item.CountryName,
+                        Value = item.CountryName,
+                        // Selected = (item.TwoCharCountryCode == "US") ? true : false
+                    });
+
+                }
+            }
+
+            model.Country = CountryItems;
+
+            //other properties
+
+            var q = from x in db.TblPCs
+                    where x.Id == User.Identity.GetUserId()
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblPC tblPC = q.Single();
+
+                model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                model.State = tblPC.State != null ? tblPC.State : string.Empty;
+                model.City = tblPC.City != null ? tblPC.City : string.Empty;
+                model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+
+                //teacher
+
+                if (tblPC.TcUid != null)
+                {
+                    var qTC = from x in db.TblTCs
+                              where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                              select x;
+
+                    if (qTC != null && qTC.Count() == 1)
+                    {
+                        TblTC tc = qTC.Single();
+                        
+                        model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
+
+                    }
+                }
+            }
+
+
+            //classroom            
+            var TblClassrooms = from x in db.TblClassrooms
+                                select x;
+
+            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
+            if (TblClassroomItems != null)
+            {
+                foreach (var item in TblClassrooms)
+                {
+                    TblClassroomItems.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id
+                    });
+                }
+            }
+
+            model.Classroom = TblClassroomItems;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditProfile(EditProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string fullName = model.FullName != null ? model.FullName : string.Empty;
+                
+                //update Full Name on identity table
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());                
+                user.FullName = fullName;
+                UserManager.Update(user);
+                
+                //update TblPC
+
+
+                string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+                Guid selectedTeacher = Guid.NewGuid();
+
+                if (model.SelectedTeacher != null)
+                {
+                    bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
+                }
+
+                var q = from x in db.TblPCs
+                        where x.Id == User.Identity.GetUserId()
+                        select x;
+                if (q != null && q.Count() == 1)
+                {
+                    TblPC tblPC = q.Single();
+                    tblPC.Name = fullName;
+                    tblPC.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                    tblPC.State = model.State != null ? model.State : string.Empty;
+                    tblPC.City = model.City != null ? model.City : string.Empty;
+                    tblPC.Country = selectedCountry;
+                    tblPC.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                    tblPC.ClassroomId = selectedClassroom;
+                    tblPC.TcUid = selectedTeacher;                                   
+                }
+
+
+                try
+                {
+                    db.SubmitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return View(model);
+                }
+                return RedirectToAction("Index", "Manage");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+
+        }
+
+        public ActionResult FillTeachers(string id)
+        {
+            var vm = new VirtualClassroom.Models.TeacherViewModel()
+            {
+                selectedClassroomId = id
+            };
+
+            return PartialView("_TeachersEditProfile", vm);
         }
 
         //

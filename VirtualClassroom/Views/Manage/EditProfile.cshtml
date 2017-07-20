@@ -1,0 +1,136 @@
+﻿@model VirtualClassroom.Models.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+//    ViewBag.Name = "Edit Profile";
+    var selectClassroom = "Select Classroom";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">       
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Address1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
+
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => Model.SelectedCountry, Model.Country, "Select Country", new
+                       {
+                           @id = "CountryId",
+                           @class = "form-control",
+                           @onchange = "ChangeCountry()"
+                       })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ZipCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+     
+        <div class="form-group">
+            @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
+
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, @selectClassroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+            </div>
+        </div>
+
+        <div class="form-group" id="teachersdiv">
+            @Html.Partial("_TeachersEditProfile", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
+        </div>
+      
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script>
+    function ChangeCountry()
+    {
+        var Id = $('#CountryId').val();
+        console.log("Country: " + Id);
+
+    }
+    function FillTeachers()
+    {
+       // debugger;
+        var Id = $('#classid').val();
+
+        var classroom = $('.classroomfill :selected').val();
+        //console.log("classroom" + classroom);
+        var s='@selectClassroom';
+
+        //console.log("selectClassroom: " + s);
+        if (classroom != "" && classroom != s)
+        {
+            $('.teachersdrop').removeAttr('disabled');
+        }
+        else
+        {
+            $('.teachersdrop').attr('disabled', true);
+        }
+        //console.log("Changing teachers....");
+
+        $("#teachersdiv").empty();
+        $("#teachersdiv").load('/Manage/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
+            var classroom = $('.classroomfill :selected').val();
+            console.log("classroom" + classroom);
+
+            if (classroom != "" && classroom != "") {
+                $('.teachersdrop').removeAttr('disabled');
+            }
+        });
+
+
+    }
+</script>

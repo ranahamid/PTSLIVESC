@@ -355,8 +355,8 @@ namespace VC.App {
            // body1.className = visible ? "lightBody" : "darkBody";
 
             // divBody1 class
-            let divBody1: HTMLElement = document.getElementById("DivBody1");
-            divBody1.className = visible ? "divBody" : "";
+            //let divBody1: HTMLElement = document.getElementById("DivBody1");
+            //divBody1.className = visible ? "divBody" : "";
 
             // header1
             let header1: HTMLElement = document.getElementById("Header1");

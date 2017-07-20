@@ -206,8 +206,8 @@ var VC;
                 let body1 = document.getElementById("Body1");
                 //  body1.className = visible ? "lightBody" : "darkBody";
                 // divBody1 class
-                let divBody1 = document.getElementById("DivBody1");
-                divBody1.className = visible ? "divBody" : "";
+                //let divBody1 = document.getElementById("DivBody1");
+                //divBody1.className = visible ? "divBody" : "";
                 // header1
                 let header1 = document.getElementById("Header1");
                 // header1.style.display = visible ? "block" : "none";

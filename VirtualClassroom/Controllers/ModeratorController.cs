@@ -100,7 +100,7 @@ namespace VirtualClassroom.Controllers
             {
                 // error
                 return responseError("Invalid URL.");
-            }            
+            }
         }
 
 
@@ -143,7 +143,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Moderator Id.");
             }
 
-            
+
         }
 
         // dispose

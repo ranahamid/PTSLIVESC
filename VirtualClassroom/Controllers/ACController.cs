@@ -24,7 +24,7 @@ namespace VirtualClassroom.Controllers
                 var q = from x in db.TblClassrooms
                         where x.Id.ToLower() == classroomId.ToLower() && x.IsActive != 0
                         select x;
-                
+
                 if (q != null && q.Count() == 1)
                 {
                     TblClassroom ac = q.Single();
@@ -38,7 +38,7 @@ namespace VirtualClassroom.Controllers
                     viewModel.ErrorMessage = "Invalid URL.";
                 }
             }
-            
+
             else
             {
                 viewModel.Name = "Virtual Classroom - Admin computer";
@@ -84,7 +84,7 @@ namespace VirtualClassroom.Controllers
                     return responseError("Invalid URL.");
                 }
             }
-            
+
             else
             {
                 // error
@@ -96,7 +96,7 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvModerator(string classroomId, Guid uid, bool? audio, bool? video)
         {
-            if(classroomId!=null && uid != null)
+            if (classroomId != null && uid != null)
             {
                 var q = from x in db.TblModerators
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
@@ -128,9 +128,9 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
-            }            
+            }
         }
-        
+
 
         [HttpPost]
         public ActionResult TurnAvPC(string classroomId, Guid uid, bool? audio, bool? video)
@@ -167,7 +167,7 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
-            }            
+            }
         }
 
 
@@ -207,7 +207,7 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
-            }   
+            }
         }
 
 
@@ -251,7 +251,7 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult TurnAvAllModerator(string classroomId, bool? audio, bool? video)
         {
-            if (classroomId != null )
+            if (classroomId != null)
             {
                 var q = from x in db.TblModerators
                         where x.ClassroomId.ToLower() == classroomId.ToLower()
@@ -324,7 +324,7 @@ namespace VirtualClassroom.Controllers
         [HttpPost]
         public ActionResult VolumePC(string classroomId, Guid uid, int volume)
         {
-            if (classroomId != null && uid != null )
+            if (classroomId != null && uid != null)
             {
                 var q = from x in db.TblPCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Uid == uid
@@ -353,7 +353,7 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
-            }            
+            }
         }
 
         //VolumeModerator
@@ -389,10 +389,10 @@ namespace VirtualClassroom.Controllers
             else
             {
                 return responseError("Id not found.");
-            }            
+            }
         }
 
-        
+
 
         [HttpPost]
         public ActionResult VolumeTC(string classroomId, Guid uid, int volume)
@@ -427,7 +427,7 @@ namespace VirtualClassroom.Controllers
             {
                 return responseError("Id not found.");
             }
-           
+
         }
 
 

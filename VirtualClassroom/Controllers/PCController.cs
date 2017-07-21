@@ -27,7 +27,7 @@ namespace VirtualClassroom.Controllers
                 var q = from x in db.TblPCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id == id && x.TblClassroom.IsActive != 0
                         select x;
-               
+
                 if (q != null && q.Count() == 1)
                 {
                     TblPC pc = q.Single();
@@ -59,7 +59,7 @@ namespace VirtualClassroom.Controllers
                 viewModel.ErrorMessage = "Invalid URL.";
             }
 
-           
+
 
             return View(viewModel);
         }
@@ -121,7 +121,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid URL.");
             }
 
-            
+
 
         }
 
@@ -157,7 +157,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student ID.");
             }
 
-          
+
         }
 
 
@@ -199,7 +199,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Student Id.");
             }
 
-            
+
         }
 
 

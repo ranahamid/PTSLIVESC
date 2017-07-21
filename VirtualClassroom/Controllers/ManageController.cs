@@ -49,6 +49,7 @@ namespace VirtualClassroom.Controllers
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : message == ManageMessageId.AddPhoneSuccess ? "The phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.EditProfileSUccess ? "Your profile has been updated."
                 : "";
 
             var model = new IndexViewModel
@@ -119,7 +120,7 @@ namespace VirtualClassroom.Controllers
                     if (qTC != null && qTC.Count() == 1)
                     {
                         TblTC tc = qTC.Single();
-                        
+
                         model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
 
                     }
@@ -156,12 +157,12 @@ namespace VirtualClassroom.Controllers
             if (ModelState.IsValid)
             {
                 string fullName = model.FullName != null ? model.FullName : string.Empty;
-                
+
                 //update Full Name on identity table
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());                
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 user.FullName = fullName;
                 UserManager.Update(user);
-                
+
                 //update TblPC
 
 
@@ -188,7 +189,7 @@ namespace VirtualClassroom.Controllers
                     tblPC.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
 
                     tblPC.ClassroomId = selectedClassroom;
-                    tblPC.TcUid = selectedTeacher;                                   
+                    tblPC.TcUid = selectedTeacher;
                 }
 
 
@@ -200,7 +201,8 @@ namespace VirtualClassroom.Controllers
                 {
                     return View(model);
                 }
-                return RedirectToAction("Index", "Manage");
+                return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });
+               // return RedirectToAction("Index", "Manage");
             }
 
             // If we got this far, something failed, redisplay form
@@ -545,7 +547,8 @@ namespace VirtualClassroom.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
-            Error
+            Error,
+            EditProfileSUccess
         }
 
         #endregion

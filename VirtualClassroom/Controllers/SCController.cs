@@ -21,7 +21,7 @@ namespace VirtualClassroom.Controllers
             {
                 var q = from x in db.TblSCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
-                        select x;                              
+                        select x;
 
                 if (q != null && q.Count() == 1)
                 {
@@ -42,7 +42,6 @@ namespace VirtualClassroom.Controllers
                 viewModel.Name = "Virtual Classroom - Seat computer";
                 viewModel.ErrorMessage = "Invalid URL.";
             }
-
             return View(viewModel);
         }
 
@@ -89,8 +88,6 @@ namespace VirtualClassroom.Controllers
                 // error
                 return responseError("Invalid URL.");
             }
-
-            
         }
 
 

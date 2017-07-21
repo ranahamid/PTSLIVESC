@@ -24,7 +24,7 @@ namespace VirtualClassroom.Controllers
             {
                 var q = from x in db.TblTCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
-                        select x;               
+                        select x;
 
                 if (q != null && q.Count() == 1)
                 {
@@ -45,7 +45,7 @@ namespace VirtualClassroom.Controllers
                 viewModel.ErrorMessage = "Invalid URL.";
             }
 
-           
+
 
             return View(viewModel);
         }
@@ -92,7 +92,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid URL.");
             }
 
-            
+
         }
 
         public ActionResult LoadForms(string classroomId, string id, Forms.FormType type)
@@ -121,7 +121,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Teacher ID.");
             }
 
-            
+
         }
 
         public ActionResult LoadAnswers(string classroomId, string id, Guid formUid)
@@ -150,7 +150,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Teacher ID.");
             }
 
-            
+
         }
 
         [HttpPost]
@@ -225,7 +225,7 @@ namespace VirtualClassroom.Controllers
                 return responseError("Invalid Form ID.");
             }
 
-            
+
         }
 
 

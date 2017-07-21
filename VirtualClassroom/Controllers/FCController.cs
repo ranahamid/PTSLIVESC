@@ -23,7 +23,7 @@ namespace VirtualClassroom.Controllers
                 var q = from x in db.TblFCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower() && x.TblClassroom.IsActive != 0
                         select x;
-                
+
                 if (q != null && q.Count() == 1)
                 {
                     TblFC fc = q.Single();
@@ -54,7 +54,7 @@ namespace VirtualClassroom.Controllers
                 var q = from x in db.TblFCs
                         where x.ClassroomId.ToLower() == classroomId.ToLower() && x.Id.ToLower() == id.ToLower()
                         orderby x.Name
-                        select x;                
+                        select x;
 
                 if (q != null && q.Count() == 1)
                 {
@@ -89,10 +89,10 @@ namespace VirtualClassroom.Controllers
             {
                 // error
                 return responseError("Invalid URL.");
-            }            
+            }
         }
 
-        
+
         // dispose
         protected override void Dispose(bool disposing)
         {

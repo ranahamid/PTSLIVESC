@@ -1,16 +1,8 @@
 ﻿@using Microsoft.AspNet.Identity
 @using VirtualClassroom.Models
-@using System.Linq;
-@using System.Security.Claims;
 @using Microsoft.AspNet.Identity;
-@using Microsoft.AspNet.Identity.EntityFramework;
 @using Microsoft.AspNet.Identity.Owin;
-@using Microsoft.Owin;
-@using Microsoft.Owin.Security;
-@using System;
-@using System.Collections.Generic;
-@using System.Data.Entity;
-@using System.Threading.Tasks;
+
 @using System.Web;
 
 @if (Request.IsAuthenticated)
@@ -59,10 +51,8 @@
                         <li>@Html.ActionLink("RolesAdmin", "Index", "RolesAdmin")</li>
                         <li>@Html.ActionLink("UsersAdmin", "Index", "UsersAdmin")</li>
                     }
-
                 </ul>
             </li>
-
         </ul>
     }
 }
@@ -71,7 +61,6 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-
         <li class="dropdown dropdown-user">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                 <img alt="" class="img-circle" style="height:20px;width:20px;" src="~/Content/pageheader/user.cf4d84ae.png" />
@@ -79,18 +68,12 @@ else
                 <i class="fa fa-angle-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-default">
-
                 <li>
                     @Html.ActionLink("Home", "Index", "Home", null, htmlAttributes: new { })
                 </li>
                 <li class="divider"> </li>
-
-
                 <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-
                 <li class="divider"> </li>
-
-
                 <li>
                     @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
                 </li>

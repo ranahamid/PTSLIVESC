@@ -14,7 +14,6 @@
     }
 
  .panel-footer {
-    /*background-color: #e2e3e5;*/
     padding-bottom: 102px !important;
 }
  
@@ -58,29 +57,6 @@ else
             $(".ModeratorTimeAlert").css('display', 'block');
             $(".ModeratorTimeAlert").css('margin-top', '10px');
 
-            //$("#minimizechat").css('float', 'right');
-            //$("#minimizechat").css('margin-top', '3px');
-            //$("#minimizechat").css('margin-right', '2px');
-            //$("#minimizechat").css('color', '#fff');
-        
-
-            //$("#minimizevideo").css('margin-right', '2px');
-			//$("#minimizevideo").css('margin-top', '3px');
-            //$("#minimizevideo").css('float', 'right');
-            //$("#minimizevideo").css('color', '#fff');
-
-            //$(".header-button").css('background-color', '#5cb85c');
-            //$(".header-button").css('border-color', '#4cae4c');
-
-            //$(".header-button2").css('background-color', '#5cb85c');
-            //$(".header-button2").css('border-color', '#4cae4c');
-            //$(".header-button2").css('height', '18px');
-
-            //$("#exportchat").css('background-color', '#5cb85c');
-            //$("#exportchat").css('border-color', '#4cae4c');
-            //$("#exportchat").css('color', '#0000ff');
-
-
 
             $("#exportchat").click(function ()
             {
@@ -89,11 +65,8 @@ else
 
                 $(".item").each(function ()
                 {
-                        //val = val + $(this).find(".itemName").text() ;
+                        
                         val = val + $(this).find(".itemName:nth-child(1)").text();
-//                    val = val +" ["+ $(this).find(".itemTimechat").text() + " ]"+'\n';
-  //                  val = val + $(this).find(".itemMessage").text() + '\n' + '\n';
-
                         val = val + " [" + $(this).find(".itemTimechat:nth-child(1)").text() + " ]" + '\n';
                         val = val + $(this).find(".itemMessage:nth-child(1)").text() + '\n' + '\n';
                 });
@@ -104,7 +77,7 @@ else
 
             $("#minimizechat").click(function ()
             {
-               // $(".panel-heading").slideToggle();
+            
                 $(".panel-body").slideToggle();
                 $(".panel-footer").slideToggle();
 

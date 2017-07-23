@@ -7,7 +7,6 @@
         height:600px;
     }
 
-
 .panel-body {
     background-color: #E2E3E5;
 }
@@ -18,12 +17,7 @@
 }
 
 </style>
-<script>
-   // $("#Header1").css('display', 'none');
-   // $("#Footer1 hr").css('display', 'none');
-    //$(".divBody").css('margin-top', '20px');
-   
-</script>
+
 @{
     ViewBag.Title = "Personal Computer";
     ViewBag.Name = Model.Name;    
@@ -54,38 +48,11 @@ else
         });
 
 
-        $(function () {
-            //Footer1
+        $(function ()
+        {     
             $("#Footer1 hr").css('display', 'none');
-            // console.log('copyright: ' + '@Model.Name');
-
             $("#Footer1 #copyright").text('@Model.Name');
-            //minimizechat
-            //$("#minimizechat").css('float', 'right');
-            //$("#minimizechat").css('margin-top', '3px');
-            //$("#minimizechat").css('margin-right', '2px');
-            //$("#minimizechat").css('color', '#fff');
-            //minimizevideo
-
-            //$("#minimizevideo").css('margin-right', '2px');
-            //$("#minimizevideo").css('margin-top', '3px');
-            //$("#minimizevideo").css('float', 'right');
-            //$("#minimizevideo").css('color', '#fff');
-
-            //header-button
-            //$(".header-button").css('background-color', '#5cb85c');
-            //$(".header-button").css('border-color', '#4cae4c');
-
-            //header-button2
-            //$(".header-button2").css('background-color', '#5cb85c');
-            //$(".header-button2").css('border-color', '#4cae4c');
-            //$(".header-button2").css('height', '18px');
-
-            //exportchat
-            //$("#exportchat").css('background-color', '#5cb85c');
-            //$("#exportchat").css('border-color', '#4cae4c');
-            //$("#exportchat").css('color', '#0000ff');
-
+            
             $("#exportchat").click(function () {
                 var values = [];
                 var val = "";
@@ -100,8 +67,8 @@ else
 
             });
 
-            $("#minimizechat").click(function () {
-                //  $(".panel-heading").slideToggle();
+            $("#minimizechat").click(function ()
+            {
                 $(".panel-body").slideToggle();
                 $(".panel-footer").slideToggle();
 

@@ -53,9 +53,22 @@ namespace VirtualClassroom.Controllers
 
         //
         // GET: /Roles/
-        public ActionResult Index()
+        public ActionResult Index(ManageMessageId? message)
         {
+            ViewBag.StatusMessage =
+                message == ManageMessageId.AddRoleSuccess ? "Your role has been created."
+              : message == ManageMessageId.DeleteRoleSuccess ? "Your role has been deleted."
+              : message == ManageMessageId.ChangeRoleSuccess ? "Your role has been changed."
+              : "";
+
             return View(RoleManager.Roles);
+        }
+
+        public enum ManageMessageId
+        {
+            AddRoleSuccess,
+            DeleteRoleSuccess,
+            ChangeRoleSuccess,            
         }
 
         //
@@ -105,7 +118,7 @@ namespace VirtualClassroom.Controllers
                     ModelState.AddModelError("", roleresult.Errors.First());
                     return View();
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","RolesAdmin", new { Message = ManageMessageId.AddRoleSuccess });
             }
             return View();
         }
@@ -139,7 +152,7 @@ namespace VirtualClassroom.Controllers
                 var role = await RoleManager.FindByIdAsync(roleModel.Id);
                 role.Name = roleModel.Name;
                 await RoleManager.UpdateAsync(role);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "RolesAdmin", new { Message = ManageMessageId.ChangeRoleSuccess });
             }
             return View();
         }
@@ -191,7 +204,7 @@ namespace VirtualClassroom.Controllers
                     ModelState.AddModelError("", result.Errors.First());
                     return View();
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "RolesAdmin", new { Message = ManageMessageId.DeleteRoleSuccess });
             }
             return View();
         }

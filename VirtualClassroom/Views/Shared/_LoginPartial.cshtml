@@ -38,10 +38,17 @@
                     </li>
                     <li class="divider"> </li>
 
-                    <li>
+                    @*<li>
                         @Html.ActionLink("My Profile", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                    </li>
+                    </li>*@
 
+                    <li>                     
+                            @Html.ActionLink("Change password", "ChangePassword", "Manage")                       
+                    </li>
+                    <li>
+                            @Html.ActionLink("My profile", "EditProfile", "Manage")                        
+                    </li>
+                    <li class="divider"> </li>
 
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
 

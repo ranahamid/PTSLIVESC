@@ -70,8 +70,7 @@
             @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
    
         <div class="col-md-10">
-            @Html.DropDownListFor(m=> Model.SelectedCountry, Model.Country, "Select Country", new { @id = "CountryId", @class = "form-control",
-           @onchange = "ChangeCountry()" })
+            @Html.DropDownListFor(m=> Model.SelectedCountry, Model.Country, "Select Country", new { @id = "CountryId", @class = "form-control"})
         </div>
     </div>
 
@@ -106,12 +105,7 @@
 }
 
 <script>
-    function ChangeCountry()
-    {
-        var Id = $('#CountryId').val();
-        console.log("Country: " + Id);
-      
-    }
+   
     function FillTeachers()
     {
        // debugger;

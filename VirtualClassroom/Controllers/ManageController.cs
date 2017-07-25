@@ -408,6 +408,25 @@ namespace VirtualClassroom.Controllers
                 if (user != null)
                 {
                     await SignInAsync(user, isPersistent: false);
+                    //send mail
+                    string FullName = string.Empty;
+                    if (user.FullName != null)
+                    {
+                        FullName = user.FullName;
+                    }
+                    else
+                    {
+                        FullName = User.Identity.GetUserName();
+                    }
+                    string body = "Dear " + FullName + ","+
+                           
+                            "\n\nRecently your Virtual Classroom account password has changed." +
+                           
+                            "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                            "\n\nThank you," +
+                            "\nThe Virtual Classroom Team";
+
+                    await UserManager.SendEmailAsync(user.Id, "Your Virtual Classroom account password has changed", body);
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }

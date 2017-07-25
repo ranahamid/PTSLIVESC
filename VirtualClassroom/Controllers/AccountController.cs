@@ -233,7 +233,7 @@ namespace VirtualClassroom.Controllers
                     }
 
                     //send email
-                    string body = "Hello " + FullName +
+                    string body = "Dear " + FullName + "," +
                        ",\n\nWelcome to Virtual Classroom!" +
                         "\n\nA request has been received to open your Virtual Classroom account." +
                         "\n\nPlease confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">Click here</a>." +
@@ -241,8 +241,7 @@ namespace VirtualClassroom.Controllers
                         "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                         "\n\nThank you," +
                         "\nThe Virtual Classroom Team";
-
-                    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
 
                     ViewBag.Link = callbackUrl;
@@ -350,15 +349,14 @@ namespace VirtualClassroom.Controllers
                 {
                     FullName = User.Identity.GetUserName();
                 }
-                string body = "Hello " + FullName +
+                string body = "Dear " + FullName + "," +
                     ", A request has been received to change the password for your Virtual Classroom account." +
                     "\n\nPlease reset your password by clicking here: <a href=\"" + callbackUrl + "\">Click here</a>." +
                     "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                     "\n\nThank you," +
                     "\nThe Virtual Classroom Team";
 
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", body);
-                //await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", body);               
                 //ViewBag.Link = callbackUrl;
                 return View("ForgotPasswordConfirmation");
             }

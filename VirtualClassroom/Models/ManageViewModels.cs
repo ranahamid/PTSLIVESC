@@ -16,7 +16,41 @@ namespace VirtualClassroom.Models
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
     }
+    public class DetailsUserAdminViewModel
+    {
+        public ApplicationUser user { get; set; }
+        [Required]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
 
+
+        [Display(Name = "Address1")]
+        public string Address1 { get; set; }
+
+        [Display(Name = "State")]
+        public string State { get; set; }
+
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+       
+        [Display(Name = "Country")]
+        public string SelectedCountry { get; set; }
+
+
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+
+        [Display(Name = "Classroom")]
+        public string SelectedClassroom { get; set; }
+
+
+
+        [Display(Name = "Teacher")]
+        public string SelectedTeacher { get; set; }
+
+    }
     public class EditProfileViewModel
     {
 

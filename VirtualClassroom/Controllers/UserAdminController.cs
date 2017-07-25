@@ -16,8 +16,10 @@ namespace VirtualClassroom.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersAdminController : Controller
     {
+        private VirtualClassroomDataContext db;
         public UsersAdminController()
         {
+            db = new VirtualClassroomDataContext();
         }
 
         public UsersAdminController(ApplicationUserManager userManager, ApplicationRoleManager roleManager)
@@ -54,11 +56,23 @@ namespace VirtualClassroom.Controllers
 
         //
         // GET: /Users/
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            ViewBag.StatusMessage =
+                message == ManageMessageId.AddUserSuccess ?    "Your user has been created."
+              : message == ManageMessageId.DeleteUserSuccess ? "Your user has been deleted."
+              : message == ManageMessageId.ChangeUserSuccess ? "Your user has been changed."
+              : "";
+
             return View(await UserManager.Users.ToListAsync());
         }
 
+        public enum ManageMessageId
+        {
+            AddUserSuccess,
+            DeleteUserSuccess,
+            ChangeUserSuccess
+        }
         //
         // GET: /Users/Details/5
         public async Task<ActionResult> Details(string id)
@@ -70,8 +84,44 @@ namespace VirtualClassroom.Controllers
             var user = await UserManager.FindByIdAsync(id);
 
             ViewBag.RoleNames = await UserManager.GetRolesAsync(user.Id);
+            //
+            DetailsUserAdminViewModel model = new DetailsUserAdminViewModel();
+            model.user = user;
 
-            return View(user);
+            var q = from x in db.TblPCs
+                    where x.Id == id
+                    select x;
+
+            if (q != null && q.Count() == 1)
+            {
+                TblPC tblPC = q.Single();
+
+                model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                model.State = tblPC.State != null ? tblPC.State : string.Empty;
+                model.City = tblPC.City != null ? tblPC.City : string.Empty;
+                model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+                //teacher
+
+                if (tblPC.TcUid != null)
+                {
+                    var qTC = from x in db.TblTCs
+                              where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                              select x;
+
+                    if (qTC != null && qTC.Count() == 1)
+                    {
+                        TblTC tc = qTC.Single();
+
+                        model.SelectedTeacher = tc.Uid != null ? tc.Name.ToString() : string.Empty;
+                    }
+                }
+            }
+
+            return View(model);
         }
 
         //
@@ -80,22 +130,142 @@ namespace VirtualClassroom.Controllers
         {
             //Get the list of Roles
             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
-            return View();
+            
+            //Create
+        
+            RegisterViewModel model = new RegisterViewModel();
+            //country
+            var Countries = from x in db.TblCountries
+                            select x;
+
+            List<SelectListItem> CountryItems = new List<SelectListItem>();
+
+            if (Countries != null)
+            {
+                foreach (var item in Countries)
+                {
+                    CountryItems.Add(new SelectListItem
+                    {
+                        Text = item.CountryName,
+                        Value = item.CountryName,
+                        Selected = (item.TwoCharCountryCode == "US") ? true : false
+                    });
+
+                }
+            }
+
+            model.Country = CountryItems;
+
+
+            //classroom            
+            var TblClassrooms = from x in db.TblClassrooms
+                                select x;
+
+            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
+
+            if (TblClassroomItems != null)
+            {
+                foreach (var item in TblClassrooms)
+                {
+                    TblClassroomItems.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id
+                    });
+                }
+            }
+
+            model.Classroom = TblClassroomItems;
+
+            return View(model);
         }
 
         //
         // POST: /Users/Create
         [HttpPost]
-        public async Task<ActionResult> Create(RegisterViewModel userViewModel, params string[] selectedRoles)
+        public async Task<ActionResult> Create(RegisterViewModel model, params string[] selectedRoles)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = userViewModel.Email, Email = userViewModel.Email };
-                var adminresult = await UserManager.CreateAsync(user, userViewModel.Password);
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FullName = model.FullName };
+                var adminresult = await UserManager.CreateAsync(user, model.Password);
 
-                //Add User to the selected Roles 
+                
                 if (adminresult.Succeeded)
                 {
+                    //add to the db pc
+                        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        //body
+                        string FullName = string.Empty;
+                        if (model.FullName != null)
+                        {
+                            FullName = model.FullName;
+                        }
+                        else
+                        {
+                            FullName = User.Identity.GetUserName();
+                        }
+
+                        //send email
+                        string body = "Dear " + FullName + "," +
+                           ",\n\nWelcome to Virtual Classroom!" +
+                            "\n\nA request has been received to open your Virtual Classroom account." +
+                            "\n\nPlease confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">Click here</a>." +
+
+                            "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                            "\n\nThank you," +
+                            "\nThe Virtual Classroom Team";
+                      
+                        await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
+
+                        ViewBag.Link = callbackUrl;
+
+                        //store the others property in tblPC
+                        string fullName = model.FullName != null ? model.FullName : string.Empty;
+                        string CurrentUserId = user.Id;
+
+                        string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                        string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+                        Guid selectedTeacher = Guid.NewGuid();
+
+                        if (model.SelectedTeacher != null)
+                        {
+                            bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
+                        }
+
+                        Guid pcUid = Guid.NewGuid();
+
+                        db.TblPCs.InsertOnSubmit(new TblPC
+                        {
+                            Uid = pcUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName,
+                            ScUid = null,
+                            TcUid = selectedTeacher,
+                            Position = 0,
+                            Audio = true,
+                            Video = true,
+                            Volume = 80,
+                            Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                            City = model.City != null ? model.City : string.Empty,
+                            Country = selectedCountry,
+                            ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                            State = model.State != null ? model.State : string.Empty,
+                        });
+
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    //end of store the others property in tblPC
+
+                    //Add User to the selected Roles 
                     if (selectedRoles != null)
                     {
                         var result = await UserManager.AddToRolesAsync(user.Id, selectedRoles);
@@ -112,9 +282,8 @@ namespace VirtualClassroom.Controllers
                     ModelState.AddModelError("", adminresult.Errors.First());
                     ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
                     return View();
-
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.AddUserSuccess });
             }
             ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
             return View();
@@ -184,7 +353,7 @@ namespace VirtualClassroom.Controllers
                     ModelState.AddModelError("", result.Errors.First());
                     return View();
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.ChangeUserSuccess });
             }
             ModelState.AddModelError("", "Something failed.");
             return View();
@@ -230,7 +399,7 @@ namespace VirtualClassroom.Controllers
                     ModelState.AddModelError("", result.Errors.First());
                     return View();
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.DeleteUserSuccess });
             }
             return View();
         }

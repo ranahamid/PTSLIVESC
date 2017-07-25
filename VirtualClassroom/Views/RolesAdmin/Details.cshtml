@@ -24,20 +24,35 @@
     <p>No users found in this role.</p>
 }
 
-<table class="table">
-
+<table class="table" style="margin-top:5px;">
+    <thead>
+        <tr style="font-weight: 700;">
+            <td>User Name</td>
+            <td>Full Name</td>
+        </tr>
+    </thead>
     @foreach (var item in ViewBag.Users)
     {
         <tr>
             <td>
                 @item.UserName
             </td>
+            <td>
+                @if(item.FullName!=null && item.FullName!=string.Empty )
+                {
+                @item.FullName
+                }
+                else
+                {
+                    <p>-</p>
+                }
+            </td>
         </tr>
     }
 </table>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Role List", "Index")
 </p>
 
 

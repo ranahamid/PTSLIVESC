@@ -199,6 +199,9 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Classroom = TblClassroomItems;
+            model.SelectedClassroom = string.Empty;
+            model.SelectedCountry = string.Empty;
+            model.SelectedTeacher = string.Empty;
 
             return View(model);
         }
@@ -240,7 +243,7 @@ namespace VirtualClassroom.Controllers
 
                         "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                         "\n\nThank you," +
-                        "\nThe Virtual Classroom Team";
+                        "\nThe Virtual Classroom Team.";
                     
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
 
@@ -354,7 +357,7 @@ namespace VirtualClassroom.Controllers
                     "\n\nPlease reset your password by clicking here: <a href=\"" + callbackUrl + "\">Click here</a>." +
                     "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                     "\n\nThank you," +
-                    "\nThe Virtual Classroom Team";
+                    "\nThe Virtual Classroom Team.";
 
                 await UserManager.SendEmailAsync(user.Id, "Reset Password", body);               
                 //ViewBag.Link = callbackUrl;

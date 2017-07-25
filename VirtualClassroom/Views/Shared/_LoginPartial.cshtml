@@ -12,7 +12,7 @@
     var user = userManager.FindByEmail(User.Identity.GetUserName());
 
     string FullName = string.Empty;
-    if (user.FullName != null)
+    if (user!=null && user.FullName != null)
     {
         FullName = user.FullName;
     }

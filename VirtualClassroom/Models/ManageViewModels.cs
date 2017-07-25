@@ -33,7 +33,7 @@ namespace VirtualClassroom.Models
         [Display(Name = "City")]
         public string City { get; set; }
 
-       
+        [Required]
         [Display(Name = "Country")]
         public string SelectedCountry { get; set; }
 
@@ -41,12 +41,12 @@ namespace VirtualClassroom.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-
+        [Required]
         [Display(Name = "Classroom")]
         public string SelectedClassroom { get; set; }
 
 
-
+        [Required]
         [Display(Name = "Teacher")]
         public string SelectedTeacher { get; set; }
 

@@ -153,19 +153,19 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<TblModerator> TblModerators
-		{
-			get
-			{
-				return this.GetTable<TblModerator>();
-			}
-		}
-		
 		public System.Data.Linq.Table<TblCountry> TblCountries
 		{
 			get
 			{
 				return this.GetTable<TblCountry>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TblModerator> TblModerators
+		{
+			get
+			{
+				return this.GetTable<TblModerator>();
 			}
 		}
 	}
@@ -2485,6 +2485,87 @@ namespace VirtualClassroom.Models
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblCountries")]
+	public partial class TblCountry
+	{
+		
+		private System.Nullable<int> _CountryID;
+		
+		private string _CountryName;
+		
+		private string _TwoCharCountryCode;
+		
+		private string _ThreeCharCountryCode;
+		
+		public TblCountry()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryID", DbType="Int")]
+		public System.Nullable<int> CountryID
+		{
+			get
+			{
+				return this._CountryID;
+			}
+			set
+			{
+				if ((this._CountryID != value))
+				{
+					this._CountryID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryName", DbType="VarChar(50)")]
+		public string CountryName
+		{
+			get
+			{
+				return this._CountryName;
+			}
+			set
+			{
+				if ((this._CountryName != value))
+				{
+					this._CountryName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TwoCharCountryCode", DbType="Char(2)")]
+		public string TwoCharCountryCode
+		{
+			get
+			{
+				return this._TwoCharCountryCode;
+			}
+			set
+			{
+				if ((this._TwoCharCountryCode != value))
+				{
+					this._TwoCharCountryCode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThreeCharCountryCode", DbType="Char(3)")]
+		public string ThreeCharCountryCode
+		{
+			get
+			{
+				return this._ThreeCharCountryCode;
+			}
+			set
+			{
+				if ((this._ThreeCharCountryCode != value))
+				{
+					this._ThreeCharCountryCode = value;
+				}
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblModerator")]
 	public partial class TblModerator : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2516,6 +2597,8 @@ namespace VirtualClassroom.Models
 		private string _ZipCode;
 		
 		private string _Country;
+		
+		private System.Nullable<System.Guid> _TcUid;
 		
 		private EntityRef<TblClassroom> _TblClassroom;
 		
@@ -2549,6 +2632,8 @@ namespace VirtualClassroom.Models
     partial void OnZipCodeChanged();
     partial void OnCountryChanging(string value);
     partial void OnCountryChanged();
+    partial void OnTcUidChanging(System.Nullable<System.Guid> value);
+    partial void OnTcUidChanged();
     #endregion
 		
 		public TblModerator()
@@ -2821,6 +2906,26 @@ namespace VirtualClassroom.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TcUid", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> TcUid
+		{
+			get
+			{
+				return this._TcUid;
+			}
+			set
+			{
+				if ((this._TcUid != value))
+				{
+					this.OnTcUidChanging(value);
+					this.SendPropertyChanging();
+					this._TcUid = value;
+					this.SendPropertyChanged("TcUid");
+					this.OnTcUidChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TblClassroom_TblModerator", Storage="_TblClassroom", ThisKey="ClassroomId", OtherKey="Id", IsForeignKey=true)]
 		public TblClassroom TblClassroom
 		{
@@ -2872,87 +2977,6 @@ namespace VirtualClassroom.Models
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TblCountries")]
-	public partial class TblCountry
-	{
-		
-		private System.Nullable<int> _CountryID;
-		
-		private string _CountryName;
-		
-		private string _TwoCharCountryCode;
-		
-		private string _ThreeCharCountryCode;
-		
-		public TblCountry()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryID", DbType="Int")]
-		public System.Nullable<int> CountryID
-		{
-			get
-			{
-				return this._CountryID;
-			}
-			set
-			{
-				if ((this._CountryID != value))
-				{
-					this._CountryID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CountryName", DbType="VarChar(50)")]
-		public string CountryName
-		{
-			get
-			{
-				return this._CountryName;
-			}
-			set
-			{
-				if ((this._CountryName != value))
-				{
-					this._CountryName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TwoCharCountryCode", DbType="Char(2)")]
-		public string TwoCharCountryCode
-		{
-			get
-			{
-				return this._TwoCharCountryCode;
-			}
-			set
-			{
-				if ((this._TwoCharCountryCode != value))
-				{
-					this._TwoCharCountryCode = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThreeCharCountryCode", DbType="Char(3)")]
-		public string ThreeCharCountryCode
-		{
-			get
-			{
-				return this._ThreeCharCountryCode;
-			}
-			set
-			{
-				if ((this._ThreeCharCountryCode != value))
-				{
-					this._ThreeCharCountryCode = value;
-				}
 			}
 		}
 	}

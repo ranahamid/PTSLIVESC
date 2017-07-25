@@ -54,24 +54,28 @@ namespace VirtualClassroom.Controllers
             }
         }
 
-        //
+
         // GET: /Users/
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.AddUserSuccess ?    "Your user has been created."
+                message == ManageMessageId.AddUserSuccess ? "Your user has been created."
               : message == ManageMessageId.DeleteUserSuccess ? "Your user has been deleted."
               : message == ManageMessageId.ChangeUserSuccess ? "Your user has been changed."
+              : message == ManageMessageId.CanTDeleteOwn ? "You can't delete your own account."
               : "";
 
             return View(await UserManager.Users.ToListAsync());
         }
 
+
+
         public enum ManageMessageId
         {
             AddUserSuccess,
             DeleteUserSuccess,
-            ChangeUserSuccess
+            ChangeUserSuccess,
+            CanTDeleteOwn
         }
         //
         // GET: /Users/Details/5
@@ -155,6 +159,9 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Country = CountryItems;
+            model.SelectedClassroom = string.Empty;
+            model.SelectedCountry = string.Empty;
+            model.SelectedTeacher = string.Empty;
 
 
             //classroom            
@@ -194,80 +201,170 @@ namespace VirtualClassroom.Controllers
                 if (adminresult.Succeeded)
                 {
                     //add to the db pc
-                        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        //body
-                        string FullName = string.Empty;
-                        if (model.FullName != null)
-                        {
-                            FullName = model.FullName;
-                        }
-                        else
-                        {
-                            FullName = User.Identity.GetUserName();
-                        }
+                    var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //body
+                    string FullName = string.Empty;
+                    if (model.FullName != null)
+                    {
+                        FullName = model.FullName;
+                    }
+                    else
+                    {
+                        FullName = User.Identity.GetUserName();
+                    }
 
-                        //send email
-                        string body = "Dear " + FullName + "," +
-                           ",\n\nWelcome to Virtual Classroom!" +
-                            "\n\nA request has been received to open your Virtual Classroom account." +
-                            "\n\nPlease confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">Click here</a>." +
+                    //send email
+                    string body = "Dear " + FullName + "," +
+                       ",\n\nWelcome to Virtual Classroom!" +
+                        "\n\nA request has been received to open your Virtual Classroom account." +
+                        "\n\nPlease confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">Click here</a>." +
 
-                            "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
-                            "\n\nThank you," +
-                            "\nThe Virtual Classroom Team";
-                      
-                        await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
-
-                        ViewBag.Link = callbackUrl;
-
-                        //store the others property in tblPC
-                        string fullName = model.FullName != null ? model.FullName : string.Empty;
-                        string CurrentUserId = user.Id;
-
-                        string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
-                        string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
-                        Guid selectedTeacher = Guid.NewGuid();
-
-                        if (model.SelectedTeacher != null)
-                        {
-                            bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
-                        }
-
-                        Guid pcUid = Guid.NewGuid();
-
-                        db.TblPCs.InsertOnSubmit(new TblPC
-                        {
-                            Uid = pcUid,
-                            Id = CurrentUserId,
-                            ClassroomId = selectedClassroom,
-                            Name = fullName,
-                            ScUid = null,
-                            TcUid = selectedTeacher,
-                            Position = 0,
-                            Audio = true,
-                            Video = true,
-                            Volume = 80,
-                            Address1 = model.Address1 != null ? model.Address1 : string.Empty,
-                            City = model.City != null ? model.City : string.Empty,
-                            Country = selectedCountry,
-                            ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
-                            State = model.State != null ? model.State : string.Empty,
-                        });
-
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    //end of store the others property in tblPC
-
+                        "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                        "\n\nThank you," +
+                        "\nThe Virtual Classroom Team.";
+                   
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
+                    ViewBag.Link = callbackUrl;
+                    
                     //Add User to the selected Roles 
                     if (selectedRoles != null)
                     {
+                        foreach (var role in selectedRoles)
+                        {
+                            //Teacher
+                            if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
+                            {
+
+                            }
+                            //Seat
+                            if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                            {
+
+                            }
+                            //Featured
+                            if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+                            {
+
+                            }
+
+                            #region Moderator
+                            //student pc
+                            if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                            {
+                                //store the others property in tblPC
+                                string fullName = model.FullName != null ? model.FullName : string.Empty;
+                                string CurrentUserId = user.Id;
+
+                                string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+                                Guid selectedTeacher = Guid.NewGuid();
+
+                                if (model.SelectedTeacher != null)
+                                {
+                                    bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
+                                }
+
+                                Guid pcUid = Guid.NewGuid();
+
+                                db.TblPCs.InsertOnSubmit(new TblPC
+                                {
+                                    Uid = pcUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName,
+                                    ScUid = null,
+                                    TcUid = selectedTeacher,
+                                    Position = 0,
+                                    Audio = true,
+                                    Video = true,
+                                    Volume = 80,
+                                    Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                                    City = model.City != null ? model.City : string.Empty,
+                                    Country = selectedCountry,
+                                    ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                                    State = model.State != null ? model.State : string.Empty,
+                                });
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                                //end of store the others property in tblPC
+                            }
+#endregion
+                            
+                            #region Moderator                            
+                            //Moderator
+                            if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                            {
+                                //store the others property in tblPC
+                                string fullName = model.FullName != null ? model.FullName : string.Empty;
+                                string CurrentUserId = user.Id;
+
+                                string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
+                                Guid selectedTeacher = Guid.NewGuid();
+
+                                if (model.SelectedTeacher != null)
+                                {
+                                    bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
+                                }
+
+                                Guid pcUid = Guid.NewGuid();
+
+                                db.TblModerators.InsertOnSubmit(new TblModerator
+                                {
+                                    Uid = pcUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName,
+                                   // ScUid = null,
+                                     TcUid = selectedTeacher,
+                                    Position = 0,
+                                    Audio = true,
+                                    Video = true,
+                                    Volume = 80,
+                                    Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                                    City = model.City != null ? model.City : string.Empty,
+                                    Country = selectedCountry,
+                                    ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                                    State = model.State != null ? model.State : string.Empty,
+                                });
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                                //end of store the others property in tblModerator
+                            }
+                            #endregion
+
+                            //Admin
+                            if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+                            {
+                                //nothing to do
+                            }
+                            //Administrator
+                            if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                            {
+                                //nothing to do
+                            }
+
+
+                        }
+
+
+                        //add user to roles
                         var result = await UserManager.AddToRolesAsync(user.Id, selectedRoles);
                         if (!result.Succeeded)
                         {
@@ -387,19 +484,49 @@ namespace VirtualClassroom.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
+                if (id == User.Identity.GetUserId())
+                {
+                    return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.CanTDeleteOwn });
+                }
+                else
+                {
+                    var user = await UserManager.FindByIdAsync(id);
+                    if (user == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    var result = await UserManager.DeleteAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("", result.Errors.First());
+                        return View();
+                    }
+                    else
+                    {
+                        //send mail
+                        string FullName = string.Empty;
+                        if (user.FullName != null)
+                        {
+                            FullName = user.FullName;
+                        }
+                        else
+                        {
+                            FullName = User.Identity.GetUserName();
+                        }
+                        string body = "Dear " + FullName + "," +
 
-                var user = await UserManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    return HttpNotFound();
+                                "\n\nRecently your Virtual Classroom account has been deleted." +
+
+                                "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                                "\n\nThank you," +
+                                "\nThe Virtual Classroom Team.";
+
+                        await UserManager.SendEmailAsync(user.Id, "Your Virtual Classroom account password has changed", body);
+                        //end email
+                    }
+                    return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.DeleteUserSuccess });
                 }
-                var result = await UserManager.DeleteAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", result.Errors.First());
-                    return View();
-                }
-                return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.DeleteUserSuccess });
+               
             }
             return View();
         }

@@ -106,6 +106,14 @@
       <Association Name="TblClassroom_TblSC" Member="TblClassroom" ThisKey="ClassroomId" OtherKey="Id" Type="TblClassroom" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.TblCountries" Member="TblCountries">
+    <Type Name="TblCountry">
+      <Column Name="CountryID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CountryName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="TwoCharCountryCode" Type="System.String" DbType="Char(2)" CanBeNull="true" />
+      <Column Name="ThreeCharCountryCode" Type="System.String" DbType="Char(3)" CanBeNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.TblModerator" Member="TblModerators">
     <Type Name="TblModerator">
       <Column Name="Uid" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -121,15 +129,8 @@
       <Column Name="City" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="ZipCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="Country" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="TcUid" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="TblClassroom_TblModerator" Member="TblClassroom" ThisKey="ClassroomId" OtherKey="Id" Type="TblClassroom" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TblCountries" Member="TblCountries">
-    <Type Name="TblCountry">
-      <Column Name="CountryID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CountryName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="TwoCharCountryCode" Type="System.String" DbType="Char(2)" CanBeNull="true" />
-      <Column Name="ThreeCharCountryCode" Type="System.String" DbType="Char(3)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

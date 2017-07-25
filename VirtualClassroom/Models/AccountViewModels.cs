@@ -85,7 +85,8 @@ namespace VirtualClassroom.Models
         [Display(Name = "Country")]
         public IEnumerable<SelectListItem> Country { get; set; }
 
-  
+        
+        [Required]
         [Display(Name = "Country")]
         public string SelectedCountry { get; set; }
 
@@ -93,11 +94,11 @@ namespace VirtualClassroom.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-     
+
         [Display(Name = "Classroom")]
         public IEnumerable<SelectListItem> Classroom { get; set; }
 
-  
+        [Required]
         [Display(Name = "Classroom")]
         public string SelectedClassroom { get; set; }
 
@@ -106,7 +107,7 @@ namespace VirtualClassroom.Models
 
         public IEnumerable<SelectListItem> Teacher { get; set; }
 
-
+        [Required]
         [Display(Name = "Teacher")]
         public string SelectedTeacher { get; set; }
 

@@ -424,9 +424,10 @@ namespace VirtualClassroom.Controllers
                            
                             "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                             "\n\nThank you," +
-                            "\nThe Virtual Classroom Team";
+                            "\nThe Virtual Classroom Team.";
 
                     await UserManager.SendEmailAsync(user.Id, "Your Virtual Classroom account password has changed", body);
+                    //end email
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }

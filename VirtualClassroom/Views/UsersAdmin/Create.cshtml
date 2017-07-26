@@ -1,7 +1,6 @@
 ﻿@model VirtualClassroom.Models.UserAdminCreateViewModel
 @{
-    ViewBag.Title = "Create";
-    var selectClassroom = "Select Classroom";
+    ViewBag.Title = "Create";    
 }
 
 
@@ -51,25 +50,7 @@
         </div>
     </div>
 
-    <script>
-        function ChangeRoleStMod()
-        {
-            console.log("In ChangeRoleStMod....");
 
-        
-            if ($('#Moderator-checkbox').prop("checked") == true || $('#Student-checkbox').prop("checked") == true)
-            {
-                $('#pc-section').css({ 'display': 'block' });
-                console.log("display true");
-      
-            }
-            else
-            {
-                $('#pc-section').css({ 'display': 'none' });
-                console.log("display none");
-            }
-        }
-    </script>
 
     <div class="pc-section" id="pc-section" style="display:none;">
 
@@ -137,6 +118,25 @@
     @Html.ActionLink("Back to User List", "Index")
 </p>
 
+<script>
+        function ChangeRoleStMod()
+        {
+            console.log("In ChangeRoleStMod....");
+
+
+            if ($('#Moderator-checkbox').prop("checked") == true || $('#Student-checkbox').prop("checked") == true)
+            {
+                $('#pc-section').css({ 'display': 'block' });
+                console.log("display true");
+
+            }
+            else
+            {
+                $('#pc-section').css({ 'display': 'none' });
+                console.log("display none");
+            }
+        }
+</script>
 
 <script>
     $(document).ready(function ()
@@ -149,28 +149,18 @@
     {
         var Id = $('#classid').val();
         var classroom = $('.classroomfill :selected').val();      
-        var s='@selectClassroom';
+   
 
-     
-        //if (classroom != "" && classroom != s)
-        //{
-        //    $('.teachersdrop').removeAttr('disabled');
-        //}
-        //else
-        //{
-        //    $('.teachersdrop').attr('disabled', true);
-        //}
-
-        //console.log("Changing teachers....");
 
         $("#teachersdiv").empty();
-        $("#teachersdiv").load('/UsersAdmin/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
-            var classroom = $('.classroomfill :selected').val();
-            console.log("classroom" + classroom);
+        $("#teachersdiv").load('/UsersAdmin/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr)
+        {
+            //var classroom = $('.classroomfill :selected').val();
+            //console.log("classroom" + classroom);
 
-            if (classroom != "" && classroom != "") {
-                $('.teachersdrop').removeAttr('disabled');
-            }
+            //if (classroom != "" ) {
+            //    $('.teachersdrop').removeAttr('disabled');
+            //}
         });
 
 

@@ -1908,13 +1908,6 @@ namespace VirtualClassroom.Controllers
             {
                 TblModerator tblModerator = q.Single();
 
-                // Guid tcUid = tblModerator.Uid;
-
-                //foreach (TblPC tblPC in db.TblPCs.Where(x => x.TcUid.HasValue && x.TcUid == tcUid).Select(x => x))
-                //{
-                //    tblPC.TcUid = null;
-                //}
-
                 db.TblModerators.DeleteOnSubmit(tblModerator);
 
                 try

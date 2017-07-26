@@ -146,10 +146,10 @@ namespace VirtualClassroom.Controllers
         {
             //Get the list of Roles
             List<IdentityRole> roleList = new List<IdentityRole>();
-            
+
             foreach (var item in RoleManager.Roles)
             {
-                if(item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")                    
+                if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
                 {
                     roleList.Add(item);
                 }
@@ -221,7 +221,7 @@ namespace VirtualClassroom.Controllers
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FullName = model.FullName };
                 var adminresult = await UserManager.CreateAsync(user, model.Password);
 
-                
+
                 if (adminresult.Succeeded)
                 {
                     //add to the db pc
@@ -247,10 +247,10 @@ namespace VirtualClassroom.Controllers
                         "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                         "\n\nThank you," +
                         "\nThe Virtual Classroom Team.";
-                   
+
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", body);
                     ViewBag.Link = callbackUrl;
-                    
+
                     //Add User to the selected Roles 
                     if (selectedRoles != null)
                     {
@@ -321,7 +321,7 @@ namespace VirtualClassroom.Controllers
                                 //end of store the others property in tblPC
                             }
                             #endregion
-                            
+
                             #region Moderator                            
                             //Moderator
                             if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
@@ -348,8 +348,8 @@ namespace VirtualClassroom.Controllers
                                     Id = CurrentUserId,
                                     ClassroomId = selectedClassroom,
                                     Name = fullName,
-                                   // ScUid = null,
-                                     TcUid = selectedTeacher,
+                                    // ScUid = null,
+                                    TcUid = selectedTeacher,
                                     Position = 0,
                                     Audio = true,
                                     Video = true,
@@ -453,12 +453,16 @@ namespace VirtualClassroom.Controllers
             {
                 Id = user.Id,
                 Email = user.Email,
-                RolesList = RoleManager.Roles.ToList().Select(x => new SelectListItem()
-                {
-                    Selected = userRoles.Contains(x.Name),
-                    Text = x.Name,
-                    Value = x.Name
-                })
+                RolesList = RoleManager.Roles.ToList().Where(x => x.Name == "Admin" ||
+                                                             x.Name == "Administrator" ||
+                                                             x.Name == "Student" ||
+                                                             x.Name == "Moderator"
+                                                            ).Select(x => new SelectListItem()
+                                                            {
+                                                                Selected = userRoles.Contains(x.Name),
+                                                                Text = x.Name,
+                                                                Value = x.Name
+                                                            }),
             });
         }
 
@@ -527,11 +531,14 @@ namespace VirtualClassroom.Controllers
         {
             if (ModelState.IsValid)
             {
+                string UserIdSt = id;
+
                 if (id == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                if (id == User.Identity.GetUserId())
+                //own user id
+                else if (id == User.Identity.GetUserId())
                 {
                     return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.CanTDeleteOwn });
                 }
@@ -542,7 +549,107 @@ namespace VirtualClassroom.Controllers
                     {
                         return HttpNotFound();
                     }
+
+                    string FullName = string.Empty;
+                    if (user.FullName != null)
+                    {
+                        FullName = user.FullName;
+                    }
+                    else
+                    {
+                        FullName = User.Identity.GetUserName();
+                    }
+                    //delete from student & moderator table
+                    var roles = await UserManager.GetRolesAsync(user.Id);
+
+                    foreach (var item in roles)
+                    {
+                        if (item == "Student")
+                        {
+                            //delete from student
+                            string loweredId = id.ToLower();
+
+                            var q = from x in db.TblPCs
+                                    where x.Id.ToLower() == loweredId
+                                    select x;
+
+                            if (q != null && q.Count() == 1)
+                            {
+                                TblPC tblPC = q.Single();
+
+                                // delete form answers of this student
+                                db.TblFormAnswers.DeleteAllOnSubmit(from x in db.TblFormAnswers
+                                                                    where x.PcUid == tblPC.Uid
+                                                                    select x);
+
+                                // delete from featured computer
+                                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                              where x.PcUid == tblPC.Uid
+                                                              select x);
+
+                                // delete student
+                                db.TblPCs.DeleteOnSubmit(tblPC);
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else if (item == "Moderator")
+                        {
+                            //delete from moderator
+                            string loweredId = id.ToLower();
+
+                            var q = from x in db.TblModerators
+                                    where x.Id.ToLower() == loweredId
+                                    select x;
+
+                            if (q != null && q.Count() == 1)
+                            {
+                                TblModerator tblModerator = q.Single();
+
+                                db.TblModerators.DeleteOnSubmit(tblModerator);
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+
+                    }
+                    //end from student & mod
+
+                    //send mail                      
+                    string body = "Dear " + FullName + "," +
+                            "\n\nRecently your Virtual Classroom account has been deleted." +
+                            "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
+                            "\n\nThank you," +
+                            "\nThe Virtual Classroom Team.";
+
+                    await UserManager.SendEmailAsync(UserIdSt, "Your Virtual Classroom account has been deleted", body);
+                    //end email
+
+                    //delete from identity
                     var result = await UserManager.DeleteAsync(user);
+
                     if (!result.Succeeded)
                     {
                         ModelState.AddModelError("", result.Errors.First());
@@ -550,30 +657,10 @@ namespace VirtualClassroom.Controllers
                     }
                     else
                     {
-                        //send mail
-                        string FullName = string.Empty;
-                        if (user.FullName != null)
-                        {
-                            FullName = user.FullName;
-                        }
-                        else
-                        {
-                            FullName = User.Identity.GetUserName();
-                        }
-                        string body = "Dear " + FullName + "," +
-
-                                "\n\nRecently your Virtual Classroom account has been deleted." +
-
-                                "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
-                                "\n\nThank you," +
-                                "\nThe Virtual Classroom Team.";
-
-                        await UserManager.SendEmailAsync(user.Id, "Your Virtual Classroom account password has changed", body);
-                        //end email
+                        return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.DeleteUserSuccess });
                     }
-                    return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.DeleteUserSuccess });
                 }
-               
+
             }
             return View();
         }

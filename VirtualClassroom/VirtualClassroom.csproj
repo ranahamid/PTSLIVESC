@@ -682,6 +682,7 @@
     <Content Include="Views\Shared\_Teachers.cshtml" />
     <Content Include="Views\Manage\EditProfile.cshtml" />
     <Content Include="Views\Shared\_TeachersEditProfile.cshtml" />
+    <Content Include="Views\Shared\_TeachersUserAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

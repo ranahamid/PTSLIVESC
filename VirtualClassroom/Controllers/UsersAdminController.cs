@@ -128,16 +128,40 @@ namespace VirtualClassroom.Controllers
             return View(model);
         }
 
+
+        public ActionResult FillTeachers(string id)
+        {
+            var vm = new VirtualClassroom.Models.TeacherViewModel()
+            {
+                selectedClassroomId = id
+            };
+
+            return PartialView("_TeachersUserAdmin", vm);
+        }
+
+
         //
         // GET: /Users/Create
         public async Task<ActionResult> Create()
         {
             //Get the list of Roles
-            ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
+            List<IdentityRole> roleList = new List<IdentityRole>();
             
+            foreach (var item in RoleManager.Roles)
+            {
+                if(item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")                    
+                {
+                    roleList.Add(item);
+                }
+
+            }
+            ViewBag.RoleId = new SelectList(roleList, "Name", "Name");
+            //ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
+
+
             //Create
-        
-            RegisterViewModel model = new RegisterViewModel();
+
+            UserAdminCreateViewModel model = new UserAdminCreateViewModel();
             //country
             var Countries = from x in db.TblCountries
                             select x;
@@ -159,9 +183,9 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Country = CountryItems;
-            model.SelectedClassroom = string.Empty;
-            model.SelectedCountry = string.Empty;
-            model.SelectedTeacher = string.Empty;
+            model.SelectedClassroom = "";
+            model.SelectedCountry = "";
+            model.SelectedTeacher = "";
 
 
             //classroom            
@@ -190,7 +214,7 @@ namespace VirtualClassroom.Controllers
         //
         // POST: /Users/Create
         [HttpPost]
-        public async Task<ActionResult> Create(RegisterViewModel model, params string[] selectedRoles)
+        public async Task<ActionResult> Create(UserAdminCreateViewModel model, params string[] selectedRoles)
         {
             if (ModelState.IsValid)
             {
@@ -248,7 +272,7 @@ namespace VirtualClassroom.Controllers
 
                             }
 
-                            #region Moderator
+                            #region Student
                             //student pc
                             if (role.Trim().ToLower() == "Student".Trim().ToLower())
                             {
@@ -296,13 +320,13 @@ namespace VirtualClassroom.Controllers
                                 }
                                 //end of store the others property in tblPC
                             }
-#endregion
+                            #endregion
                             
                             #region Moderator                            
                             //Moderator
                             if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                             {
-                                //store the others property in tblPC
+                                //store the others property in tblModerator
                                 string fullName = model.FullName != null ? model.FullName : string.Empty;
                                 string CurrentUserId = user.Id;
 
@@ -377,12 +401,35 @@ namespace VirtualClassroom.Controllers
                 else
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
-                    ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
+                    //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
+                    List<IdentityRole> roleList2 = new List<IdentityRole>();
+
+                    foreach (var item in RoleManager.Roles)
+                    {
+                        if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+                        {
+                            roleList2.Add(item);
+                        }
+
+                    }
+                    ViewBag.RoleId = new SelectList(roleList2, "Name", "Name");
                     return View();
                 }
                 return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.AddUserSuccess });
             }
-            ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
+
+            //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
+            List<IdentityRole> roleList = new List<IdentityRole>();
+
+            foreach (var item in RoleManager.Roles)
+            {
+                if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+                {
+                    roleList.Add(item);
+                }
+
+            }
+            ViewBag.RoleId = new SelectList(roleList, "Name", "Name");
             return View();
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -59,7 +60,71 @@ namespace VirtualClassroom.Models
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
-   
+    public class UserAdminCreateViewModel
+    {
+        [Required]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
+
+       
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+
+
+        [Display(Name = "Address1")]
+        public string Address1 { get; set; }
+
+        [Display(Name = "State")]
+        public string State { get; set; }
+
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [Display(Name = "Country")]
+        public IEnumerable<SelectListItem> Country { get; set; }
+
+
+        [Required]
+        [Display(Name = "Country")]
+        public string SelectedCountry { get; set; }
+
+
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+
+        [Display(Name = "Classroom")]
+        public IEnumerable<SelectListItem> Classroom { get; set; }
+
+        [Required]
+        [Display(Name = "Classroom")]
+        public string SelectedClassroom { get; set; }
+
+
+        [Display(Name = "Teacher")]
+
+        public IEnumerable<SelectListItem> Teacher { get; set; }
+
+        [Required]
+        [Display(Name = "Teacher")]
+        public string SelectedTeacher { get; set; }
+
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 4)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
+
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
     public class RegisterViewModel
     {       
         [Required]

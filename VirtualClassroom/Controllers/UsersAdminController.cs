@@ -254,6 +254,7 @@ namespace VirtualClassroom.Controllers
                     //Add User to the selected Roles 
                     if (selectedRoles != null)
                     {
+                        #region foreach
                         foreach (var role in selectedRoles)
                         {
                             //Teacher
@@ -383,10 +384,9 @@ namespace VirtualClassroom.Controllers
                             {
                                 //nothing to do
                             }
-
-
                         }
-
+                        //end for each
+#endregion
 
                         //add user to roles
                         var result = await UserManager.AddToRolesAsync(user.Id, selectedRoles);

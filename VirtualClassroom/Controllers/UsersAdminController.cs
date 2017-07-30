@@ -92,6 +92,11 @@ namespace VirtualClassroom.Controllers
             DetailsUserAdminViewModel model = new DetailsUserAdminViewModel();
             model.user = user;
 
+
+            //get roles 
+
+
+            //if is in student role
             var q = from x in db.TblPCs
                     where x.Id == id
                     select x;
@@ -124,6 +129,8 @@ namespace VirtualClassroom.Controllers
                     }
                 }
             }
+
+            //if is in moderator role
 
             return View(model);
         }

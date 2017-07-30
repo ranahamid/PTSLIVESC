@@ -64,7 +64,7 @@ namespace VirtualClassroom.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditProfile()
+        public async Task <ActionResult> EditProfile()
         {
             EditProfileViewModel model = new EditProfileViewModel();
 
@@ -92,41 +92,109 @@ namespace VirtualClassroom.Controllers
 
             //other properties
 
-            var q = from x in db.TblPCs
-                    where x.Id == User.Identity.GetUserId()
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            //check in which role
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user == null)
             {
-                TblPC tblPC = q.Single();
-
-                model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
-                model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
-                model.State = tblPC.State != null ? tblPC.State : string.Empty;
-                model.City = tblPC.City != null ? tblPC.City : string.Empty;
-                model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
-                model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
-                model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
-
-
-                //teacher
-
-                if (tblPC.TcUid != null)
-                {
-                    var qTC = from x in db.TblTCs
-                              where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
-                              select x;
-
-                    if (qTC != null && qTC.Count() == 1)
-                    {
-                        TblTC tc = qTC.Single();
-
-                        model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
-
-                    }
-                }
+                return HttpNotFound();
             }
 
+            IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+
+            foreach (var item in rolesAll)
+            {
+                if (item == "Student")
+                {
+                    //if is in student role
+
+                    var q = from x in db.TblPCs
+                            where x.Id == User.Identity.GetUserId()
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblPC tblPC = q.Single();
+
+                        model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                        model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                        model.State = tblPC.State != null ? tblPC.State : string.Empty;
+                        model.City = tblPC.City != null ? tblPC.City : string.Empty;
+                        model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                        model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                        model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+
+                        //teacher
+
+                        if (tblPC.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            model.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end student
+
+
+                }
+                else if (item == "Moderator")
+                {
+                    //moderator
+                    var q = from x in db.TblModerators
+                            where x.Id == User.Identity.GetUserId()
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblModerator tblModerator = q.Single();
+
+                        model.FullName = tblModerator.Name != null ? tblModerator.Name : string.Empty;
+                        model.Address1 = tblModerator.Address1 != null ? tblModerator.Address1 : string.Empty;
+                        model.State = tblModerator.State != null ? tblModerator.State : string.Empty;
+                        model.City = tblModerator.City != null ? tblModerator.City : string.Empty;
+                        model.SelectedCountry = tblModerator.Country != null ? tblModerator.Country : string.Empty;
+                        model.ZipCode = tblModerator.ZipCode != null ? tblModerator.ZipCode : string.Empty;
+                        model.SelectedClassroom = tblModerator.ClassroomId != null ? tblModerator.ClassroomId : string.Empty;
+
+
+                        //teacher
+
+                        if (tblModerator.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblModerator.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            model.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end moderator
+
+                }
+
+            }
+
+            
 
             //classroom            
             var TblClassrooms = from x in db.TblClassrooms
@@ -146,6 +214,8 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Classroom = TblClassroomItems;
+
+            //if is in moderator role
 
             return View(model);
         }
@@ -174,24 +244,62 @@ namespace VirtualClassroom.Controllers
                 {
                     bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
                 }
-
-                var q = from x in db.TblPCs
-                        where x.Id == User.Identity.GetUserId()
-                        select x;
-                if (q != null && q.Count() == 1)
+                //check role
+              
+                if (user == null)
                 {
-                    TblPC tblPC = q.Single();
-                    tblPC.Name = fullName;
-                    tblPC.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
-                    tblPC.State = model.State != null ? model.State : string.Empty;
-                    tblPC.City = model.City != null ? model.City : string.Empty;
-                    tblPC.Country = selectedCountry;
-                    tblPC.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
-
-                    tblPC.ClassroomId = selectedClassroom;
-                    tblPC.TcUid = selectedTeacher;
+                    return HttpNotFound();
                 }
 
+                IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+
+                foreach (var item in rolesAll)
+                {
+                    if (item == "Student")
+                    {
+                        //if is in student role
+                        var q = from x in db.TblPCs
+                                where x.Id == User.Identity.GetUserId()
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblPC tblPC = q.Single();
+                            tblPC.Name = fullName;
+                            tblPC.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                            tblPC.State = model.State != null ? model.State : string.Empty;
+                            tblPC.City = model.City != null ? model.City : string.Empty;
+                            tblPC.Country = selectedCountry;
+                            tblPC.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                            tblPC.ClassroomId = selectedClassroom;
+                            tblPC.TcUid = selectedTeacher;
+                        }
+
+                    }
+                    else if (item == "Moderator")
+                    {
+                        //if is in student role
+                        var q = from x in db.TblModerators
+                                where x.Id == User.Identity.GetUserId()
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblModerator tblModerator = q.Single();
+                            tblModerator.Name = fullName;
+                            tblModerator.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                            tblModerator.State = model.State != null ? model.State : string.Empty;
+                            tblModerator.City = model.City != null ? model.City : string.Empty;
+                            tblModerator.Country = selectedCountry;
+                            tblModerator.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                            tblModerator.ClassroomId = selectedClassroom;
+                            tblModerator.TcUid = selectedTeacher;
+                        }
+                    }
+
+                }
+                
+                //if is in moderator role
 
                 try
                 {
@@ -201,8 +309,7 @@ namespace VirtualClassroom.Controllers
                 {
                     return View(model);
                 }
-                return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });
-               // return RedirectToAction("Index", "Manage");
+                return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });             
             }
 
             // If we got this far, something failed, redisplay form

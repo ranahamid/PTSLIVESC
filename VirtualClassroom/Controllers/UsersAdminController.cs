@@ -94,43 +94,98 @@ namespace VirtualClassroom.Controllers
 
 
             //get roles 
-
-
-            //if is in student role
-            var q = from x in db.TblPCs
-                    where x.Id == id
-                    select x;
-
-            if (q != null && q.Count() == 1)
+            if (user == null)
             {
-                TblPC tblPC = q.Single();
-
-                model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
-                model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
-                model.State = tblPC.State != null ? tblPC.State : string.Empty;
-                model.City = tblPC.City != null ? tblPC.City : string.Empty;
-                model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
-                model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
-                model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
-
-                //teacher
-
-                if (tblPC.TcUid != null)
-                {
-                    var qTC = from x in db.TblTCs
-                              where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
-                              select x;
-
-                    if (qTC != null && qTC.Count() == 1)
-                    {
-                        TblTC tc = qTC.Single();
-
-                        model.SelectedTeacher = tc.Uid != null ? tc.Name.ToString() : string.Empty;
-                    }
-                }
+                return HttpNotFound();
             }
 
-            //if is in moderator role
+            IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+            foreach (var item in rolesAll)
+            {
+                if (item == "Student")
+                {
+                    //if is in student role
+                    var q = from x in db.TblPCs
+                            where x.Id == id
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblPC tblPC = q.Single();
+
+                        model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                        model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                        model.State = tblPC.State != null ? tblPC.State : string.Empty;
+                        model.City = tblPC.City != null ? tblPC.City : string.Empty;
+                        model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                        model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                        model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+                        //teacher
+
+                        if (tblPC.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                model.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            model.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end of student
+
+                }
+                else if (item == "Moderator")
+                {
+                  //if is in moderator role
+                    var q = from x in db.TblModerators
+                            where x.Id == id
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblModerator tblPC = q.Single();
+
+                        model.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                        model.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                        model.State = tblPC.State != null ? tblPC.State : string.Empty;
+                        model.City = tblPC.City != null ? tblPC.City : string.Empty;
+                        model.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                        model.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                        model.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+                        //teacher
+
+                        if (tblPC.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                model.SelectedTeacher = tc.Uid != null ? tc.Name.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            model.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end moderator
+                }
+            }
 
             return View(model);
         }

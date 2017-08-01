@@ -305,7 +305,7 @@ namespace VirtualClassroom.Controllers
                 {
                     db.SubmitChanges();
                 }
-                catch (Exception ex)
+                catch (Exception )
                 {
                     return View(model);
                 }

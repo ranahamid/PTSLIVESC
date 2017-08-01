@@ -72,16 +72,17 @@ namespace VirtualClassroom.Models
     }
 
     // Configure the RoleManager used in the application. RoleManager is defined in the ASP.NET Identity core assembly
-    public class ApplicationRoleManager : RoleManager<IdentityRole>
+    public class ApplicationRoleManager : RoleManager<ApplicationRole>
     {
-        public ApplicationRoleManager(IRoleStore<IdentityRole,string> roleStore)
+        //changes to ApplicationRole
+        public ApplicationRoleManager(IRoleStore<ApplicationRole, string> roleStore)
             : base(roleStore)
         {
         }
 
         public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
         {
-            return new ApplicationRoleManager(new RoleStore<IdentityRole>(context.Get<ApplicationDbContext>()));
+            return new ApplicationRoleManager(new RoleStore<ApplicationRole>(context.Get<ApplicationDbContext>()));
         }
     }
 
@@ -118,7 +119,7 @@ namespace VirtualClassroom.Models
                 client.Send(msg);
                 return Task.FromResult(0);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return Task.FromResult(0);
             }
@@ -153,15 +154,16 @@ namespace VirtualClassroom.Models
         public static void InitializeIdentityForEF(ApplicationDbContext db) {
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var roleManager = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
-            const string name = "admin@example.com";
-            const string password = "Admin@123456";
+            const string name = "ranahamid007@gmail.com";
+            const string password = "1234";
             const string roleName = "Admin";
 
             //Create Role Admin if it does not exist
             var role = roleManager.FindByName(roleName);
             if (role == null)
             {
-                role = new IdentityRole(roleName);
+                role = new ApplicationRole(roleName);
+                role.Description = "Admin can do everything";
                 var roleresult = roleManager.Create(role);
             }
 

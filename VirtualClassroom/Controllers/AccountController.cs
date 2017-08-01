@@ -287,7 +287,7 @@ namespace VirtualClassroom.Controllers
                     {
                         db.SubmitChanges();
                     }
-                    catch (ChangeConflictException ex)
+                    catch (ChangeConflictException )
                     {
 
                     }

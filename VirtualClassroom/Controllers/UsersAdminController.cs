@@ -204,10 +204,10 @@ namespace VirtualClassroom.Controllers
 
         //
         // GET: /Users/Create
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
             //Get the list of Roles
-            List<IdentityRole> roleList = new List<IdentityRole>();
+            List<ApplicationRole> roleList = new List<ApplicationRole>();
 
             foreach (var item in RoleManager.Roles)
             {
@@ -377,7 +377,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception ex)
+                                catch (Exception )
                                 {
 
                                 }
@@ -428,7 +428,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception ex)
+                                catch (Exception )
                                 {
 
                                 }
@@ -464,7 +464,7 @@ namespace VirtualClassroom.Controllers
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
                     //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
-                    List<IdentityRole> roleList2 = new List<IdentityRole>();
+                    List<ApplicationRole> roleList2 = new List<ApplicationRole>();
 
                     foreach (var item in RoleManager.Roles)
                     {
@@ -481,7 +481,7 @@ namespace VirtualClassroom.Controllers
             }
 
             //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
-            List<IdentityRole> roleList = new List<IdentityRole>();
+            List<ApplicationRole> roleList = new List<ApplicationRole>();
 
             foreach (var item in RoleManager.Roles)
             {
@@ -656,7 +656,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception ex)
+                                catch (Exception )
                                 {
 
                                 }
@@ -685,7 +685,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception ex)
+                                catch (Exception )
                                 {
 
                                 }

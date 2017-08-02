@@ -111,8 +111,7 @@ namespace VirtualClassroom.Models
             client.Port = 587;
             client.EnableSsl = true;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["mailAccount"],
-                                                         ConfigurationManager.AppSettings["mailPassword"]);
+            client.Credentials = new NetworkCredential( ConfigurationManager.AppSettings["mailAccount"], ConfigurationManager.AppSettings["mailPassword"] );
             client.Timeout = 20000;
             try
             {
@@ -151,20 +150,21 @@ namespace VirtualClassroom.Models
         }
 
         //Create User=Admin@Admin.com with password=Admin@123456 in the Admin role        
-        public static void InitializeIdentityForEF(ApplicationDbContext db) {
+        public static void InitializeIdentityForEF(ApplicationDbContext db)
+        {
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var roleManager = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
             const string name = "ranahamid007@gmail.com";
             const string password = "1234";
             const string fullName = "Rana Hamid";
-            const string roleName = "Admin";
+            const string roleName = "Administrator";
 
             //Create Role Admin if it does not exist
             var role = roleManager.FindByName(roleName);
             if (role == null)
             {
                 role = new ApplicationRole(roleName);
-                role.Description = "Admin can do everything";
+                role.Description = "Administrator can do everything";
                 var roleresult = roleManager.Create(role);
             }
 

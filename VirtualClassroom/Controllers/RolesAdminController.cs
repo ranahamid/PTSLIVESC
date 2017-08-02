@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace VirtualClassroom.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Administrator")]
     public class RolesAdminController : Controller
     {
         public RolesAdminController()

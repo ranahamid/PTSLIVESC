@@ -13,7 +13,7 @@ using System.Web.Mvc;
 
 namespace VirtualClassroom.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Administrator")]
     public class UsersAdminController : Controller
     {
         private VirtualClassroomDataContext db;

@@ -68,16 +68,7 @@ namespace VirtualClassroom.Controllers
         {
             EditProfileViewModel model = new EditProfileViewModel();
             model.DisplayAllOption = false;
-            //get full name
-
-            var user = await UserManager.FindByEmailAsync(User.Identity.GetUserName());
-
-            string FullName = string.Empty;
-           
-            if (user != null && user.FullName != null)
-            {
-                model.FullName = user.FullName;
-            }
+            
           
             //country
             var Countries = from x in db.TblCountries
@@ -229,7 +220,15 @@ namespace VirtualClassroom.Controllers
 
             model.Classroom = TblClassroomItems;
 
-            //if is in moderator role
+            //get full name
+            var user = await UserManager.FindByEmailAsync(User.Identity.GetUserName());
+
+            string FullName = string.Empty;
+
+            if (user != null && user.FullName != null)
+            {
+                model.FullName = user.FullName;
+            }
 
             return View(model);
         }

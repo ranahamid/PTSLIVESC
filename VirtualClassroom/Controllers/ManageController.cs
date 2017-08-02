@@ -67,7 +67,18 @@ namespace VirtualClassroom.Controllers
         public async Task <ActionResult> EditProfile()
         {
             EditProfileViewModel model = new EditProfileViewModel();
+            model.DisplayAllOption = false;
+            //get full name
 
+            var user = await UserManager.FindByEmailAsync(User.Identity.GetUserName());
+
+            string FullName = string.Empty;
+           
+            if (user != null && user.FullName != null)
+            {
+                model.FullName = user.FullName;
+            }
+          
             //country
             var Countries = from x in db.TblCountries
                             select x;
@@ -93,7 +104,7 @@ namespace VirtualClassroom.Controllers
             //other properties
 
             //check in which role
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+   
             if (user == null)
             {
                 return HttpNotFound();
@@ -105,6 +116,7 @@ namespace VirtualClassroom.Controllers
             {
                 if (item == "Student")
                 {
+                    model.DisplayAllOption = true;
                     //if is in student role
 
                     var q = from x in db.TblPCs
@@ -150,6 +162,8 @@ namespace VirtualClassroom.Controllers
                 }
                 else if (item == "Moderator")
                 {
+
+                    model.DisplayAllOption = true;
                     //moderator
                     var q = from x in db.TblModerators
                             where x.Id == User.Identity.GetUserId()
@@ -274,6 +288,34 @@ namespace VirtualClassroom.Controllers
                             tblPC.ClassroomId = selectedClassroom;
                             tblPC.TcUid = selectedTeacher;
                         }
+                        else
+                        {
+                            //insert
+                            //store the others property in tblPC
+                           
+                            string CurrentUserId = user.Id;
+
+                            Guid pcUid = Guid.NewGuid();
+
+                            db.TblPCs.InsertOnSubmit(new TblPC
+                            {
+                                Uid = pcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName,
+                                ScUid = null,
+                                TcUid = selectedTeacher,
+                                Position = 0,
+                                Audio = true,
+                                Video = true,
+                                Volume = 80,
+                                Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                                City = model.City != null ? model.City : string.Empty,
+                                Country = selectedCountry,
+                                ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                                State = model.State != null ? model.State : string.Empty,
+                            });
+                        }
 
                     }
                     else if (item == "Moderator")
@@ -294,6 +336,32 @@ namespace VirtualClassroom.Controllers
 
                             tblModerator.ClassroomId = selectedClassroom;
                             tblModerator.TcUid = selectedTeacher;
+                        }
+                        else
+                        {
+
+                            string CurrentUserId = user.Id;
+                            Guid pcUid = Guid.NewGuid();
+
+                            //insert
+                            db.TblModerators.InsertOnSubmit(new TblModerator
+                            {
+                                Uid = pcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName,
+                                // ScUid = null,
+                                TcUid = selectedTeacher,
+                                Position = 0,
+                                Audio = true,
+                                Video = true,
+                                Volume = 80,
+                                Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                                City = model.City != null ? model.City : string.Empty,
+                                Country = selectedCountry,
+                                ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                                State = model.State != null ? model.State : string.Empty,
+                            });
                         }
                     }
 

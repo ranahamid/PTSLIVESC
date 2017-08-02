@@ -12,9 +12,18 @@ namespace VirtualClassroom.Models
         public string name { get; set; }
     }
 
+    public class ClassroomViewModel
+    {
+        public List<Classroom> classRoom { get; set; }
+        public IList<String> Roles { get; set; }
+        public string UserId { get; set; }
+        public string FullName { get; set; }
+    }
+
     [DataObject]
     public class Classroom
     {
+
         public string id { get; set; }
         public string name { get; set; }
         public string url { get; set; }
@@ -31,7 +40,11 @@ namespace VirtualClassroom.Models
         //without seat and teacher computer
         public List<Student> studentsWithOutSeatTeacher { get; set; }
 
+        
+
     }
+
+
 
     [DataObject]
     public class Seat : Computer

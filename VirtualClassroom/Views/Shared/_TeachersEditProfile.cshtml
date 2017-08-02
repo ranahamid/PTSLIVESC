@@ -1,7 +1,8 @@
-﻿@model VirtualClassroom.Models.TeacherViewModel
+﻿
+@model VirtualClassroom.Models.TeacherViewModel
 
 @Html.LabelFor(m => m.Teacher, new { @class = "col-md-2 control-label" })
 
 <div class="col-md-10">
-    @Html.DropDownListFor(m => Model.SelectedTeacher, new SelectList(Model.TeacherslList, "Value", "Text"), "Select Teacher", new { @id = "selectedTeacher", @class = "form-control teachersdrop" })   
+    @Html.DropDownListFor(m => Model.SelectedTeacher, new SelectList(Model.TeacherslList, "Value", "Text"), new { @id = "selectedTeacher", @class = "form-control teachersdrop" })
 </div>

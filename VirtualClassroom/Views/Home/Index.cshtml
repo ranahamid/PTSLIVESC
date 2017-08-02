@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VirtualClassroom.Models.Classroom>
+﻿@model VirtualClassroom.Models.ClassroomViewModel
 
 
 @{
@@ -6,29 +6,55 @@
     ViewBag.Name = "Virtual Classroom";
 }
 
+
 <div class="homeContainer">
-    <div style="text-align:right"><h4>@Html.ActionLink("Administration", "Index", "Admin", routeValues: new { }, htmlAttributes: new { })</h4></div>
+    <h4>List of roles</h4>
+    @if (Model.Roles.Count == 0)
+    {
+        <hr />
+        <p>No roles found for this user.</p>
+    }
 
-    <div class="row">
-        @foreach (var item in Model)
+    <table class="table">
+        @foreach (var item in Model.Roles)
         {
-            <div class="col-sm-4">
-                <ul>
-                    <li>
-                        <h4>@Html.Label(item.name)</h4>
-                        <ul>
-                            <li>
-                                @Html.ActionLink("Admin computer", "Index", "AC", routeValues: new { classroomId = item.id }, htmlAttributes: new { })
-                            </li>
-                        </ul>
+            <tr>
+                <td>
+                    @item
+                </td>
+            </tr>
+        }
+    </table>
+ </div>
 
-                        @foreach (var sc in item.seats)
-                        {
+
+
+
+<div id="developer-section" style="display:block;" class="row">
+
+    <div class="homeContainer">
+        <div style="text-align:right"><h4>@Html.ActionLink("Administration", "Index", "Admin", routeValues: new { }, htmlAttributes: new { })</h4></div>
+
+        <div class="row">
+            @foreach (var item in Model.classRoom)
+            {
+                <div class="col-md-4">
+                    <ul>
+                        <li>
+                            <h4>@Html.Label(item.name)</h4>
                             <ul>
                                 <li>
-                                    @Html.ActionLink(sc.name, "Index", "SC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })
-                                    <ul>
-                                        @{
+                                    @Html.ActionLink("Admin computer", "Index", "AC", routeValues: new { classroomId = item.id }, htmlAttributes: new { })
+                                </li>
+                            </ul>
+
+                            @foreach (var sc in item.seats)
+                        {
+                        <ul>
+                            <li>
+                                @Html.ActionLink(sc.name, "Index", "SC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })
+                                <ul>
+                                    @{
                                             for (int i = 0; i < sc.students.Count; i++)
                                             {
                                                 var address = string.Empty;
@@ -55,28 +81,28 @@
 
                                                 if (address != string.Empty)
                                                 {
-                                                    <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                        <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
                                                 }
                                                 else
                                                 {
-                                                    <li>@Html.ActionLink(sc.students[i].name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                        <li>@Html.ActionLink(sc.students[i].name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
                                                 }
                                             }
-                                        }
-                                    </ul>
-                                </li>
-                            </ul>
+                                    }
+                                </ul>
+                            </li>
+                        </ul>
                                             }
 
 
-                        @if (item.studentsWithOutSeat.Count > 0)
+                            @if (item.studentsWithOutSeat.Count > 0)
                         {
-                            <p>Students WithOut Seat</p>
+                        <p>Students WithOut Seat</p>
                             foreach (var sc in item.studentsWithOutSeat)
                             {
 
-                                <ul>
-                                    @{
+                        <ul>
+                            @{
 
                                         var address = string.Empty;
                                         if (sc.address1 != null && sc.address1 != string.Empty)
@@ -102,26 +128,26 @@
 
                                         if (address != string.Empty)
                                         {
-                                            <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                    <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                         }
                                         else
                                         {
-                                            <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                    <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                         }
-                                    }
-                                </ul>
+                            }
+                        </ul>
                                             }
                                         }
 
 
-                        @if (item.studentsWithOutSeatTeacher.Count > 0)
+                            @if (item.studentsWithOutSeatTeacher.Count > 0)
                         {
-                            <p>Students WithOut Seat and Teacher</p>
+                        <p>Students WithOut Seat and Teacher</p>
                             foreach (var sc in item.studentsWithOutSeatTeacher)
                             {
 
-                                <ul>
-                                    @{
+                        <ul>
+                            @{
 
                                         var address = string.Empty;
                                         if (sc.address1 != null && sc.address1 != string.Empty)
@@ -147,56 +173,57 @@
 
                                         if (address != string.Empty)
                                         {
-                                            <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                    <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                         }
                                         else
                                         {
-                                            <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                    <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                         }
-                                    }
-                                </ul>
+                            }
+                        </ul>
                                             }
                                         }
 
 
                         @if (item.teachers.Count > 0)
                         {
-                            <p>Teacher</p>
+                        <p>Teacher</p>
                             foreach (var tc in item.teachers)
                             {
 
-                                <ul>
-                                    <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
-                                </ul>
+                        <ul>
+                            <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
+                        </ul>
                             }
                         }
 
-                        @if (item.moderators.Count > 0)
+                            @if (item.moderators.Count > 0)
                         {
-                            <p>Moderator</p>
+                        <p>Moderator</p>
                             foreach (var moderator in item.moderators)
                             {
 
-                                <ul>
-                                    <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
-                                </ul>
+                        <ul>
+                            <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
+                        </ul>
                             }
                         }
-                        @if (item.featureds.Count > 0)
+                            @if (item.featureds.Count > 0)
                         {
-                            <p>Featured Computer</p>
+                        <p>Featured Computer</p>
                             foreach (var fc in item.featureds)
                             {
-                                <ul>
-                                    <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
-                                </ul>
+                        <ul>
+                            <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
+                        </ul>
                             }
                         }
 
-                    </li>
-                </ul>
-            </div>
-        }
-    </div>
+                        </li>
+                    </ul>
+                </div>
+                                }
+        </div>
 
+    </div>
 </div>

@@ -156,6 +156,7 @@ namespace VirtualClassroom.Models
             var roleManager = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
             const string name = "ranahamid007@gmail.com";
             const string password = "1234";
+            const string fullName = "Rana Hamid";
             const string roleName = "Admin";
 
             //Create Role Admin if it does not exist
@@ -170,7 +171,7 @@ namespace VirtualClassroom.Models
             var user = userManager.FindByName(name);
             if (user == null)
             {
-                user = new ApplicationUser { UserName = name, Email = name };
+                user = new ApplicationUser { UserName = name, Email = name, FullName=fullName };
                 var result = userManager.Create(user, password);
                 result = userManager.SetLockoutEnabled(user.Id, false);
             }

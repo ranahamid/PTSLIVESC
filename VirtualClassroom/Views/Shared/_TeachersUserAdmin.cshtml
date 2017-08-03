@@ -5,4 +5,6 @@
 
 <div class="col-md-10">
     @Html.DropDownListFor(m => Model.SelectedTeacher, new SelectList(Model.TeacherslList, "Value", "Text"), new { @id = "selectedTeacher", @class = "form-control teachersdrop" })
+    <p>Select only for Moderator/ Student Role</p>
 </div>
+

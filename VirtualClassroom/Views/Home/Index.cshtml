@@ -8,24 +8,24 @@
 
 
 @*<div class="homeContainer">
-    <h4>List of roles</h4>
-    @if (Model.Roles.Count == 0)
-    {
-        <hr />
-        <p>No roles found for this user.</p>
-    }
+       <h4>List of roles</h4>
+       @if (Model.Roles.Count == 0)
+       {
+           <hr />
+           <p>No roles found for this user.</p>
+       }
 
-    <table class="table">
-        @foreach (var item in Model.Roles)
-        {
-            <tr>
-                <td>
-                    @item
-                </td>
-            </tr>
-        }
-    </table>
- </div>*@
+       <table class="table">
+           @foreach (var item in Model.Roles)
+           {
+               <tr>
+                   <td>
+                       @item
+                   </td>
+               </tr>
+           }
+       </table>
+    </div>*@
 
 
 
@@ -47,182 +47,183 @@
                                     @Html.ActionLink("Admin computer", "Index", "AC", routeValues: new { classroomId = item.id }, htmlAttributes: new { })
                                 </li>
                             </ul>
-
+                            <p>Seat Computer</p>
                             @foreach (var sc in item.seats)
-                        {
-                        <ul>
-                            <li>
-                                @Html.ActionLink(sc.name, "Index", "SC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })
+                            {
                                 <ul>
-                                    @{
-                                            for (int i = 0; i < sc.students.Count; i++)
-                                            {
-                                                var address = string.Empty;
-                                                if (sc.students[i].address1 != null && sc.students[i].address1 != string.Empty)
+                                    <li>
+                                        @Html.ActionLink(sc.name, "Index", "SC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })
+                                        <ul>
+                                            @{
+                                                @*<p>Student Computer</p>*@
+                                                for (int i = 0; i < sc.students.Count; i++)
                                                 {
-                                                    address = sc.students[i].address1;
-                                                }
-                                                if (sc.students[i].State != null && sc.students[i].State != string.Empty)
-                                                {
-                                                    address = address + ", " + sc.students[i].State;
-                                                }
-                                                if (sc.students[i].City != null && sc.students[i].City != string.Empty)
-                                                {
-                                                    address = address + ", " + sc.students[i].City;
-                                                }
-                                                if (sc.students[i].Country != null && sc.students[i].Country != string.Empty)
-                                                {
-                                                    address = address + ", " + sc.students[i].Country;
-                                                }
-                                                if (sc.students[i].ZipCode != null && sc.students[i].ZipCode != string.Empty)
-                                                {
-                                                    address = address + "-" + sc.students[i].ZipCode;
-                                                }
+                                                    var address = string.Empty;
+                                                    if (sc.students[i].address1 != null && sc.students[i].address1 != string.Empty)
+                                                    {
+                                                        address = sc.students[i].address1;
+                                                    }
+                                                    if (sc.students[i].State != null && sc.students[i].State != string.Empty)
+                                                    {
+                                                        address = address + ", " + sc.students[i].State;
+                                                    }
+                                                    if (sc.students[i].City != null && sc.students[i].City != string.Empty)
+                                                    {
+                                                        address = address + ", " + sc.students[i].City;
+                                                    }
+                                                    if (sc.students[i].Country != null && sc.students[i].Country != string.Empty)
+                                                    {
+                                                        address = address + ", " + sc.students[i].Country;
+                                                    }
+                                                    if (sc.students[i].ZipCode != null && sc.students[i].ZipCode != string.Empty)
+                                                    {
+                                                        address = address + "-" + sc.students[i].ZipCode;
+                                                    }
 
-                                                if (address != string.Empty)
-                                                {
-                                        <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
-                                                }
-                                                else
-                                                {
-                                        <li>@Html.ActionLink(sc.students[i].name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                                    if (address != string.Empty)
+                                                    {
+                                                        <li>@Html.ActionLink(sc.students[i].name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>@Html.ActionLink(sc.students[i].name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.students[i].id }, htmlAttributes: new { })</li>
+                                                    }
                                                 }
                                             }
-                                    }
+                                        </ul>
+                                    </li>
                                 </ul>
-                            </li>
-                        </ul>
-                                            }
+                                                }
 
 
                             @if (item.studentsWithOutSeat.Count > 0)
-                        {
-                        <p>Students WithOut Seat</p>
-                            foreach (var sc in item.studentsWithOutSeat)
                             {
+                                <p>Students WithOut Seat</p>
+                                foreach (var sc in item.studentsWithOutSeat)
+                                {
 
-                        <ul>
-                            @{
+                                    <ul>
+                                        @{
 
-                                        var address = string.Empty;
-                                        if (sc.address1 != null && sc.address1 != string.Empty)
-                                        {
-                                            address = sc.address1;
-                                        }
-                                        if (sc.State != null && sc.State != string.Empty)
-                                        {
-                                            address = address + ", " + sc.State;
-                                        }
-                                        if (sc.City != null && sc.City != string.Empty)
-                                        {
-                                            address = address + ", " + sc.City;
-                                        }
-                                        if (sc.Country != null && sc.Country != string.Empty)
-                                        {
-                                            address = address + ", " + sc.Country;
-                                        }
-                                        if (sc.ZipCode != null && sc.ZipCode != string.Empty)
-                                        {
-                                            address = address + "-" + sc.ZipCode;
-                                        }
+                                            var address = string.Empty;
+                                            if (sc.address1 != null && sc.address1 != string.Empty)
+                                            {
+                                                address = sc.address1;
+                                            }
+                                            if (sc.State != null && sc.State != string.Empty)
+                                            {
+                                                address = address + ", " + sc.State;
+                                            }
+                                            if (sc.City != null && sc.City != string.Empty)
+                                            {
+                                                address = address + ", " + sc.City;
+                                            }
+                                            if (sc.Country != null && sc.Country != string.Empty)
+                                            {
+                                                address = address + ", " + sc.Country;
+                                            }
+                                            if (sc.ZipCode != null && sc.ZipCode != string.Empty)
+                                            {
+                                                address = address + "-" + sc.ZipCode;
+                                            }
 
-                                        if (address != string.Empty)
-                                        {
-                                    <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                        }
-                                        else
-                                        {
-                                    <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                        }
-                            }
-                        </ul>
+                                            if (address != string.Empty)
+                                            {
+                                                <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                            }
+                                            else
+                                            {
+                                                <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                             }
                                         }
+                                    </ul>
+                                                }
+                                            }
 
 
                             @if (item.studentsWithOutSeatTeacher.Count > 0)
-                        {
-                        <p>Students WithOut Seat and Teacher</p>
-                            foreach (var sc in item.studentsWithOutSeatTeacher)
                             {
+                                <p>Students WithOut Seat and Teacher</p>
+                                foreach (var sc in item.studentsWithOutSeatTeacher)
+                                {
 
-                        <ul>
-                            @{
+                                    <ul>
+                                        @{
 
-                                        var address = string.Empty;
-                                        if (sc.address1 != null && sc.address1 != string.Empty)
-                                        {
-                                            address = sc.address1;
-                                        }
-                                        if (sc.State != null && sc.State != string.Empty)
-                                        {
-                                            address = address + ", " + sc.State;
-                                        }
-                                        if (sc.City != null && sc.City != string.Empty)
-                                        {
-                                            address = address + ", " + sc.City;
-                                        }
-                                        if (sc.Country != null && sc.Country != string.Empty)
-                                        {
-                                            address = address + ", " + sc.Country;
-                                        }
-                                        if (sc.ZipCode != null && sc.ZipCode != string.Empty)
-                                        {
-                                            address = address + "-" + sc.ZipCode;
-                                        }
+                                            var address = string.Empty;
+                                            if (sc.address1 != null && sc.address1 != string.Empty)
+                                            {
+                                                address = sc.address1;
+                                            }
+                                            if (sc.State != null && sc.State != string.Empty)
+                                            {
+                                                address = address + ", " + sc.State;
+                                            }
+                                            if (sc.City != null && sc.City != string.Empty)
+                                            {
+                                                address = address + ", " + sc.City;
+                                            }
+                                            if (sc.Country != null && sc.Country != string.Empty)
+                                            {
+                                                address = address + ", " + sc.Country;
+                                            }
+                                            if (sc.ZipCode != null && sc.ZipCode != string.Empty)
+                                            {
+                                                address = address + "-" + sc.ZipCode;
+                                            }
 
-                                        if (address != string.Empty)
-                                        {
-                                    <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                        }
-                                        else
-                                        {
-                                    <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
-                                        }
-                            }
-                        </ul>
+                                            if (address != string.Empty)
+                                            {
+                                                <li>@Html.ActionLink(sc.name + ", " + address, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
+                                            }
+                                            else
+                                            {
+                                                <li>@Html.ActionLink(sc.name, "Index", "PC", routeValues: new { classroomId = item.id, id = sc.id }, htmlAttributes: new { })</li>
                                             }
                                         }
+                                    </ul>
+                                                }
+                                            }
 
 
-                        @if (item.teachers.Count > 0)
-                        {
-                        <p>Teacher</p>
-                            foreach (var tc in item.teachers)
+                            @if (item.teachers.Count > 0)
                             {
+                                <p>Teacher</p>
+                                foreach (var tc in item.teachers)
+                                {
 
-                        <ul>
-                            <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
-                        </ul>
+                                    <ul>
+                                        <li>@Html.ActionLink(tc.name, "Index", "TC", routeValues: new { classroomId = item.id, id = tc.id }, htmlAttributes: new { })</li>
+                                    </ul>
+                                }
                             }
-                        }
 
                             @if (item.moderators.Count > 0)
-                        {
-                        <p>Moderator</p>
-                            foreach (var moderator in item.moderators)
                             {
+                                <p>Moderator</p>
+                                foreach (var moderator in item.moderators)
+                                {
 
-                        <ul>
-                            <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
-                        </ul>
+                                    <ul>
+                                        <li>@Html.ActionLink(moderator.name, "Index", "Moderator", routeValues: new { classroomId = item.id, id = moderator.id }, htmlAttributes: new { })</li>
+                                    </ul>
+                                }
                             }
-                        }
                             @if (item.featureds.Count > 0)
-                        {
-                        <p>Featured Computer</p>
-                            foreach (var fc in item.featureds)
                             {
-                        <ul>
-                            <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
-                        </ul>
+                                <p>Featured Computer</p>
+                                foreach (var fc in item.featureds)
+                                {
+                                    <ul>
+                                        <li>@Html.ActionLink(fc.name, "Index", "FC", routeValues: new { classroomId = item.id, id = fc.id }, htmlAttributes: new { })</li>
+                                    </ul>
+                                }
                             }
-                        }
 
                         </li>
                     </ul>
                 </div>
-                                }
+                                            }
         </div>
 
     </div>

@@ -95,7 +95,7 @@ namespace VirtualClassroom.Controllers
             //other properties
 
             //check in which role
-   
+            var user = await UserManager.FindByEmailAsync(User.Identity.GetUserName());
             if (user == null)
             {
                 return HttpNotFound();
@@ -221,8 +221,7 @@ namespace VirtualClassroom.Controllers
             model.Classroom = TblClassroomItems;
 
             //get full name
-            var user = await UserManager.FindByEmailAsync(User.Identity.GetUserName());
-
+           
             string FullName = string.Empty;
 
             if (user != null && user.FullName != null)

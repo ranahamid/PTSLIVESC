@@ -211,7 +211,7 @@ namespace VirtualClassroom.Controllers
 
             foreach (var item in RoleManager.Roles)
             {
-                if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+               // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
                 {
                     roleList.Add(item);
                 }
@@ -286,7 +286,7 @@ namespace VirtualClassroom.Controllers
 
                 if (adminresult.Succeeded)
                 {
-                    //add to the db pc
+                    
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     //body
@@ -319,19 +319,79 @@ namespace VirtualClassroom.Controllers
                         #region foreach
                         foreach (var role in selectedRoles)
                         {
+                            string fullName = model.FullName != null ? model.FullName : string.Empty;
+                            string CurrentUserId = user.Id;
                             //Teacher
                             if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
                             {
+
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
+                                Guid tcUid = Guid.NewGuid();
+
+                                db.TblTCs.InsertOnSubmit(new TblTC
+                                {
+                                    Uid = tcUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName,
+                                    Audio = true,
+                                    Video = true
+                                });
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
 
                             }
                             //Seat
                             if (role.Trim().ToLower() == "Seat".Trim().ToLower())
                             {
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
+                                Guid scUid = Guid.NewGuid();
+                                db.TblSCs.InsertOnSubmit(new TblSC
+                                {
+                                    Uid = scUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName
+                                });
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
 
                             }
                             //Featured
                             if (role.Trim().ToLower() == "Featured".Trim().ToLower())
                             {
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
+                                Guid fcUid = Guid.NewGuid();
+                                db.TblFCs.InsertOnSubmit(new TblFC
+                                {
+                                    Uid = fcUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName
+                                });
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
 
                             }
 
@@ -340,11 +400,11 @@ namespace VirtualClassroom.Controllers
                             if (role.Trim().ToLower() == "Student".Trim().ToLower())
                             {
                                 //store the others property in tblPC
-                                string fullName = model.FullName != null ? model.FullName : string.Empty;
-                                string CurrentUserId = user.Id;
+
+                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
 
                                 string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
-                                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
                                 Guid selectedTeacher = Guid.NewGuid();
 
                                 if (model.SelectedTeacher != null)
@@ -377,7 +437,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception )
+                                catch (Exception e)
                                 {
 
                                 }
@@ -389,11 +449,9 @@ namespace VirtualClassroom.Controllers
                             //Moderator
                             if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                             {
-                                //store the others property in tblModerator
-                                string fullName = model.FullName != null ? model.FullName : string.Empty;
-                                string CurrentUserId = user.Id;
-
+                                //store the others property in tblModerator                                
                                 string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+
                                 string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
 
                                 Guid selectedTeacher = Guid.NewGuid();
@@ -428,7 +486,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception )
+                                catch (Exception e)
                                 {
 
                                 }
@@ -448,7 +506,7 @@ namespace VirtualClassroom.Controllers
                             }
                         }
                         //end for each
-#endregion
+                        #endregion
 
                         //add user to roles
                         var result = await UserManager.AddToRolesAsync(user.Id, selectedRoles);
@@ -468,7 +526,7 @@ namespace VirtualClassroom.Controllers
 
                     foreach (var item in RoleManager.Roles)
                     {
-                        if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+                      //  if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
                         {
                             roleList2.Add(item);
                         }
@@ -485,7 +543,7 @@ namespace VirtualClassroom.Controllers
 
             foreach (var item in RoleManager.Roles)
             {
-                if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+               // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
                 {
                     roleList.Add(item);
                 }
@@ -515,11 +573,7 @@ namespace VirtualClassroom.Controllers
             {
                 Id = user.Id,
                 Email = user.Email,
-                RolesList = RoleManager.Roles.ToList().Where(x => x.Name == "Admin" ||
-                                                             x.Name == "Administrator" ||
-                                                             x.Name == "Student" ||
-                                                             x.Name == "Moderator"
-                                                            ).Select(x => new SelectListItem()
+                RolesList = RoleManager.Roles.ToList().Select(x => new SelectListItem()
                                                             {
                                                                 Selected = userRoles.Contains(x.Name),
                                                                 Text = x.Name,

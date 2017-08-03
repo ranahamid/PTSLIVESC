@@ -1,6 +1,6 @@
 ﻿@model VirtualClassroom.Models.UserAdminCreateViewModel
 @{
-    ViewBag.Title = "Create";    
+    ViewBag.Title = "Create";
 }
 
 
@@ -43,16 +43,16 @@
         <div class="col-md-10">
             @foreach (var item in (SelectList)ViewBag.RoleId)
             {
-                <input type="checkbox" name="SelectedRoles" value="@item.Value" class="checkbox-inline" id="@item.Value-checkbox"  , onchange="ChangeRoleStMod()" />
+                <input type="checkbox" name="SelectedRoles" value="@item.Value" class="checkbox-inline" id="@item.Value-checkbox" , onchange="ChangeRoleStMod()" />
                 @Html.Label(item.Value, new { @class = "control-label" })
             }
-          
+
         </div>
     </div>
 
 
 
-    <div class="pc-section" id="pc-section" style="display:none;">
+    <div class="pc-section1" id="pc-section1" style="display:none;">
 
         <div class="form-group">
             @Html.LabelFor(m => m.Address1, new { @class = "col-md-2 control-label" })
@@ -80,7 +80,7 @@
             @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
 
             <div class="col-md-10">
-                @Html.DropDownListFor(m => Model.SelectedCountry, Model.Country,  new {@id = "CountryId",@class = "form-control"})
+                @Html.DropDownListFor(m => Model.SelectedCountry, Model.Country, new { @id = "CountryId", @class = "form-control" })
             </div>
         </div>
 
@@ -92,25 +92,28 @@
                 @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control" })
             </div>
         </div>
+    </div>
+    <div class="pc-section2" id="pc-section2" style="display:none;">
 
         <div class="form-group">
             @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
 
             <div class="col-md-10">
-                @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom,  new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+                @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+            </div>
+        </div>
+    </div>
+        <div class="pc-section3" id="pc-section3" style="display:none;">
+            <div class="form-group" id="teachersdiv">
+                @Html.Partial("_TeachersUserAdmin", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
             </div>
         </div>
 
-        <div class="form-group" id="teachersdiv">
-            @Html.Partial("_TeachersUserAdmin", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Create" />
-        </div>
-    </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn btn-default" value="Create" />
+                </div>
+            </div>
 }
 
 <p>
@@ -119,39 +122,44 @@
 </p>
 
 <script>
-        function ChangeRoleStMod()
+    function ChangeRoleStMod()
+    {
+
+        if ($('#Moderator-checkbox').prop("checked") == true || $('#Student-checkbox').prop("checked") == true)
         {
-            console.log("In ChangeRoleStMod....");
-
-
-            if ($('#Moderator-checkbox').prop("checked") == true || $('#Student-checkbox').prop("checked") == true)
-            {
-                $('#pc-section').css({ 'display': 'block' });
-            }
-            else
-            {
-                $('#pc-section').css({ 'display': 'none' });       
-            }
+            $('#pc-section1').css({ 'display': 'block' });
+            $('#pc-section2').css({ 'display': 'block' });
+            $('#pc-section3').css({ 'display': 'block' });
         }
+        else {
+            $('#pc-section1').css({ 'display': 'none' });
+            $('#pc-section2').css({ 'display': 'none' });
+            $('#pc-section3').css({ 'display': 'none' });
+        }
+
+        if ($('#Seat-checkbox').prop("checked") == true || $('#Featured-checkbox').prop("checked") == true || $('#Teacher-checkbox').prop("checked") == true)
+        {           
+            $('#pc-section2').css({ 'display': 'block' });           
+        }
+
+
+    }
 </script>
 
 <script>
-    $(document).ready(function ()
-    {
+    $(document).ready(function () {
         FillTeachers();
     });
 
 
-    function FillTeachers()
-    {
+    function FillTeachers() {
         var Id = $('#classid').val();
-        var classroom = $('.classroomfill :selected').val();      
-   
+        var classroom = $('.classroomfill :selected').val();
+
 
 
         $("#teachersdiv").empty();
-        $("#teachersdiv").load('/UsersAdmin/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr)
-        {
+        $("#teachersdiv").load('/UsersAdmin/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
         });
 
 

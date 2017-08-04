@@ -54,6 +54,10 @@ namespace VirtualClassroom.Models
     public class EditProfileViewModel
     {
         public bool DisplayAllOption { get; set; }
+
+        public bool DisplayTeacherOption { get; set; }
+
+
         [Required]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }

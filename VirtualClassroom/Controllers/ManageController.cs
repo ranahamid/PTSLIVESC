@@ -68,8 +68,8 @@ namespace VirtualClassroom.Controllers
         {
             EditProfileViewModel model = new EditProfileViewModel();
             model.DisplayAllOption = false;
-            
-          
+            model.DisplayTeacherOption = false;
+
             //country
             var Countries = from x in db.TblCountries
                             select x;
@@ -108,9 +108,10 @@ namespace VirtualClassroom.Controllers
                 if (item == "Student")
                 {
                     model.DisplayAllOption = true;
-                    //if is in student role
+                    model.DisplayTeacherOption = true;
+                  //if is in student role
 
-                    var q = from x in db.TblPCs
+                  var q = from x in db.TblPCs
                             where x.Id == User.Identity.GetUserId()
                             select x;
 
@@ -153,7 +154,8 @@ namespace VirtualClassroom.Controllers
                 }
                 else if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
                 {
-                    var q = from x in db.TblTCs
+                    model.DisplayTeacherOption = true;
+                  var q = from x in db.TblTCs
                             where x.Id.ToLower() == User.Identity.GetUserId()
                             select x;
 
@@ -165,6 +167,7 @@ namespace VirtualClassroom.Controllers
                 }
                 else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
                 {
+                    model.DisplayTeacherOption = true;
                     var q = from x in db.TblSCs
                             where x.Id.ToLower() == User.Identity.GetUserId()
                             select x;
@@ -178,6 +181,7 @@ namespace VirtualClassroom.Controllers
 
                 else if (item.Trim().ToLower() == "Featured".Trim().ToLower())
                 {
+                    model.DisplayTeacherOption = true;
                     var q = from x in db.TblFCs
                             where x.Id.ToLower() == User.Identity.GetUserId()
                             select x;
@@ -202,6 +206,7 @@ namespace VirtualClassroom.Controllers
                 {
 
                     model.DisplayAllOption = true;
+                    model.DisplayTeacherOption = true;
                     //moderator
                     var q = from x in db.TblModerators
                             where x.Id == User.Identity.GetUserId()
@@ -286,6 +291,8 @@ namespace VirtualClassroom.Controllers
             if (ModelState.IsValid)
             {
                 string fullName = model.FullName != null ? model.FullName : string.Empty;
+                model.DisplayAllOption = false;
+                model.DisplayTeacherOption = false;
 
                 //update Full Name on identity table
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -317,6 +324,9 @@ namespace VirtualClassroom.Controllers
                 {
                     if (item == "Student")
                     {
+                        model.DisplayAllOption = true;
+                        model.DisplayTeacherOption = true;
+
                         //if is in student role
                         var q = from x in db.TblPCs
                                 where x.Id == User.Identity.GetUserId()
@@ -375,6 +385,9 @@ namespace VirtualClassroom.Controllers
                     //Teacher
                     if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
                     {
+                        
+                        model.DisplayTeacherOption = true;
+
                         var q = from x in db.TblTCs
                                 where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
                                 select x;
@@ -382,8 +395,8 @@ namespace VirtualClassroom.Controllers
                         if (q != null && q.Count() == 1)
                         {
                             TblTC tblTC = q.Single();
-                            tblTC.Name = fullName;                           
-
+                            tblTC.Name = fullName;
+                            tblTC.ClassroomId = selectedClassroom;
                             try
                             {
                                 db.SubmitChanges();
@@ -421,7 +434,9 @@ namespace VirtualClassroom.Controllers
                     }
                     //Seat
                     if (item.Trim().ToLower() == "Seat".Trim().ToLower())
-                    {
+                    {                     
+                        model.DisplayTeacherOption = true;
+
                         var q = from x in db.TblSCs
                                 where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
                                 select x;
@@ -430,7 +445,7 @@ namespace VirtualClassroom.Controllers
                         {
                             TblSC tblSC = q.Single();
                             tblSC.Name = fullName;
-
+                            tblSC.ClassroomId = selectedClassroom;
                             // remove assigned students
                             var qPC = from x in db.TblPCs
                                       where x.ClassroomId.ToLower() == selectedClassroom.ToLower() && x.ScUid.HasValue && x.ScUid == tblSC.Uid
@@ -474,6 +489,8 @@ namespace VirtualClassroom.Controllers
                     //Featured
                     if (item.Trim().ToLower() == "Featured".Trim().ToLower())
                     {
+                 
+                        model.DisplayTeacherOption = true;
 
                         var q = from x in db.TblFCs
                                 where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
@@ -483,7 +500,7 @@ namespace VirtualClassroom.Controllers
                         {
                             TblFC tblFC = q.Single();
                             tblFC.Name = fullName;
-
+                            tblFC.ClassroomId = selectedClassroom;
 
 
                             try
@@ -530,6 +547,9 @@ namespace VirtualClassroom.Controllers
                     //moderator
                     else if (item == "Moderator")
                     {
+                        model.DisplayAllOption = true;
+                        model.DisplayTeacherOption = true;
+
                         //if is in student role
                         var q = from x in db.TblModerators
                                 where x.Id == User.Identity.GetUserId()

@@ -65,27 +65,33 @@
                             @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
                         </div>
                     </div>
+                    }
+                </div>
 
+            }
 
-                    <div class="form-group">
+                if (Model.DisplayTeacherOption)
+                    {
+                        <div class="form-group">
                         @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
 
                         <div class="col-md-10">
                             @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
                         </div>
                     </div>
+                    }
 
+
+                 if (Model.DisplayAllOption)
+                    {
                     <div class="form-group" id="teachersdiv">
                         @Html.Partial("_TeachersEditProfile", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
                     </div>
-                    
+                    }
 
-                </div>
+
             }
 
-        }
-
-      
 
 
 

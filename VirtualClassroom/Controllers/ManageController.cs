@@ -64,7 +64,7 @@ namespace VirtualClassroom.Controllers
         }
 
         [HttpGet]
-        public async Task <ActionResult> EditProfile()
+        public async Task<ActionResult> EditProfile()
         {
             EditProfileViewModel model = new EditProfileViewModel();
             model.DisplayAllOption = false;
@@ -109,9 +109,9 @@ namespace VirtualClassroom.Controllers
                 {
                     model.DisplayAllOption = true;
                     model.DisplayTeacherOption = true;
-                  //if is in student role
+                    //if is in student role
 
-                  var q = from x in db.TblPCs
+                    var q = from x in db.TblPCs
                             where x.Id == User.Identity.GetUserId()
                             select x;
 
@@ -155,7 +155,7 @@ namespace VirtualClassroom.Controllers
                 else if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
                 {
                     model.DisplayTeacherOption = true;
-                  var q = from x in db.TblTCs
+                    var q = from x in db.TblTCs
                             where x.Id.ToLower() == User.Identity.GetUserId()
                             select x;
 
@@ -251,8 +251,6 @@ namespace VirtualClassroom.Controllers
 
             }
 
-            
-
             //classroom            
             var TblClassrooms = from x in db.TblClassrooms
                                 select x;
@@ -273,7 +271,7 @@ namespace VirtualClassroom.Controllers
             model.Classroom = TblClassroomItems;
 
             //get full name
-           
+
             string FullName = string.Empty;
 
             if (user != null && user.FullName != null)
@@ -311,7 +309,7 @@ namespace VirtualClassroom.Controllers
                     bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
                 }
                 //check role
-              
+
                 if (user == null)
                 {
                     return HttpNotFound();
@@ -381,11 +379,11 @@ namespace VirtualClassroom.Controllers
                     }
 
 
-                    
+
                     //Teacher
                     if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
                     {
-                        
+
                         model.DisplayTeacherOption = true;
 
                         var q = from x in db.TblTCs
@@ -429,12 +427,10 @@ namespace VirtualClassroom.Controllers
                         {
 
                         }
-
-
                     }
                     //Seat
                     if (item.Trim().ToLower() == "Seat".Trim().ToLower())
-                    {                     
+                    {
                         model.DisplayTeacherOption = true;
 
                         var q = from x in db.TblSCs
@@ -461,7 +457,7 @@ namespace VirtualClassroom.Controllers
                                 db.SubmitChanges();
                             }
                             catch (Exception ex)
-                            { 
+                            {
                             }
                         }
                         else
@@ -474,7 +470,7 @@ namespace VirtualClassroom.Controllers
                                 ClassroomId = selectedClassroom,
                                 Name = fullName
                             });
-                            
+
                         }
                         try
                         {
@@ -489,7 +485,7 @@ namespace VirtualClassroom.Controllers
                     //Featured
                     if (item.Trim().ToLower() == "Featured".Trim().ToLower())
                     {
-                 
+
                         model.DisplayTeacherOption = true;
 
                         var q = from x in db.TblFCs
@@ -529,7 +525,7 @@ namespace VirtualClassroom.Controllers
                                 ClassroomId = selectedClassroom,
                                 Name = fullName
                             });
-                          
+
                         }
 
                         try
@@ -605,7 +601,7 @@ namespace VirtualClassroom.Controllers
 
                 }
 
-                return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });             
+                return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });
             }
 
             return View(model);
@@ -820,10 +816,10 @@ namespace VirtualClassroom.Controllers
                     {
                         FullName = User.Identity.GetUserName();
                     }
-                    string body = "Dear " + FullName + ","+
-                           
+                    string body = "Dear " + FullName + "," +
+
                             "\n\nRecently your Virtual Classroom account password has changed." +
-                           
+
                             "\n\nIf you did not initiate this request, please contact us immediately at support@example.com." +
                             "\n\nThank you," +
                             "\nThe Virtual Classroom Team.";

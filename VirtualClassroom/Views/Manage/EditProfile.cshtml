@@ -70,27 +70,27 @@
 
             }
 
-                if (Model.DisplayTeacherOption)
-                    {
-                        <div class="form-group">
-                        @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
+            if (Model.DisplayTeacherOption)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
 
-                        <div class="col-md-10">
-                            @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
-                        </div>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
                     </div>
-                    }
-
-
-                 if (Model.DisplayAllOption)
-                    {
-                    <div class="form-group" id="teachersdiv">
-                        @Html.Partial("_TeachersEditProfile", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
-                    </div>
-                    }
-
-
+                </div>
             }
+
+
+            if (Model.DisplayAllOption)
+            {
+                <div class="form-group" id="teachersdiv">
+                    @Html.Partial("_TeachersEditProfile", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
+                </div>
+            }
+
+
+        }
 
 
 
@@ -102,7 +102,7 @@
         </div>
     </div>
 
-}
+            }
 
 <div>
     @Html.ActionLink("Back to List", "Index")
@@ -121,12 +121,11 @@
 
         var classroom = $('.classroomfill :selected').val();
 
-     
+
 
 
         $("#teachersdiv").empty();
-        $("#teachersdiv").load('/Manage/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr)
-        {
+        $("#teachersdiv").load('/Manage/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
             //var classroom = $('.classroomfill :selected').val();
             //console.log("classroom" + classroom);
 

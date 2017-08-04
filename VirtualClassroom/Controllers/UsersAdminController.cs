@@ -195,7 +195,7 @@ namespace VirtualClassroom.Controllers
                 }
                 else if (item == "Moderator")
                 {
-                  //if is in moderator role
+                    //if is in moderator role
                     var q = from x in db.TblModerators
                             where x.Id == id
                             select x;
@@ -253,7 +253,7 @@ namespace VirtualClassroom.Controllers
 
         //
         // GET: /Users/Create
-        public async Task< ActionResult> Create()
+        public async Task<ActionResult> Create()
         {
             //Get the list of Roles
             //List<ApplicationRole> roleList = new List<ApplicationRole>();
@@ -335,7 +335,7 @@ namespace VirtualClassroom.Controllers
 
                 if (adminresult.Succeeded)
                 {
-                    
+
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     //body
@@ -405,10 +405,10 @@ namespace VirtualClassroom.Controllers
                                 Guid scUid = Guid.NewGuid();
                                 db.TblSCs.InsertOnSubmit(new TblSC
                                 {
-                                    Uid          = scUid,
-                                    Id           = CurrentUserId,
-                                    ClassroomId  = selectedClassroom,
-                                    Name         = fullName
+                                    Uid = scUid,
+                                    Id = CurrentUserId,
+                                    ClassroomId = selectedClassroom,
+                                    Name = fullName
                                 });
                                 try
                                 {
@@ -571,7 +571,7 @@ namespace VirtualClassroom.Controllers
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
                     //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
-                  
+
                     ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
                     return View();
                 }
@@ -583,7 +583,7 @@ namespace VirtualClassroom.Controllers
 
             foreach (var item in RoleManager.Roles)
             {
-               // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+                // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
                 {
                     roleList.Add(item);
                 }
@@ -633,7 +633,7 @@ namespace VirtualClassroom.Controllers
                 }
             }
 
-            
+
 
             //classroom            
             var TblClassrooms = from x in db.TblClassrooms
@@ -797,18 +797,18 @@ namespace VirtualClassroom.Controllers
                     //end moderator
                 }
             }
-           
+
             vm.Id = user.Id;
             vm.Email = user.Email;
             vm.Classroom = TblClassroomItems;
             vm.Country = CountryItems;
-           
+
             vm.RolesList = RoleManager.Roles.ToList().Select(x => new SelectListItem()
-                {
-                    Selected = userRoles.Contains(x.Name),
-                    Text = x.Name,
-                    Value = x.Name
-                });
+            {
+                Selected = userRoles.Contains(x.Name),
+                Text = x.Name,
+                Value = x.Name
+            });
 
             return View(vm);
         }
@@ -899,11 +899,11 @@ namespace VirtualClassroom.Controllers
                     }
                     if (role.Trim().ToLower() == "Student".Trim().ToLower())
                     {
-                      
+
                     }
                     if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                     {
-                        //nothing to do
+                        
                     }
                 }
 
@@ -977,18 +977,18 @@ namespace VirtualClassroom.Controllers
                     }
                     //delete from student & moderator table
                     var roles = await UserManager.GetRolesAsync(user.Id);
-                    
+
                     //user id in lower
                     string loweredId = id.ToLower();
 
                     foreach (var role in roles)
-                    {                     
+                    {
 
                         if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
                         {
                             //delete from Teacher
                             var q = from x in db.TblTCs
-                                    where  x.Id.ToLower() == loweredId
+                                    where x.Id.ToLower() == loweredId
                                     select x;
 
                             if (q != null && q.Count() == 1)
@@ -1007,9 +1007,9 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception  ex)
+                                catch (Exception ex)
                                 {
-                                   
+
                                 }
                             }
                         }
@@ -1017,7 +1017,7 @@ namespace VirtualClassroom.Controllers
                         {
                             //delete from Seat
                             var q = from x in db.TblSCs
-                                    where  x.Id.ToLower() == loweredId
+                                    where x.Id.ToLower() == loweredId
                                     select x;
 
                             if (q != null && q.Count() == 1)
@@ -1036,11 +1036,11 @@ namespace VirtualClassroom.Controllers
                                 try
                                 {
                                     db.SubmitChanges();
-                                    
+
                                 }
-                                catch (Exception  ex)
+                                catch (Exception ex)
                                 {
-                                 
+
                                 }
                             }
                         }
@@ -1087,7 +1087,7 @@ namespace VirtualClassroom.Controllers
                         if (role.Trim().ToLower() == "Student".Trim().ToLower())
                         {
                             //delete from student
-                           
+
 
                             var q = from x in db.TblPCs
                                     where x.Id.ToLower() == loweredId
@@ -1114,7 +1114,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception )
+                                catch (Exception)
                                 {
 
                                 }
@@ -1126,7 +1126,7 @@ namespace VirtualClassroom.Controllers
                         }
                         if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                         {
-                            
+
 
                             var q = from x in db.TblModerators
                                     where x.Id.ToLower() == loweredId
@@ -1142,7 +1142,7 @@ namespace VirtualClassroom.Controllers
                                 {
                                     db.SubmitChanges();
                                 }
-                                catch (Exception )
+                                catch (Exception)
                                 {
 
                                 }

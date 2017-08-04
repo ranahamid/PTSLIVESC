@@ -100,6 +100,8 @@ namespace VirtualClassroom.Controllers
             }
 
             IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+            //user id in lower
+            string loweredId = user.Id.ToLower();
             foreach (var item in rolesAll)
             {
                 if (item == "Student")
@@ -143,6 +145,53 @@ namespace VirtualClassroom.Controllers
                     }
                     //end of student
 
+                }
+                else if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                {
+                    var q = from x in db.TblTCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblTC tblTC = q.Single();
+                        model.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                    }
+                }
+                else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
+                {
+                    var q = from x in db.TblSCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblSC tblSC = q.Single();
+                        model.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                    }
+                }
+
+                else if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                {
+                    var q = from x in db.TblFCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblFC tblFC = q.Single();
+                        model.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                    }
+
+                }
+                else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
+                {
+                    //nothing to do
+                }
+                //Administrator
+                else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
+                {
+                    //nothing to do
                 }
                 else if (item == "Moderator")
                 {
@@ -204,21 +253,21 @@ namespace VirtualClassroom.Controllers
 
         //
         // GET: /Users/Create
-        public ActionResult Create()
+        public async Task< ActionResult> Create()
         {
             //Get the list of Roles
-            List<ApplicationRole> roleList = new List<ApplicationRole>();
+            //List<ApplicationRole> roleList = new List<ApplicationRole>();
 
-            foreach (var item in RoleManager.Roles)
-            {
-               // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
-                {
-                    roleList.Add(item);
-                }
+            //foreach (var item in RoleManager.Roles)
+            //{
+            //   // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
+            //    {
+            //        roleList.Add(item);
+            //    }
 
-            }
-            ViewBag.RoleId = new SelectList(roleList, "Name", "Name");
-            //ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
+            //}
+            //ViewBag.RoleId = new SelectList(roleList, "Name", "Name");
+            ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
 
 
             //Create
@@ -356,10 +405,10 @@ namespace VirtualClassroom.Controllers
                                 Guid scUid = Guid.NewGuid();
                                 db.TblSCs.InsertOnSubmit(new TblSC
                                 {
-                                    Uid = scUid,
-                                    Id = CurrentUserId,
-                                    ClassroomId = selectedClassroom,
-                                    Name = fullName
+                                    Uid          = scUid,
+                                    Id           = CurrentUserId,
+                                    ClassroomId  = selectedClassroom,
+                                    Name         = fullName
                                 });
                                 try
                                 {
@@ -522,17 +571,8 @@ namespace VirtualClassroom.Controllers
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
                     //ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
-                    List<ApplicationRole> roleList2 = new List<ApplicationRole>();
-
-                    foreach (var item in RoleManager.Roles)
-                    {
-                      //  if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
-                        {
-                            roleList2.Add(item);
-                        }
-
-                    }
-                    ViewBag.RoleId = new SelectList(roleList2, "Name", "Name");
+                  
+                    ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
                     return View();
                 }
                 return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.AddUserSuccess });
@@ -569,24 +609,215 @@ namespace VirtualClassroom.Controllers
 
             var userRoles = await UserManager.GetRolesAsync(user.Id);
 
-            return View(new EditUserViewModel()
+
+            //others property
+
+
+            //country
+            var Countries = from x in db.TblCountries
+                            select x;
+
+            List<SelectListItem> CountryItems = new List<SelectListItem>();
+
+            if (Countries != null)
             {
-                Id = user.Id,
-                Email = user.Email,
-                RolesList = RoleManager.Roles.ToList().Select(x => new SelectListItem()
-                                                            {
-                                                                Selected = userRoles.Contains(x.Name),
-                                                                Text = x.Name,
-                                                                Value = x.Name
-                                                            }),
-            });
+                foreach (var item in Countries)
+                {
+                    CountryItems.Add(new SelectListItem
+                    {
+                        Text = item.CountryName,
+                        Value = item.CountryName,
+                        Selected = (item.TwoCharCountryCode == "US") ? true : false
+                    });
+
+                }
+            }
+
+            
+
+            //classroom            
+            var TblClassrooms = from x in db.TblClassrooms
+                                select x;
+
+            List<SelectListItem> TblClassroomItems = new List<SelectListItem>();
+
+            if (TblClassroomItems != null)
+            {
+                foreach (var item in TblClassrooms)
+                {
+                    TblClassroomItems.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id
+                    });
+                }
+            }
+
+
+            //details
+            EditUserViewModel vm = new EditUserViewModel();
+            vm.SelectedClassroom = string.Empty;
+            vm.SelectedCountry = string.Empty;
+            vm.SelectedTeacher = string.Empty;
+
+
+            IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+            //user id in lower
+            string loweredId = user.Id.ToLower();
+            foreach (var item in rolesAll)
+            {
+                if (item == "Student")
+                {
+                    //if is in student role
+                    var q = from x in db.TblPCs
+                            where x.Id == id
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblPC tblPC = q.Single();
+
+                        vm.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                        vm.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                        vm.State = tblPC.State != null ? tblPC.State : string.Empty;
+                        vm.City = tblPC.City != null ? tblPC.City : string.Empty;
+                        vm.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                        vm.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                        vm.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+                        //teacher
+
+                        if (tblPC.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                vm.SelectedTeacher = tc.Uid != null ? tc.Uid.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            vm.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end of student
+
+                }
+                else if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                {
+                    var q = from x in db.TblTCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblTC tblTC = q.Single();
+                        vm.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                    }
+                }
+                else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
+                {
+                    var q = from x in db.TblSCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblSC tblSC = q.Single();
+                        vm.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                    }
+                }
+
+                else if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                {
+                    var q = from x in db.TblFCs
+                            where x.Id.ToLower() == loweredId
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblFC tblFC = q.Single();
+                        vm.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                    }
+
+                }
+                else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
+                {
+                    //nothing to do
+                }
+                //Administrator
+                else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
+                {
+                    //nothing to do
+                }
+                else if (item == "Moderator")
+                {
+                    //if is in moderator role
+                    var q = from x in db.TblModerators
+                            where x.Id == id
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblModerator tblPC = q.Single();
+
+                        vm.FullName = tblPC.Name != null ? tblPC.Name : string.Empty;
+                        vm.Address1 = tblPC.Address1 != null ? tblPC.Address1 : string.Empty;
+                        vm.State = tblPC.State != null ? tblPC.State : string.Empty;
+                        vm.City = tblPC.City != null ? tblPC.City : string.Empty;
+                        vm.SelectedCountry = tblPC.Country != null ? tblPC.Country : string.Empty;
+                        vm.ZipCode = tblPC.ZipCode != null ? tblPC.ZipCode : string.Empty;
+                        vm.SelectedClassroom = tblPC.ClassroomId != null ? tblPC.ClassroomId : string.Empty;
+
+                        //teacher
+
+                        if (tblPC.TcUid != null)
+                        {
+                            var qTC = from x in db.TblTCs
+                                      where x.Uid.ToString().ToLower() == tblPC.TcUid.ToString().ToLower()
+                                      select x;
+
+                            if (qTC != null && qTC.Count() == 1)
+                            {
+                                TblTC tc = qTC.Single();
+
+                                vm.SelectedTeacher = tc.Uid != null ? tc.Name.ToString() : string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            vm.SelectedTeacher = string.Empty;
+                        }
+                    }
+                    //end moderator
+                }
+            }
+           
+            vm.Id = user.Id;
+            vm.Email = user.Email;
+            vm.Classroom = TblClassroomItems;
+            vm.Country = CountryItems;
+           
+            vm.RolesList = RoleManager.Roles.ToList().Select(x => new SelectListItem()
+                {
+                    Selected = userRoles.Contains(x.Name),
+                    Text = x.Name,
+                    Value = x.Name
+                });
+
+            return View(vm);
         }
 
         //
         // POST: /Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Email,Id")] EditUserViewModel editUser, params string[] selectedRole)
+        public async Task<ActionResult> Edit(EditUserViewModel editUser, params string[] selectedRole)
         {
             if (ModelState.IsValid)
             {
@@ -612,6 +843,70 @@ namespace VirtualClassroom.Controllers
                 }
                 result = await UserManager.RemoveFromRolesAsync(user.Id, userRoles.Except(selectedRole).ToArray<string>());
 
+                //update user's based on role
+                var roles = await UserManager.GetRolesAsync(user.Id);
+
+                //user id in lower
+                string loweredId = user.Id.ToLower();
+
+                foreach (var role in roles)
+                {
+                    //update 
+                    if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    {
+
+                        var q = from x in db.TblTCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblTC tblTC = q.Single();
+                        }
+                    }
+                    if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                    {
+                        var q = from x in db.TblSCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblSC tblSC = q.Single();
+                        }
+                    }
+                    if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+
+                    {
+                        var q = from x in db.TblFCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblFC tblFC = q.Single();
+                        }
+
+                    }
+                    if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+                    {
+                        //nothing to do
+                    }
+                    //Administrator
+                    if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                    {
+                        //nothing to do
+                    }
+                    if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                    {
+                      
+                    }
+                    if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                    {
+                        //nothing to do
+                    }
+                }
+
                 if (!result.Succeeded)
                 {
                     ModelState.AddModelError("", result.Errors.First());
@@ -631,6 +926,11 @@ namespace VirtualClassroom.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            else if (id == User.Identity.GetUserId())
+            {
+                return RedirectToAction("Index", "UsersAdmin", new { Message = ManageMessageId.CanTDeleteOwn });
+            }
+
             var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
@@ -677,13 +977,117 @@ namespace VirtualClassroom.Controllers
                     }
                     //delete from student & moderator table
                     var roles = await UserManager.GetRolesAsync(user.Id);
+                    
+                    //user id in lower
+                    string loweredId = id.ToLower();
 
-                    foreach (var item in roles)
-                    {
-                        if (item == "Student")
+                    foreach (var role in roles)
+                    {                     
+
+                        if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
+                        {
+                            //delete from Teacher
+                            var q = from x in db.TblTCs
+                                    where  x.Id.ToLower() == loweredId
+                                    select x;
+
+                            if (q != null && q.Count() == 1)
+                            {
+                                TblTC tblTC = q.Single();
+
+                                Guid tcUid = tblTC.Uid;
+
+                                foreach (TblPC tblPC in db.TblPCs.Where(x => x.TcUid.HasValue && x.TcUid == tcUid).Select(x => x))
+                                {
+                                    tblPC.TcUid = null;
+                                }
+                                db.TblTCs.DeleteOnSubmit(tblTC);
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception  ex)
+                                {
+                                   
+                                }
+                            }
+                        }
+                        if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                        {
+                            //delete from Seat
+                            var q = from x in db.TblSCs
+                                    where  x.Id.ToLower() == loweredId
+                                    select x;
+
+                            if (q != null && q.Count() == 1)
+                            {
+                                TblSC tblSC = q.Single();
+
+                                Guid scUid = tblSC.Uid;
+
+                                foreach (TblPC tblPC in db.TblPCs.Where(x => x.ScUid.HasValue && x.ScUid == scUid).Select(x => x))
+                                {
+                                    tblPC.ScUid = null;
+                                    tblPC.Position = 0;
+                                }
+                                db.TblSCs.DeleteOnSubmit(tblSC);
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                    
+                                }
+                                catch (Exception  ex)
+                                {
+                                 
+                                }
+                            }
+                        }
+                        if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+                        {
+                            //delete from Featured
+                            var q = from x in db.TblFCs
+                                    where x.Id.ToLower() == loweredId
+                                    select x;
+
+                            if (q != null && q.Count() == 1)
+                            {
+                                TblFC tblFC = q.Single();
+
+                                Guid fcUid = tblFC.Uid;
+
+                                // remove assigned students
+                                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                              where x.FcUid == tblFC.Uid
+                                                              select x);
+
+                                db.TblFCs.DeleteOnSubmit(tblFC);
+
+                                try
+                                {
+                                    db.SubmitChanges();
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+                        }
+                        if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+                        {
+                            //nothing to do
+                        }
+                        //Administrator
+                        if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                        {
+                            //nothing to do
+                        }
+
+                        if (role.Trim().ToLower() == "Student".Trim().ToLower())
                         {
                             //delete from student
-                            string loweredId = id.ToLower();
+                           
 
                             var q = from x in db.TblPCs
                                     where x.Id.ToLower() == loweredId
@@ -720,10 +1124,9 @@ namespace VirtualClassroom.Controllers
 
                             }
                         }
-                        else if (item == "Moderator")
+                        if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                         {
-                            //delete from moderator
-                            string loweredId = id.ToLower();
+                            
 
                             var q = from x in db.TblModerators
                                     where x.Id.ToLower() == loweredId
@@ -749,6 +1152,7 @@ namespace VirtualClassroom.Controllers
 
                             }
                         }
+
 
                     }
                     //end from student & mod

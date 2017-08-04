@@ -16,6 +16,15 @@
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
 
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.FullName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+            </div>
+        </div>
+
+
         <div class="form-group">
             @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -28,11 +37,72 @@
             <span class=" col-md-10">
                 @foreach (var item in Model.RolesList)
                 {
-                    <input type="checkbox" name="SelectedRole" value="@item.Value" checked="@item.Selected" class="checkbox-inline" />
+                    <input type="checkbox" name="SelectedRole" value="@item.Value" checked="@item.Selected" class="checkbox-inline"  id="@item.Value-checkbox" , onchange="ChangeRoleStMod()" />
                     @Html.Label(item.Value, new { @class = "control-label" })
                 }
             </span>
         </div>
+
+
+
+        <div class="pc-section1" id="pc-section1" style="display:none;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Address1, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.State, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
+
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => Model.SelectedCountry, Model.Country, new { @id = "CountryId", @class = "form-control" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ZipCode, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="pc-section2" id="pc-section2" style="display:none;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Classroom, new { @class = "col-md-2 control-label" })
+
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => Model.SelectedClassroom, Model.Classroom, new { @id = "classid", @class = "form-control classroomfill", @onchange = "FillTeachers()" })
+                </div>
+            </div>
+        </div>
+        <div class="pc-section3" id="pc-section3" style="display:none;">
+            <div class="form-group" id="teachersdiv">
+                @Html.Partial("_TeachersUserAdmin", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
+            </div>
+        </div>
+
+
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -45,6 +115,56 @@
 <div>
     @Html.ActionLink("Back to User List", "Index")
 </div>
+
+
+
+<script>
+    function ChangeRoleStMod()
+    {
+
+        if ($('#Moderator-checkbox').prop("checked") == true || $('#Student-checkbox').prop("checked") == true)
+        {
+            $('#pc-section1').css({ 'display': 'block' });
+            $('#pc-section2').css({ 'display': 'block' });
+            $('#pc-section3').css({ 'display': 'block' });
+        }
+        else {
+            $('#pc-section1').css({ 'display': 'none' });
+            $('#pc-section2').css({ 'display': 'none' });
+            $('#pc-section3').css({ 'display': 'none' });
+        }
+
+        if ($('#Seat-checkbox').prop("checked") == true || $('#Featured-checkbox').prop("checked") == true || $('#Teacher-checkbox').prop("checked") == true)
+        {
+            $('#pc-section2').css({ 'display': 'block' });
+        }
+
+
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        FillTeachers();
+        ChangeRoleStMod();
+    });
+
+
+    function FillTeachers() {
+        var Id = $('#classid').val();
+        var classroom = $('.classroomfill :selected').val();
+
+
+
+        $("#teachersdiv").empty();
+        $("#teachersdiv").load('/UsersAdmin/FillTeachers', { id: Id }, function (responseTxt, statusTxt, xhr) {
+        });
+
+
+    }
+</script>
+
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

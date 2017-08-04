@@ -151,6 +151,53 @@ namespace VirtualClassroom.Controllers
 
 
                 }
+                else if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                {
+                    var q = from x in db.TblTCs
+                            where x.Id.ToLower() == User.Identity.GetUserId()
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblTC tblTC = q.Single();
+                        model.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                    }
+                }
+                else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
+                {
+                    var q = from x in db.TblSCs
+                            where x.Id.ToLower() == User.Identity.GetUserId()
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblSC tblSC = q.Single();
+                        model.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                    }
+                }
+
+                else if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                {
+                    var q = from x in db.TblFCs
+                            where x.Id.ToLower() == User.Identity.GetUserId()
+                            select x;
+
+                    if (q != null && q.Count() == 1)
+                    {
+                        TblFC tblFC = q.Single();
+                        model.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                    }
+
+                }
+                else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
+                {
+                    //nothing to do
+                }
+                //Administrator
+                else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
+                {
+                    //nothing to do
+                }
                 else if (item == "Moderator")
                 {
 
@@ -264,6 +311,7 @@ namespace VirtualClassroom.Controllers
                 }
 
                 IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
+                string CurrentUserId = user.Id;
 
                 foreach (var item in rolesAll)
                 {
@@ -290,9 +338,6 @@ namespace VirtualClassroom.Controllers
                         {
                             //insert
                             //store the others property in tblPC
-                           
-                            string CurrentUserId = user.Id;
-
                             Guid pcUid = Guid.NewGuid();
 
                             db.TblPCs.InsertOnSubmit(new TblPC
@@ -314,8 +359,175 @@ namespace VirtualClassroom.Controllers
                                 State = model.State != null ? model.State : string.Empty,
                             });
                         }
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
 
                     }
+
+
+                    
+                    //Teacher
+                    if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    {
+                        var q = from x in db.TblTCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblTC tblTC = q.Single();
+                            tblTC.Name = fullName;                           
+
+                            try
+                            {
+                                db.SubmitChanges();
+                            }
+                            catch (Exception ex)
+                            {
+                            }
+                        }
+                        else
+                        {
+                            //insert
+                            Guid tcUid = Guid.NewGuid();
+
+                            db.TblTCs.InsertOnSubmit(new TblTC
+                            {
+                                Uid = tcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName,
+                                Audio = true,
+                                Video = true
+                            });
+
+                        }
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+
+                    }
+                    //Seat
+                    if (item.Trim().ToLower() == "Seat".Trim().ToLower())
+                    {
+                        var q = from x in db.TblSCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblSC tblSC = q.Single();
+                            tblSC.Name = fullName;
+
+                            // remove assigned students
+                            var qPC = from x in db.TblPCs
+                                      where x.ClassroomId.ToLower() == selectedClassroom.ToLower() && x.ScUid.HasValue && x.ScUid == tblSC.Uid
+                                      select x;
+                            foreach (TblPC tblPC in qPC.Select(x => x))
+                            {
+                                tblPC.ScUid = null;
+                                tblPC.Position = 0;
+                            }
+
+                            try
+                            {
+                                db.SubmitChanges();
+                            }
+                            catch (Exception ex)
+                            { 
+                            }
+                        }
+                        else
+                        {
+                            Guid scUid = Guid.NewGuid();
+                            db.TblSCs.InsertOnSubmit(new TblSC
+                            {
+                                Uid = scUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName
+                            });
+                            
+                        }
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+                    }
+                    //Featured
+                    if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                    {
+
+                        var q = from x in db.TblFCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblFC tblFC = q.Single();
+                            tblFC.Name = fullName;
+
+
+
+                            try
+                            {
+                                db.SubmitChanges();
+                                // remove assigned students
+                                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                              where x.FcUid == tblFC.Uid
+                                                              select x);
+                                db.SubmitChanges();
+                            }
+
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+                        else
+                        {
+                            //inseret
+                            Guid fcUid = Guid.NewGuid();
+                            db.TblFCs.InsertOnSubmit(new TblFC
+                            {
+                                Uid = fcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName
+                            });
+                          
+                        }
+
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+                    }
+
+
+                    //moderator
                     else if (item == "Moderator")
                     {
                         //if is in student role
@@ -338,7 +550,6 @@ namespace VirtualClassroom.Controllers
                         else
                         {
 
-                            string CurrentUserId = user.Id;
                             Guid pcUid = Guid.NewGuid();
 
                             //insert
@@ -361,24 +572,22 @@ namespace VirtualClassroom.Controllers
                                 State = model.State != null ? model.State : string.Empty,
                             });
                         }
+
+                        try
+                        {
+                            db.SubmitChanges();
+                        }
+                        catch (Exception)
+                        {
+
+                        }
                     }
 
                 }
-                
-                //if is in moderator role
 
-                try
-                {
-                    db.SubmitChanges();
-                }
-                catch (Exception )
-                {
-                    return View(model);
-                }
                 return RedirectToAction("Index", "Manage", new { Message = ManageMessageId.EditProfileSUccess });             
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
 
         }

@@ -163,6 +163,7 @@ namespace VirtualClassroom.Controllers
                     {
                         TblTC tblTC = q.Single();
                         model.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                        model.FullName = tblTC.Name != null ? tblTC.Name : string.Empty;
                     }
                 }
                 else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
@@ -176,6 +177,8 @@ namespace VirtualClassroom.Controllers
                     {
                         TblSC tblSC = q.Single();
                         model.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                        model.FullName = tblSC.Name != null ? tblSC.Name : string.Empty;
+
                     }
                 }
 
@@ -190,17 +193,26 @@ namespace VirtualClassroom.Controllers
                     {
                         TblFC tblFC = q.Single();
                         model.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                        model.FullName = tblFC.Name != null ? tblFC.Name : string.Empty;
+
                     }
 
                 }
                 else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
                 {
-                    //nothing to do
+                    
+                    if (user.FullName != null)
+                    {
+                        model.FullName = user.FullName;
+                    }
                 }
                 //Administrator
                 else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
                 {
-                    //nothing to do
+                    if (user.FullName != null)
+                    {
+                        model.FullName = user.FullName;
+                    }
                 }
                 else if (item == "Moderator")
                 {
@@ -320,6 +332,173 @@ namespace VirtualClassroom.Controllers
 
                 foreach (var item in rolesAll)
                 {
+                    
+
+
+
+                    //Teacher
+                    if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    {
+
+                        model.DisplayTeacherOption = true;
+
+                        var q = from x in db.TblTCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblTC tblTC = q.Single();
+                            tblTC.Name = fullName;
+                            tblTC.ClassroomId = selectedClassroom;
+                          
+                        }
+                        else
+                        {
+                            //insert
+                            Guid tcUid = Guid.NewGuid();
+
+                            db.TblTCs.InsertOnSubmit(new TblTC
+                            {
+                                Uid = tcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName,
+                                Audio = true,
+                                Video = true
+                            });
+
+                        }                      
+                    }
+                    //Seat
+                    if (item.Trim().ToLower() == "Seat".Trim().ToLower())
+                    {
+                        model.DisplayTeacherOption = true;
+
+                        var q = from x in db.TblSCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblSC tblSC = q.Single();
+                            tblSC.Name = fullName;
+                            tblSC.ClassroomId = selectedClassroom;
+                            // remove assigned students
+                            var qPC = from x in db.TblPCs
+                                      where x.ClassroomId.ToLower() == selectedClassroom.ToLower() && x.ScUid.HasValue && x.ScUid == tblSC.Uid
+                                      select x;
+                            foreach (TblPC tblPC in qPC.Select(x => x))
+                            {
+                                tblPC.ScUid = null;
+                                tblPC.Position = 0;
+                            }
+
+                         
+                        }
+                        else
+                        {
+                            Guid scUid = Guid.NewGuid();
+                            db.TblSCs.InsertOnSubmit(new TblSC
+                            {
+                                Uid = scUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName
+                            });
+
+                        }                      
+
+                    }
+                    //Featured
+                    if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                    {
+
+                        model.DisplayTeacherOption = true;
+
+                        var q = from x in db.TblFCs
+                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblFC tblFC = q.Single();
+                            tblFC.Name = fullName;
+                            tblFC.ClassroomId = selectedClassroom;
+                            // remove assigned students
+                            db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                              where x.FcUid == tblFC.Uid
+                                                              select x);
+                            
+                        }
+                        else
+                        {
+                            //inseret
+                            Guid fcUid = Guid.NewGuid();
+                            db.TblFCs.InsertOnSubmit(new TblFC
+                            {
+                                Uid = fcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName
+                            });
+
+                        }                      
+                    }
+
+
+                    //moderator
+                    else if (item == "Moderator")
+                    {
+                        model.DisplayAllOption = true;
+                        model.DisplayTeacherOption = true;
+
+                        //if is in Moderators role
+                        var q = from x in db.TblModerators
+                                where x.Id == User.Identity.GetUserId()
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblModerator tblModerator = q.Single();
+                            tblModerator.Name = fullName;
+                            tblModerator.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                            tblModerator.State = model.State != null ? model.State : string.Empty;
+                            tblModerator.City = model.City != null ? model.City : string.Empty;
+                            tblModerator.Country = selectedCountry;
+                            tblModerator.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                            tblModerator.ClassroomId = selectedClassroom;
+                            tblModerator.TcUid = selectedTeacher;
+                        }
+                        else
+                        {
+
+                            Guid pcUid = Guid.NewGuid();
+
+                            //insert
+                            db.TblModerators.InsertOnSubmit(new TblModerator
+                            {
+                                Uid = pcUid,
+                                Id = CurrentUserId,
+                                ClassroomId = selectedClassroom,
+                                Name = fullName,
+                                // ScUid = null,
+                                TcUid = selectedTeacher,
+                                Position = 0,
+                                Audio = true,
+                                Video = true,
+                                Volume = 80,
+                                Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                                City = model.City != null ? model.City : string.Empty,
+                                Country = selectedCountry,
+                                ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                                State = model.State != null ? model.State : string.Empty,
+                            });
+                        }
+
+                       
+                    }
+
                     if (item == "Student")
                     {
                         model.DisplayAllOption = true;
@@ -367,236 +546,16 @@ namespace VirtualClassroom.Controllers
                                 State = model.State != null ? model.State : string.Empty,
                             });
                         }
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-
                     }
 
-
-
-                    //Teacher
-                    if (item.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    //for all
+                    try
                     {
-
-                        model.DisplayTeacherOption = true;
-
-                        var q = from x in db.TblTCs
-                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
-                                select x;
-
-                        if (q != null && q.Count() == 1)
-                        {
-                            TblTC tblTC = q.Single();
-                            tblTC.Name = fullName;
-                            tblTC.ClassroomId = selectedClassroom;
-                            try
-                            {
-                                db.SubmitChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }
-                        else
-                        {
-                            //insert
-                            Guid tcUid = Guid.NewGuid();
-
-                            db.TblTCs.InsertOnSubmit(new TblTC
-                            {
-                                Uid = tcUid,
-                                Id = CurrentUserId,
-                                ClassroomId = selectedClassroom,
-                                Name = fullName,
-                                Audio = true,
-                                Video = true
-                            });
-
-                        }
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
+                        db.SubmitChanges();
                     }
-                    //Seat
-                    if (item.Trim().ToLower() == "Seat".Trim().ToLower())
-                    {
-                        model.DisplayTeacherOption = true;
-
-                        var q = from x in db.TblSCs
-                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
-                                select x;
-
-                        if (q != null && q.Count() == 1)
-                        {
-                            TblSC tblSC = q.Single();
-                            tblSC.Name = fullName;
-                            tblSC.ClassroomId = selectedClassroom;
-                            // remove assigned students
-                            var qPC = from x in db.TblPCs
-                                      where x.ClassroomId.ToLower() == selectedClassroom.ToLower() && x.ScUid.HasValue && x.ScUid == tblSC.Uid
-                                      select x;
-                            foreach (TblPC tblPC in qPC.Select(x => x))
-                            {
-                                tblPC.ScUid = null;
-                                tblPC.Position = 0;
-                            }
-
-                            try
-                            {
-                                db.SubmitChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }
-                        else
-                        {
-                            Guid scUid = Guid.NewGuid();
-                            db.TblSCs.InsertOnSubmit(new TblSC
-                            {
-                                Uid = scUid,
-                                Id = CurrentUserId,
-                                ClassroomId = selectedClassroom,
-                                Name = fullName
-                            });
-
-                        }
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-
-                    }
-                    //Featured
-                    if (item.Trim().ToLower() == "Featured".Trim().ToLower())
+                    catch (Exception e)
                     {
 
-                        model.DisplayTeacherOption = true;
-
-                        var q = from x in db.TblFCs
-                                where x.Id.ToLower() == User.Identity.GetUserId().ToLower()
-                                select x;
-
-                        if (q != null && q.Count() == 1)
-                        {
-                            TblFC tblFC = q.Single();
-                            tblFC.Name = fullName;
-                            tblFC.ClassroomId = selectedClassroom;
-
-
-                            try
-                            {
-                                db.SubmitChanges();
-                                // remove assigned students
-                                db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
-                                                              where x.FcUid == tblFC.Uid
-                                                              select x);
-                                db.SubmitChanges();
-                            }
-
-                            catch (Exception e)
-                            {
-
-                            }
-                        }
-                        else
-                        {
-                            //inseret
-                            Guid fcUid = Guid.NewGuid();
-                            db.TblFCs.InsertOnSubmit(new TblFC
-                            {
-                                Uid = fcUid,
-                                Id = CurrentUserId,
-                                ClassroomId = selectedClassroom,
-                                Name = fullName
-                            });
-
-                        }
-
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-
-                    }
-
-
-                    //moderator
-                    else if (item == "Moderator")
-                    {
-                        model.DisplayAllOption = true;
-                        model.DisplayTeacherOption = true;
-
-                        //if is in student role
-                        var q = from x in db.TblModerators
-                                where x.Id == User.Identity.GetUserId()
-                                select x;
-                        if (q != null && q.Count() == 1)
-                        {
-                            TblModerator tblModerator = q.Single();
-                            tblModerator.Name = fullName;
-                            tblModerator.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
-                            tblModerator.State = model.State != null ? model.State : string.Empty;
-                            tblModerator.City = model.City != null ? model.City : string.Empty;
-                            tblModerator.Country = selectedCountry;
-                            tblModerator.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
-
-                            tblModerator.ClassroomId = selectedClassroom;
-                            tblModerator.TcUid = selectedTeacher;
-                        }
-                        else
-                        {
-
-                            Guid pcUid = Guid.NewGuid();
-
-                            //insert
-                            db.TblModerators.InsertOnSubmit(new TblModerator
-                            {
-                                Uid = pcUid,
-                                Id = CurrentUserId,
-                                ClassroomId = selectedClassroom,
-                                Name = fullName,
-                                // ScUid = null,
-                                TcUid = selectedTeacher,
-                                Position = 0,
-                                Audio = true,
-                                Video = true,
-                                Volume = 80,
-                                Address1 = model.Address1 != null ? model.Address1 : string.Empty,
-                                City = model.City != null ? model.City : string.Empty,
-                                Country = selectedCountry,
-                                ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
-                                State = model.State != null ? model.State : string.Empty,
-                            });
-                        }
-
-                        try
-                        {
-                            db.SubmitChanges();
-                        }
-                        catch (Exception)
-                        {
-
-                        }
                     }
 
                 }

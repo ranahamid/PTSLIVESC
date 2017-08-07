@@ -102,6 +102,8 @@ namespace VirtualClassroom.Controllers
             IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
             //user id in lower
             string loweredId = user.Id.ToLower();
+
+            #region foreach details
             foreach (var item in rolesAll)
             {
                 if (item == "Student")
@@ -156,6 +158,7 @@ namespace VirtualClassroom.Controllers
                     {
                         TblTC tblTC = q.Single();
                         model.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                        model.FullName = tblTC.Name != null ? tblTC.Name : string.Empty;
                     }
                 }
                 else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
@@ -168,6 +171,7 @@ namespace VirtualClassroom.Controllers
                     {
                         TblSC tblSC = q.Single();
                         model.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                        model.FullName = tblSC.Name != null ? tblSC.Name : string.Empty;
                     }
                 }
 
@@ -181,18 +185,22 @@ namespace VirtualClassroom.Controllers
                     {
                         TblFC tblFC = q.Single();
                         model.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                        model.FullName = tblFC.Name != null ? tblFC.Name : string.Empty;
                     }
 
                 }
+
                 else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
                 {
                     //nothing to do
                 }
+
                 //Administrator
                 else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
                 {
                     //nothing to do
                 }
+
                 else if (item == "Moderator")
                 {
                     //if is in moderator role
@@ -231,9 +239,17 @@ namespace VirtualClassroom.Controllers
                         {
                             model.SelectedTeacher = string.Empty;
                         }
-                    }
-                    //end moderator
+                    }                    
                 }
+
+
+            }
+
+            #endregion
+
+            if (user.FullName != null)
+            {
+                model.FullName = user.FullName;
             }
 
             return View(model);
@@ -255,25 +271,11 @@ namespace VirtualClassroom.Controllers
         // GET: /Users/Create
         public async Task<ActionResult> Create()
         {
-            //Get the list of Roles
-            //List<ApplicationRole> roleList = new List<ApplicationRole>();
-
-            //foreach (var item in RoleManager.Roles)
-            //{
-            //   // if (item.Name == "Admin" || item.Name == "Administrator" || item.Name == "Student" || item.Name == "Moderator")
-            //    {
-            //        roleList.Add(item);
-            //    }
-
-            //}
-            //ViewBag.RoleId = new SelectList(roleList, "Name", "Name");
             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
-
-
-            //Create
-
+          
             UserAdminCreateViewModel model = new UserAdminCreateViewModel();
-            //country
+
+            #region country
             var Countries = from x in db.TblCountries
                             select x;
 
@@ -294,12 +296,14 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Country = CountryItems;
-            model.SelectedClassroom = "";
-            model.SelectedCountry = "";
-            model.SelectedTeacher = "";
+            #endregion
+
+            model.SelectedClassroom = string.Empty;
+            model.SelectedCountry = string.Empty;
+            model.SelectedTeacher = string.Empty;
 
 
-            //classroom            
+            #region classroom            
             var TblClassrooms = from x in db.TblClassrooms
                                 select x;
 
@@ -318,6 +322,8 @@ namespace VirtualClassroom.Controllers
             }
 
             model.Classroom = TblClassroomItems;
+            #endregion
+
 
             return View(model);
         }
@@ -365,7 +371,7 @@ namespace VirtualClassroom.Controllers
                     //Add User to the selected Roles 
                     if (selectedRoles != null)
                     {
-                        #region foreach
+                        #region foreach select roles insert
                         foreach (var role in selectedRoles)
                         {
                             string fullName = model.FullName != null ? model.FullName : string.Empty;
@@ -386,19 +392,10 @@ namespace VirtualClassroom.Controllers
                                     Name = fullName,
                                     Audio = true,
                                     Video = true
-                                });
-                                try
-                                {
-                                    db.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-
+                                });                            
                             }
                             //Seat
-                            if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Seat".Trim().ToLower())
                             {
                                 string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
 
@@ -409,19 +406,10 @@ namespace VirtualClassroom.Controllers
                                     Id = CurrentUserId,
                                     ClassroomId = selectedClassroom,
                                     Name = fullName
-                                });
-                                try
-                                {
-                                    db.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-
+                                });                               
                             }
                             //Featured
-                            if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Featured".Trim().ToLower())
                             {
                                 string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
 
@@ -432,21 +420,11 @@ namespace VirtualClassroom.Controllers
                                     Id = CurrentUserId,
                                     ClassroomId = selectedClassroom,
                                     Name = fullName
-                                });
-                                try
-                                {
-                                    db.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-
+                                });                              
                             }
 
-                            #region Student
                             //student pc
-                            if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Student".Trim().ToLower())
                             {
                                 //store the others property in tblPC
 
@@ -481,22 +459,12 @@ namespace VirtualClassroom.Controllers
                                     ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
                                     State = model.State != null ? model.State : string.Empty,
                                 });
-
-                                try
-                                {
-                                    db.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-                                //end of store the others property in tblPC
                             }
-                            #endregion
+                       
 
-                            #region Moderator                            
+                                           
                             //Moderator
-                            if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
                             {
                                 //store the others property in tblModerator                                
                                 string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
@@ -529,29 +497,27 @@ namespace VirtualClassroom.Controllers
                                     Country = selectedCountry,
                                     ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
                                     State = model.State != null ? model.State : string.Empty,
-                                });
-
-                                try
-                                {
-                                    db.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-                                //end of store the others property in tblModerator
+                                });                                
                             }
-                            #endregion
 
                             //Admin
-                            if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Admin".Trim().ToLower())
                             {
                                 //nothing to do
                             }
                             //Administrator
-                            if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                            else if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
                             {
                                 //nothing to do
+                            }
+
+                            try
+                            {
+                                db.SubmitChanges();
+                            }
+                            catch (Exception e)
+                            {
+
                             }
                         }
                         //end for each
@@ -607,13 +573,18 @@ namespace VirtualClassroom.Controllers
                 return HttpNotFound();
             }
 
-            var userRoles = await UserManager.GetRolesAsync(user.Id);
+            //details
+            EditUserViewModel vm = new EditUserViewModel();
+            vm.SelectedClassroom = string.Empty;
+            vm.SelectedCountry = string.Empty;
+            
 
+            var userRoles = await UserManager.GetRolesAsync(user.Id);
 
             //others property
 
 
-            //country
+            #region country
             var Countries = from x in db.TblCountries
                             select x;
 
@@ -633,9 +604,9 @@ namespace VirtualClassroom.Controllers
                 }
             }
 
+            #endregion
 
-
-            //classroom            
+            #region classroom
             var TblClassrooms = from x in db.TblClassrooms
                                 select x;
 
@@ -652,18 +623,14 @@ namespace VirtualClassroom.Controllers
                     });
                 }
             }
-
-
-            //details
-            EditUserViewModel vm = new EditUserViewModel();
-            vm.SelectedClassroom = string.Empty;
-            vm.SelectedCountry = string.Empty;
-            vm.SelectedTeacher = string.Empty;
+            #endregion
 
 
             IList<string> rolesAll = await UserManager.GetRolesAsync(user.Id);
             //user id in lower
             string loweredId = user.Id.ToLower();
+
+            #region foreach update/edit user
             foreach (var item in rolesAll)
             {
                 if (item == "Student")
@@ -718,6 +685,7 @@ namespace VirtualClassroom.Controllers
                     {
                         TblTC tblTC = q.Single();
                         vm.SelectedClassroom = tblTC.ClassroomId != null ? tblTC.ClassroomId : string.Empty;
+                        vm.FullName = tblTC.Name != null ? tblTC.Name : string.Empty;
                     }
                 }
                 else if (item.Trim().ToLower() == "Seat".Trim().ToLower())
@@ -730,6 +698,7 @@ namespace VirtualClassroom.Controllers
                     {
                         TblSC tblSC = q.Single();
                         vm.SelectedClassroom = tblSC.ClassroomId != null ? tblSC.ClassroomId : string.Empty;
+                        vm.FullName = tblSC.Name != null ? tblSC.Name : string.Empty;
                     }
                 }
 
@@ -743,17 +712,17 @@ namespace VirtualClassroom.Controllers
                     {
                         TblFC tblFC = q.Single();
                         vm.SelectedClassroom = tblFC.ClassroomId != null ? tblFC.ClassroomId : string.Empty;
+                        vm.FullName = tblFC.Name != null ? tblFC.Name : string.Empty;
                     }
 
                 }
                 else if (item.Trim().ToLower() == "Admin".Trim().ToLower())
                 {
-                    //nothing to do
+
                 }
                 //Administrator
                 else if (item.Trim().ToLower() == "Administrator".Trim().ToLower())
                 {
-                    //nothing to do
                 }
                 else if (item == "Moderator")
                 {
@@ -797,7 +766,12 @@ namespace VirtualClassroom.Controllers
                     //end moderator
                 }
             }
+            #endregion
 
+            if (user.FullName != null)
+            {
+                vm.FullName = user.FullName;
+            }
             vm.Id = user.Id;
             vm.Email = user.Email;
             vm.Classroom = TblClassroomItems;
@@ -817,18 +791,30 @@ namespace VirtualClassroom.Controllers
         // POST: /Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditUserViewModel editUser, params string[] selectedRole)
+        public async Task<ActionResult> Edit(EditUserViewModel model, params string[] selectedRole)
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByIdAsync(editUser.Id);
+                var user = await UserManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
                     return HttpNotFound();
                 }
 
-                user.UserName = editUser.Email;
-                user.Email = editUser.Email;
+                //update Full Name on identity table
+                string fullName = model.FullName != null ? model.FullName : string.Empty;
+                user.FullName = fullName;
+                user.UserName = model.Email;
+                user.Email = model.Email;
+                UserManager.Update(user);
+
+
+                Guid selectedTeacher = Guid.NewGuid();
+
+                if (model.SelectedTeacher != null)
+                {
+                    bool resultGuid = Guid.TryParse(model.SelectedTeacher, out selectedTeacher);
+                }
 
                 var userRoles = await UserManager.GetRolesAsync(user.Id);
 
@@ -849,6 +835,270 @@ namespace VirtualClassroom.Controllers
                 //user id in lower
                 string loweredId = user.Id.ToLower();
 
+                string selectedCountry = model.SelectedCountry != null ? model.SelectedCountry : string.Empty;
+                string selectedClassroom = model.SelectedClassroom != null ? model.SelectedClassroom : string.Empty;
+
+                #region foreach delete user
+                //userRoles = previous roles
+                //selectedRole = new roles
+                //delete
+
+                var userExDelete = userRoles.Except(selectedRole);
+                foreach (var role in userExDelete)
+                {
+                    //update 
+                    if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    {
+
+                        var q = from x in db.TblTCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+
+                            TblTC tblTC = q.Single();
+
+                            Guid tcUid = tblTC.Uid;
+
+                            foreach (TblPC tblPC in db.TblPCs.Where(x => x.TcUid.HasValue && x.TcUid == tcUid).Select(x => x))
+                            {
+                                tblPC.TcUid = null;
+                            }
+                            db.TblTCs.DeleteOnSubmit(tblTC);
+                        }
+                    }
+                    else if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                    {
+                        var q = from x in db.TblSCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+
+                            TblSC tblSC = q.Single();
+
+                            Guid scUid = tblSC.Uid;
+
+                            foreach (TblPC tblPC in db.TblPCs.Where(x => x.ScUid.HasValue && x.ScUid == scUid).Select(x => x))
+                            {
+                                tblPC.ScUid = null;
+                                tblPC.Position = 0;
+                            }
+                            db.TblSCs.DeleteOnSubmit(tblSC);
+
+                        }
+                    }
+
+                    else if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+                    {
+                        var q = from x in db.TblFCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblFC tblFC = q.Single();
+                            // remove assigned students
+                            db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                          where x.FcUid == tblFC.Uid
+                                                          select x);
+
+                            db.TblFCs.DeleteOnSubmit(tblFC);
+                        }
+
+                    }
+
+                    else if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+                    {
+                        //nothing to do
+                    }
+
+                    else if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                    {
+                        //nothing to do
+                    }
+                    else if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                    {
+                        var q = from x in db.TblPCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblPC tblPC = q.Single();
+
+                            // delete form answers of this student
+                            db.TblFormAnswers.DeleteAllOnSubmit(from x in db.TblFormAnswers
+                                                                where x.PcUid == tblPC.Uid
+                                                                select x);
+
+                            // delete from featured computer
+                            db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                          where x.PcUid == tblPC.Uid
+                                                          select x);
+
+                            // delete student
+                            db.TblPCs.DeleteOnSubmit(tblPC);
+                        }
+                    }
+                    else if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                    {
+                        
+                        var q = from x in db.TblModerators
+                                where x.Id.ToLower() == loweredId
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblModerator tblModerator = q.Single();
+                            db.TblModerators.DeleteOnSubmit(tblModerator);
+                        }
+
+                    }
+                    try
+                    {
+                        db.SubmitChanges();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+#endregion
+
+                //insert
+                var userExInsert = selectedRole.Except(userRoles);
+
+                #region foreach insert
+                foreach (var role in userExInsert)
+                {
+                   
+                    string CurrentUserId = user.Id;
+                    //Teacher
+                    if (role.Trim().ToLower() == "Teacher".Trim().ToLower())
+                    {
+                        Guid tcUid = Guid.NewGuid();
+
+                        db.TblTCs.InsertOnSubmit(new TblTC
+                        {
+                            Uid = tcUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName,
+                            Audio = true,
+                            Video = true
+                        });
+                       
+                    }
+                    //Seat
+                    else if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                    {
+                       
+
+                        Guid scUid = Guid.NewGuid();
+                        db.TblSCs.InsertOnSubmit(new TblSC
+                        {
+                            Uid = scUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName
+                        });
+                       
+
+                    }
+                    //Featured
+                    else if (role.Trim().ToLower() == "Featured".Trim().ToLower())
+                    {
+                        Guid fcUid = Guid.NewGuid();
+                        db.TblFCs.InsertOnSubmit(new TblFC
+                        {
+                            Uid = fcUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName
+                        });
+                       
+
+                    }
+
+      
+                    //student pc
+                    else if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                    {
+                        //store the others property in tblPC
+                        Guid pcUid = Guid.NewGuid();
+
+                        db.TblPCs.InsertOnSubmit(new TblPC
+                        {
+                            Uid = pcUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName,
+                            ScUid = null,
+                            TcUid = selectedTeacher,
+                            Position = 0,
+                            Audio = true,
+                            Video = true,
+                            Volume = 80,
+                            Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                            City = model.City != null ? model.City : string.Empty,
+                            Country = selectedCountry,
+                            ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                            State = model.State != null ? model.State : string.Empty,
+                        });
+
+                        //end of store the others property in tblPC
+                    }
+   
+
+                              
+                    //Moderator
+                    else if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                    {
+                        //store the others property in tblModerator                                
+                        
+                       
+
+                        Guid pcUid = Guid.NewGuid();
+
+                        db.TblModerators.InsertOnSubmit(new TblModerator
+                        {
+                            Uid = pcUid,
+                            Id = CurrentUserId,
+                            ClassroomId = selectedClassroom,
+                            Name = fullName,
+                            // ScUid = null,
+                            TcUid = selectedTeacher,
+                            Position = 0,
+                            Audio = true,
+                            Video = true,
+                            Volume = 80,
+                            Address1 = model.Address1 != null ? model.Address1 : string.Empty,
+                            City = model.City != null ? model.City : string.Empty,
+                            Country = selectedCountry,
+                            ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty,
+                            State = model.State != null ? model.State : string.Empty,
+                        });
+
+                        //end of store the others property in tblModerator
+                    }
+            
+
+                    try
+                    {
+                        db.SubmitChanges();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+                //end for each
+                #endregion
+
+
+                #region foreach update user
+                //update
                 foreach (var role in roles)
                 {
                     //update 
@@ -861,10 +1111,13 @@ namespace VirtualClassroom.Controllers
 
                         if (q != null && q.Count() == 1)
                         {
+                     
                             TblTC tblTC = q.Single();
+                            tblTC.Name = fullName;
+                            tblTC.ClassroomId = selectedClassroom;                      
                         }
                     }
-                    if (role.Trim().ToLower() == "Seat".Trim().ToLower())
+                    else if (role.Trim().ToLower() == "Seat".Trim().ToLower())
                     {
                         var q = from x in db.TblSCs
                                 where x.Id.ToLower() == loweredId
@@ -873,10 +1126,22 @@ namespace VirtualClassroom.Controllers
                         if (q != null && q.Count() == 1)
                         {
                             TblSC tblSC = q.Single();
+                            tblSC.Name = fullName;
+                            tblSC.ClassroomId = selectedClassroom;
+                            // remove assigned students
+                            var qPC = from x in db.TblPCs
+                                      where x.ClassroomId.ToLower() == selectedClassroom.ToLower() && x.ScUid.HasValue && x.ScUid == tblSC.Uid
+                                      select x;
+                            foreach (TblPC tblPC in qPC.Select(x => x))
+                            {
+                                tblPC.ScUid = null;
+                                tblPC.Position = 0;
+                            }
+                           
                         }
                     }
-                    if (role.Trim().ToLower() == "Featured".Trim().ToLower())
 
+                    else if (role.Trim().ToLower() == "Featured".Trim().ToLower())
                     {
                         var q = from x in db.TblFCs
                                 where x.Id.ToLower() == loweredId
@@ -885,27 +1150,83 @@ namespace VirtualClassroom.Controllers
                         if (q != null && q.Count() == 1)
                         {
                             TblFC tblFC = q.Single();
+                            tblFC.Name = fullName;
+                            tblFC.ClassroomId = selectedClassroom;
+
+                         
+                            // remove assigned students
+                            db.TblFCPCs.DeleteAllOnSubmit(from x in db.TblFCPCs
+                                                              where x.FcUid == tblFC.Uid
+                                                              select x);
+                            
                         }
 
                     }
-                    if (role.Trim().ToLower() == "Admin".Trim().ToLower())
+
+                    else if (role.Trim().ToLower() == "Admin".Trim().ToLower())
                     {
                         //nothing to do
                     }
+
                     //Administrator
-                    if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
+                    else if (role.Trim().ToLower() == "Administrator".Trim().ToLower())
                     {
                         //nothing to do
                     }
-                    if (role.Trim().ToLower() == "Student".Trim().ToLower())
+
+                    else if (role.Trim().ToLower() == "Student".Trim().ToLower())
+                    {
+                        var q = from x in db.TblPCs
+                                where x.Id.ToLower() == loweredId
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblPC tblPC = q.Single();
+                            tblPC.Name = fullName;
+                            tblPC.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                            tblPC.State = model.State != null ? model.State : string.Empty;
+                            tblPC.City = model.City != null ? model.City : string.Empty;
+                            tblPC.Country = selectedCountry;
+                            tblPC.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                            tblPC.ClassroomId = selectedClassroom;
+                            tblPC.TcUid = selectedTeacher;
+                        }
+                    }
+
+                    else if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
+                    {
+                        //if is in Moderators role
+                        var q = from x in db.TblModerators
+                                where x.Id.ToLower() == loweredId
+                                select x;
+                        if (q != null && q.Count() == 1)
+                        {
+                            TblModerator tblModerator = q.Single();
+                            tblModerator.Name = fullName;
+                            tblModerator.Address1 = model.Address1 != null ? model.Address1 : string.Empty;
+                            tblModerator.State = model.State != null ? model.State : string.Empty;
+                            tblModerator.City = model.City != null ? model.City : string.Empty;
+                            tblModerator.Country = selectedCountry;
+                            tblModerator.ZipCode = model.ZipCode != null ? model.ZipCode : string.Empty;
+
+                            tblModerator.ClassroomId = selectedClassroom;
+                            tblModerator.TcUid = selectedTeacher;
+                        }
+                       
+                    }
+                    try
+                    {
+                        db.SubmitChanges();
+                    }
+                    catch (Exception)
                     {
 
                     }
-                    if (role.Trim().ToLower() == "Moderator".Trim().ToLower())
-                    {
-                        
-                    }
                 }
+
+#endregion
+
 
                 if (!result.Succeeded)
                 {
@@ -917,6 +1238,8 @@ namespace VirtualClassroom.Controllers
             ModelState.AddModelError("", "Something failed.");
             return View();
         }
+
+
 
         //
         // GET: /Users/Delete/5

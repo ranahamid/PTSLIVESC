@@ -71,6 +71,9 @@
    
         <div class="col-md-10">
             @Html.DropDownListFor(m=> Model.SelectedCountry, Model.Country, "Select Country", new { @id = "CountryId", @class = "form-control"})
+            @*@Html.DropDownListFor(m => m.SelectedCountry,
+                            new SelectList(Model.Country, "Value", "Text",1),
+                            new { id = "CountryId", @class = "form-control" })*@
         </div>
     </div>
 
@@ -93,6 +96,7 @@
     </div>
 
     <div class="form-group" id="teachersdiv">
+      
         @Html.Partial("_Teachers", new VirtualClassroom.Models.TeacherViewModel() { SelectedTeacher = (string)Model.SelectedTeacher, selectedClassroomId = (string)Model.SelectedClassroom })
     </div>
 
@@ -108,11 +112,11 @@
    
     function FillTeachers()
     {
-       // debugger;
+ 
         var Id = $('#classid').val();
 
         var classroom = $('.classroomfill :selected').val();
-        //console.log("classroom" + classroom);
+  
         var s='@selectClassroom';
 
         //console.log("selectClassroom: " + s);

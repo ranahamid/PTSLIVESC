@@ -171,7 +171,7 @@ namespace VirtualClassroom.Controllers
                     {
                         Text = item.CountryName,
                         Value = item.CountryName,
-                        Selected = (item.TwoCharCountryCode == "US") ? true : false
+                        Selected = (item.CountryName == "United States") ? true : false
                     });
 
                 }

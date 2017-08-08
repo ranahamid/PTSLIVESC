@@ -52,7 +52,7 @@
 
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
 
-                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                    @if (Request.IsAuthenticated && User.IsInRole("Administrator"))
                     {
                         <li class="divider"> </li>
                         <li>@Html.ActionLink("RolesAdmin", "Index", "RolesAdmin")</li>

@@ -58,6 +58,8 @@ namespace VirtualClassroom.Controllers
             ViewBag.StatusMessage =
                 message == ManageMessageId.AddRoleSuccess ? "Your role has been created."
               : message == ManageMessageId.DeleteRoleSuccess ? "Your role has been deleted."
+              : message == ManageMessageId.CantDeleteAdministrator ? "You can't delete 'Administrator' role."
+              : message == ManageMessageId.CantEditAdministrator ? "You can't edit 'Administrator' role name."
               : message == ManageMessageId.ChangeRoleSuccess ? "Your role has been changed."
               : "";
 
@@ -68,7 +70,9 @@ namespace VirtualClassroom.Controllers
         {
             AddRoleSuccess,
             DeleteRoleSuccess,
-            ChangeRoleSuccess,            
+            CantDeleteAdministrator,
+            ChangeRoleSuccess,
+            CantEditAdministrator
         }
 
         //
@@ -158,8 +162,14 @@ namespace VirtualClassroom.Controllers
             if (ModelState.IsValid)
             {
                 var role = await RoleManager.FindByIdAsync(roleModel.Id);
-                role.Name = roleModel.Name;
 
+                if (role.Name == "Administrator" && roleModel.Name!= "Administrator")
+                {
+                    //return to index
+                    return RedirectToAction("Index", "RolesAdmin", new { Message = ManageMessageId.CantEditAdministrator });
+                }
+
+                role.Name = roleModel.Name;
                 role.Description = roleModel.Description;
 
                 await RoleManager.UpdateAsync(role);
@@ -180,6 +190,12 @@ namespace VirtualClassroom.Controllers
             if (role == null)
             {
                 return HttpNotFound();
+            }
+            
+            if (role.Name == "Administrator")
+            {
+                //return to index
+                return RedirectToAction("Index", "RolesAdmin", new { Message = ManageMessageId.CantDeleteAdministrator });
             }
             return View(role);
         }
